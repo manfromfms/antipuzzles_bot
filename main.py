@@ -3,7 +3,8 @@ import telebot
 import os
 from dotenv import load_dotenv
 
-import src.commands.ping as ping_command
+import src.commands.ping
+import src.commands.info
 
 load_dotenv()
 
@@ -14,7 +15,12 @@ def main():
 
     @bot.message_handler(commands=['ping'])
     def ping(message):
-        ping_command.ping(message, bot)
+        src.commands.ping.ping(message, bot)
+
+
+    @bot.message_handler(commands=['info'])
+    def info(message):
+        src.commands.info.info(message, bot)
 
 
     bot.infinity_polling()
