@@ -3,6 +3,9 @@ import chess.variant
 
 class Puzzle:
     def __init__(self):
+        # Link to the game
+        self.Site = ''
+
         # Player's elo
         self.WhiteElo = 0
         self.BlackElo = 0
@@ -13,9 +16,6 @@ class Puzzle:
 
         # Time control
         self.TimeControl = ''
-
-        # Link to the game
-        self.Site = ''
 
         # Initial position of a puzzle
         self.position = chess.variant.AntichessBoard()
