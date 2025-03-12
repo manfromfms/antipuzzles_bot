@@ -13,6 +13,7 @@ class Database:
                 Site TEXT,
                 WhiteElo INTEGER DEFAULT 0,
                 BlackElo INTEGER DEFAULT 0,
+                SuggestedBy TEXT DEFAULT "generator",
                 White TEXT,
                 Black TEXT,
                 TimeControl TEXT,
