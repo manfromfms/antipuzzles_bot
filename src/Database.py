@@ -11,8 +11,8 @@ class Database:
             CREATE TABLE IF NOT EXISTS Puzzles (
                 id INTEGER PRIMARY KEY,
                 Site TEXT,
-                WhiteElo INTEGER,
-                BlackElo INTEGER,
+                WhiteElo INTEGER DEFAULT 0,
+                BlackElo INTEGER DEFAULT 0,
                 White TEXT,
                 Black TEXT,
                 TimeControl TEXT,
