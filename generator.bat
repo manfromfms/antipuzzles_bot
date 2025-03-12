@@ -1,6 +1,8 @@
 @echo off
 if "%1"=="" goto NoFile
-python your_script.py %1
+cd /d "%~dp0"
+call ".venv\Scripts\activate"
+python ./generate.py %1
 goto End
 
 :NoFile
@@ -9,4 +11,5 @@ pause
 exit /b 1
 
 :End
+pause
 exit /b 0
