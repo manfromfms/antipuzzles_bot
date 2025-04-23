@@ -1,0 +1,130 @@
+import sqlite3
+
+from src.cls.Game import *
+import chess
+
+class Puzzle:
+    def __init__(self, cursor: sqlite3.Cursor, searchById=''):
+        self.cursor = cursor
+
+        self.id = 0
+        self.gameId = 0
+        self.elo = 1000
+        self.fen = ''
+        self.isProcessed = False
+        self.turn = True
+
+        self.game = Game(cursor)
+
+    def loadFromBoard(self, board: chess.Board):
+        self.fen = board.fen()
+        self.turn = board.turn
+
+        self.update_database_entry()
+
+
+    def update_game_parent(self, game: Game):
+        self.gameId = game.id
+        self.game = game
+
+        self.update_database_entry()
+
+
+    def set(self, key: str, value: any):
+        setattr(self, key, value)
+
+
+    def update_database_entry(self):
+        """
+        Update the whole entry in the database.
+        """
+
+        # First try to update
+        update_query = """
+            UPDATE puzzles 
+            SET 
+                gameId = ?,
+                elo = ?,
+                fen = ?,
+                isProcessed = ?,
+                turn = ?,
+            WHERE id = ?
+        """
+
+        # Parameters for the update query
+        update_params = (
+            self.gameId,
+            self.elo,
+            self.fen,
+            self.isProcessed,
+            self.turn,
+            self.id  # WHERE clause parameter
+        )
+
+        self.cursor.execute(update_query, update_params)
+
+        # If no rows were updated, insert new record
+        if self.cursor.rowcount == 0:
+            self.insert_database_entry()
+
+        self.cursor.connection.commit()
+
+
+    def insert_database_entry(self):
+        insert_query = """
+            INSERT INTO games (
+                gameId,
+                elo,
+                fen,
+                isProcessed,
+                turn
+            ) VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT DO NOTHING
+        """
+
+        insert_params = (
+            self.gameId,
+            self.elo,
+            self.fen,
+            self.isProcessed,
+            self.turn,
+        )
+
+        self.cursor.execute(insert_query, insert_params)
+        
+        if self.cursor.rowcount == 1:
+            # New row inserted - get the auto-incremented ID
+            self.id = self.cursor.lastrowid
+        else:
+            # Row already exists - fetch the existing ID
+            select_query = "SELECT id FROM games WHERE gameId = ?"
+            self.cursor.execute(select_query, (self.gameId,))
+            existing_row = self.cursor.fetchone()
+            self.id = existing_row[0]
+
+
+    def setup_database_schema(self):
+        """Create the games table if it doesn't exist."""
+
+        create_table_sql = """
+        CREATE TABLE IF NOT EXISTS puzzles (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            gameId INTEGER,
+            elo INTEGER,
+            fen TEXT,
+            isProcessed INTEGER,
+            turn INTEGER
+        );
+        """
+        
+        index_sql = [
+            "CREATE INDEX IF NOT EXISTS idx_gameId ON puzzles (gameId)",
+            "CREATE INDEX IF NOT EXISTS idx_turn ON puzzles (turn)",
+        ]
+
+        self.cursor.execute(create_table_sql)
+        for index_stmt in index_sql:
+            self.cursor.execute(index_stmt)
+
+        self.cursor.connection.commit()
+
