@@ -206,3 +206,4 @@ class Game:
             existing_row = self.cursor.fetchone()
             self.id = existing_row[0]
 
+    # TODO: Setup games table
