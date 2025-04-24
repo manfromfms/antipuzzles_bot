@@ -10,8 +10,8 @@ import src.db as db
 import sqlite3
 
 # Reads a file and returns the positions
-def read_file(file_path, cursor: sqlite3.Cursor):
-    positions = games_loop.loop_through_games(file_path, cursor)
+def read_file(file_path, connection: sqlite3.Connection):
+    positions = games_loop.loop_through_games(file_path, connection)
 
     return positions
 
@@ -20,24 +20,24 @@ def process_db():
     print('2')
 
 
-def db_setup(cursor: sqlite3.Cursor):
+def db_setup(connection: sqlite3.Connection):
 
-    (Game(cursor=cursor)).setup_database_schema()
-    (Puzzle(cursor=cursor)).setup_database_schema()
+    (Game(connection=connection)).setup_database_structure()
+    (Puzzle(connection=connection)).setup_database_structure()
 
-    cursor.connection.commit()
+    connection.commit()
 
 
 # Main function
 if __name__ == "__main__":
-    cursor = db.create_db('../puzzles.db')
+    connection = db.create_db('../puzzles.db')
 
-    db_setup(cursor)
+    db_setup(connection)
 
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
         if os.path.isfile(file_path):
-            positions = read_file(file_path, cursor)
+            positions = read_file(file_path, connection)
         else:
             process_db()
     else:

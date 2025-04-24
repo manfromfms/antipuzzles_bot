@@ -4,8 +4,9 @@ from src.cls.Game import *
 import chess
 
 class Puzzle:
-    def __init__(self, cursor: sqlite3.Cursor, searchById=''):
-        self.cursor = cursor
+    def __init__(self, connection: sqlite3.Connection, searchById=''):
+        self.connection = connection
+        self.cursor = self.connection.cursor()
 
         self.id = 0
         self.gameId = 0
@@ -14,7 +15,7 @@ class Puzzle:
         self.isProcessed = False
         self.turn = True
 
-        self.game = Game(cursor)
+        self.game = Game(connection)
 
     def loadFromBoard(self, board: chess.Board):
         self.fen = board.fen()
@@ -47,8 +48,8 @@ class Puzzle:
                 elo = ?,
                 fen = ?,
                 isProcessed = ?,
-                turn = ?,
-            WHERE id = ?
+                turn = ?
+            WHERE id = ?;
         """
 
         # Parameters for the update query
@@ -61,18 +62,20 @@ class Puzzle:
             self.id  # WHERE clause parameter
         )
 
+        print(update_params)
+
         self.cursor.execute(update_query, update_params)
 
         # If no rows were updated, insert new record
         if self.cursor.rowcount == 0:
             self.insert_database_entry()
 
-        self.cursor.connection.commit()
+        self.connection.commit()
 
 
     def insert_database_entry(self):
         insert_query = """
-            INSERT INTO games (
+            INSERT INTO puzzles (
                 gameId,
                 elo,
                 fen,
@@ -102,9 +105,11 @@ class Puzzle:
             existing_row = self.cursor.fetchone()
             self.id = existing_row[0]
 
+            self.connection.commit()
 
-    def setup_database_schema(self):
-        """Create the games table if it doesn't exist."""
+
+    def setup_database_structure(self):
+        """Create puzzles table if it doesn't exist."""
 
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS puzzles (
@@ -126,5 +131,5 @@ class Puzzle:
         for index_stmt in index_sql:
             self.cursor.execute(index_stmt)
 
-        self.cursor.connection.commit()
+        self.connection.commit()
 

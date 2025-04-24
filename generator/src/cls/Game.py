@@ -2,7 +2,7 @@ import sqlite3
 import chess.pgn
 
 class Game:
-    def __init__(self, cursor: sqlite3.Cursor, searchById='', searchByGameId='') -> None:
+    def __init__(self, connection: sqlite3.Connection, searchById='', searchByGameId='') -> None:
         """
         This class stores game headers.
 
@@ -26,7 +26,8 @@ class Game:
             [Annotator "lichess.org"]
         """
 
-        self.cursor = cursor # sqlite3.Cursor
+        self.connection = connection
+        self.cursor = self.connection.cursor() # sqlite3.Cursor
         self.id = 0
 
         self.Event = ''
@@ -145,7 +146,7 @@ class Game:
         if self.cursor.rowcount == 0:
             self.insert_database_entry()
 
-        self.cursor.connection.commit()
+        self.connection.commit()
 
 
     def insert_database_entry(self):
@@ -206,4 +207,40 @@ class Game:
             existing_row = self.cursor.fetchone()
             self.id = existing_row[0]
 
-    # TODO: Setup games table
+
+    def setup_database_structure(self) -> None:
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS games (
+                id INTEGER PRIMARY KEY,
+                Event TEXT,
+                Site TEXT,
+                Date TEXT,
+                White TEXT,
+                Black TEXT,
+                Result TEXT,
+                GameId TEXT UNIQUE,
+                UTCDate TEXT,
+                UTCTime TEXT,
+                WhiteElo INTEGER,
+                BlackElo INTEGER,
+                WhiteRatingDiff INTEGER,
+                BlackRatingDiff INTEGER,
+                Variant TEXT,
+                TimeControl TEXT,
+                ECO TEXT,
+                Termination TEXT,
+                Annotator TEXT
+            )
+        ''')
+
+        self.cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_games_white 
+            ON games (White)
+        ''')
+
+        self.cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_games_black 
+            ON games (Black)
+        ''')
+
+        self.connection.commit()
