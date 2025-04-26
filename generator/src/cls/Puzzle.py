@@ -11,6 +11,7 @@ class Puzzle:
         self.id = 0
         self.gameId = 0
         self.elo = 1000
+        self.elodev = 256
         self.fen = ''
         self.isProcessed = False
         self.turn = True
@@ -46,6 +47,7 @@ class Puzzle:
             SET 
                 gameId = ?,
                 elo = ?,
+                elodev = ?,
                 fen = ?,
                 isProcessed = ?,
                 turn = ?
@@ -56,6 +58,7 @@ class Puzzle:
         update_params = (
             self.gameId,
             self.elo,
+            self.elodev,
             self.fen,
             self.isProcessed,
             self.turn,
@@ -78,16 +81,18 @@ class Puzzle:
             INSERT INTO puzzles (
                 gameId,
                 elo,
+                elodev,
                 fen,
                 isProcessed,
                 turn
-            ) VALUES (?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT DO NOTHING
         """
 
         insert_params = (
             self.gameId,
             self.elo,
+            self.elodev,
             self.fen,
             self.isProcessed,
             self.turn,
@@ -116,7 +121,8 @@ class Puzzle:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             gameId INTEGER,
             elo INTEGER,
-            fen TEXT,
+            elodev INTEGER,
+            fen TEXT UNIQUE,
             isProcessed INTEGER,
             turn INTEGER
         );
