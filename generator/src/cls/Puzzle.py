@@ -37,43 +37,47 @@ class Puzzle:
 
 
     def update_database_entry(self):
-        """
-        Update the whole entry in the database.
-        """
+        # Somehow this function is working correctly, although I don't have any idea why...
+        try:
+            """
+            Update the whole entry in the database.
+            """
 
-        # First try to update
-        update_query = """
-            UPDATE puzzles 
-            SET 
-                gameId = ?,
-                elo = ?,
-                elodev = ?,
-                fen = ?,
-                isProcessed = ?,
-                turn = ?
-            WHERE id = ?;
-        """
+            # First try to update
+            update_query = """
+                UPDATE puzzles
+                SET 
+                    gameId = ?,
+                    elo = ?,
+                    elodev = ?,
+                    fen = ?,
+                    isProcessed = ?,
+                    turn = ?
+                WHERE (id = ?)
+            """
 
-        # Parameters for the update query
-        update_params = (
-            self.gameId,
-            self.elo,
-            self.elodev,
-            self.fen,
-            self.isProcessed,
-            self.turn,
-            self.id  # WHERE clause parameter
-        )
+            # Parameters for the update query
+            update_params = (
+                self.gameId,
+                self.elo,
+                self.elodev,
+                self.fen,
+                self.isProcessed,
+                self.turn,
+                self.id  # WHERE clause parameter
+            )
 
-        print(update_params)
+            print(update_params)
 
-        self.cursor.execute(update_query, update_params)
+            self.cursor.execute(update_query, update_params)
 
-        # If no rows were updated, insert new record
-        if self.cursor.rowcount == 0:
-            self.insert_database_entry()
+            # If no rows were updated, insert new record
+            if self.cursor.rowcount == 0:
+                self.insert_database_entry()
 
-        self.connection.commit()
+            self.connection.commit()
+        except sqlite3.IntegrityError:
+            print('Dupelicate entry')
 
 
     def insert_database_entry(self):
@@ -86,7 +90,6 @@ class Puzzle:
                 isProcessed,
                 turn
             ) VALUES (?, ?, ?, ?, ?, ?)
-            ON CONFLICT DO NOTHING
         """
 
         insert_params = (
@@ -99,18 +102,21 @@ class Puzzle:
         )
 
         self.cursor.execute(insert_query, insert_params)
+
+        print('Row count', self.cursor.rowcount)
         
         if self.cursor.rowcount == 1:
             # New row inserted - get the auto-incremented ID
             self.id = self.cursor.lastrowid
         else:
             # Row already exists - fetch the existing ID
-            select_query = "SELECT id FROM games WHERE gameId = ?"
+            select_query = "SELECT id FROM puzzles WHERE gameId = ?"
             self.cursor.execute(select_query, (self.gameId,))
             existing_row = self.cursor.fetchone()
+            print('Existing row', existing_row)
             self.id = existing_row[0]
 
-            self.connection.commit()
+        self.connection.commit()
 
 
     def setup_database_structure(self):

@@ -15,9 +15,9 @@ def find_positions(game: chess.pgn.Game, connection: sqlite3.Connection) -> list
             g.loadFromHeaders(h)
 
             p = Puzzle(connection)
-            p.loadFromBoard(game.board())
-
             p.update_game_parent(g)
+
+            p.loadFromBoard(game.board())
 
             positions.append(p)
 

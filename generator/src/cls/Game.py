@@ -92,6 +92,11 @@ class Game:
         Update the whole entry in the database.
         """
 
+        # If the id is 0
+        if self.id == 0:
+            self.insert_database_entry()
+            return
+
         # First try to update
         update_query = """
             UPDATE games 
@@ -145,6 +150,7 @@ class Game:
         # If no rows were updated, insert new record
         if self.cursor.rowcount == 0:
             self.insert_database_entry()
+            return
 
         self.connection.commit()
 
@@ -206,6 +212,8 @@ class Game:
             self.cursor.execute(select_query, (self.GameId,))
             existing_row = self.cursor.fetchone()
             self.id = existing_row[0]
+
+        self.connection.commit()
 
 
     def setup_database_structure(self) -> None:
