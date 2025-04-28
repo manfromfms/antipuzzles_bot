@@ -7,23 +7,26 @@ from src.cls.Game import Game
 from src.cls.Puzzle import Puzzle
 from src.cls.Opening import Opening, get_opening
 
+
 def find_positions(game: chess.pgn.Game, connection: sqlite3.Connection) -> list[dict]:
+    """This function loops through the game and finds potential puzzles before adding them into the database"""
     positions = []
 
     h = game.headers
     
     while game is not None:
+        # Lichess kindly provides this comment for some positions which the generator should look after
         if 'Lost forced checkmate sequence' in game.comment:
             g = Game(connection)
-            g.loadFromHeaders(h)
+            g.loadFromHeaders(h) # Just making sure to save the game into the database
 
             p = Puzzle(connection)
             p.update_game_parent(g)
 
-            p.opening = get_opening(game.parent, connection)
+            p.opening = get_opening(game.parent, connection) # Get the opening for a position and save it into the puzzle
             p.openingId = p.opening.id
 
-            p.loadFromBoard(game.parent.board())
+            p.loadFromBoard(game.parent.board()) # Load the puzzle from current board state
 
             positions.append(p)
 
