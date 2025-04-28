@@ -1,9 +1,11 @@
 import chess.pgn
 import chess
 
-from src.cls.Game import *
-from src.cls.Puzzle import *
-from src.cls.Opening import *
+import sqlite3
+
+from src.cls.Game import Game
+from src.cls.Puzzle import Puzzle
+from src.cls.Opening import Opening, get_opening
 
 def find_positions(game: chess.pgn.Game, connection: sqlite3.Connection) -> list[dict]:
     positions = []
@@ -18,10 +20,10 @@ def find_positions(game: chess.pgn.Game, connection: sqlite3.Connection) -> list
             p = Puzzle(connection)
             p.update_game_parent(g)
 
-            p.opening = get_opening(game, connection)
+            p.opening = get_opening(game.parent, connection)
             p.openingId = p.opening.id
 
-            p.loadFromBoard(game.board())
+            p.loadFromBoard(game.parent.board())
 
             positions.append(p)
 

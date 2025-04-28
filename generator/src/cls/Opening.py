@@ -27,10 +27,12 @@ class Opening:
                 moves.pop()
                 continue
 
-            string = ' '.join(moves)
+            string = str(' '.join(moves))
 
             self.cursor.execute('SELECT * FROM openings WHERE sequence = ?', (string,))
             result = self.cursor.fetchall()
+
+            print(result)
 
             if len(result) > 0:
                 result = result[-1]
@@ -103,7 +105,18 @@ def get_opening(node: chess.pgn.Game, connection: sqlite3.Connection) -> Opening
         moves.append(node.parent.board().san(node.move))
         node = node.parent
     moves.reverse()
-    move_str = ' '.join(f"{i//2 + 1}. {moves[i]} {moves[i+1]}" if i % 2 == 0 else "" for i in range(len(moves)))
-    m = move_str.strip()
+    
+    move_parts = []
+    for j in range(0, len(moves), 2):
+        move_number = (j // 2) + 1
+        white = moves[j]
+        if j + 1 < len(moves):
+            black = moves[j + 1]
+            move_parts.append(f"{move_number}. {white} {black}")
+        else:
+            move_parts.append(f"{move_number}. {white}")
+    move_str = ' '.join(move_parts)
 
-    return Opening(connection, m)
+    print(move_str)
+    
+    return Opening(connection, moves_str=move_str)

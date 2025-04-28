@@ -109,8 +109,6 @@ class Puzzle:
         )
 
         self.cursor.execute(insert_query, insert_params)
-
-        print('Row count', self.cursor.rowcount)
         
         if self.cursor.rowcount == 1:
             # New row inserted - get the auto-incremented ID
@@ -120,7 +118,6 @@ class Puzzle:
             select_query = "SELECT id FROM puzzles WHERE gameId = ?"
             self.cursor.execute(select_query, (self.gameId,))
             existing_row = self.cursor.fetchone()
-            print('Existing row', existing_row)
             self.id = existing_row[0]
 
         self.connection.commit()
