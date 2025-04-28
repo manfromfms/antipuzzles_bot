@@ -3,6 +3,7 @@ import chess
 
 from src.cls.Game import *
 from src.cls.Puzzle import *
+from src.cls.Opening import *
 
 def find_positions(game: chess.pgn.Game, connection: sqlite3.Connection) -> list[dict]:
     positions = []
@@ -16,6 +17,9 @@ def find_positions(game: chess.pgn.Game, connection: sqlite3.Connection) -> list
 
             p = Puzzle(connection)
             p.update_game_parent(g)
+
+            p.opening = get_opening(game, connection)
+            p.openingId = p.opening.id
 
             p.loadFromBoard(game.board())
 

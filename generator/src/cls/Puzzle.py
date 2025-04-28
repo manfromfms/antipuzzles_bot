@@ -1,6 +1,7 @@
 import sqlite3
 
 from src.cls.Game import *
+from src.cls.Opening import *
 import chess
 
 class Puzzle:
@@ -13,6 +14,8 @@ class Puzzle:
         self.elo = 1000
         self.elodev = 256
         self.fen = ''
+        self.openingId = 0
+        self.opening = Opening(self.connection)
         self.isProcessed = False
         self.turn = True
 
@@ -51,6 +54,7 @@ class Puzzle:
                     elo = ?,
                     elodev = ?,
                     fen = ?,
+                    openingId = ?,
                     isProcessed = ?,
                     turn = ?
                 WHERE (id = ?)
@@ -62,6 +66,7 @@ class Puzzle:
                 self.elo,
                 self.elodev,
                 self.fen,
+                self.openingId,
                 self.isProcessed,
                 self.turn,
                 self.id  # WHERE clause parameter
@@ -87,9 +92,10 @@ class Puzzle:
                 elo,
                 elodev,
                 fen,
+                openingId,
                 isProcessed,
                 turn
-            ) VALUES (?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
         """
 
         insert_params = (
@@ -97,6 +103,7 @@ class Puzzle:
             self.elo,
             self.elodev,
             self.fen,
+            self.openingId,
             self.isProcessed,
             self.turn,
         )
@@ -125,10 +132,11 @@ class Puzzle:
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS puzzles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            gameId INTEGER,
+            gameId INTEGER REFERENCES games(id),
             elo INTEGER,
             elodev INTEGER,
             fen TEXT UNIQUE,
+            openingId TEXT,
             isProcessed INTEGER,
             turn INTEGER
         );

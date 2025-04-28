@@ -4,6 +4,7 @@ import os
 import src.games_loop as games_loop
 from src.cls.Game import *
 from src.cls.Puzzle import *
+from src.cls.Opening import *
 
 import src.db as db
 
@@ -24,6 +25,7 @@ def db_setup(connection: sqlite3.Connection):
 
     (Game(connection=connection)).setup_database_structure()
     (Puzzle(connection=connection)).setup_database_structure()
+    (Opening(connection=connection)).setup_database_structure()
 
     connection.commit()
 
