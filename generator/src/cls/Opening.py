@@ -15,8 +15,13 @@ class Opening:
         self.parentId = 0
 
         if moves_str != '':
-            self = self.search_opening_by_string(moves_str)
-
+            found_opening = self.search_opening_by_string(moves_str) 
+            #self = self.search_opening_by_string(moves_str) //it does not work
+            if found_opening.id != 0:
+                self.id = found_opening.id
+                self.name = found_opening.name
+                self.sequence = found_opening.sequence
+                self.parentId = found_opening.parentId
 
     def search_opening_by_string(self, moves_str: str):
         moves = []
