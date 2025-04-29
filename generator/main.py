@@ -40,6 +40,7 @@ if __name__ == "__main__":
         file_path = sys.argv[1]
         if os.path.isfile(file_path):
             positions = read_file(file_path, connection)
+            process_db()
         else:
             process_db()
     else:

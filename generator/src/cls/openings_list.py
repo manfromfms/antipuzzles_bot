@@ -30,12 +30,12 @@ openings_list = [
     ("Nilatac Variation", "1. Nh3 g5 2. Nxg5 Bg7 3. Nxh7 Bxb2 4. Bxb2 Rxh7 5. Bf6 exf6 6. Qc1"),
     ("Icelandic Variation", "1. Nh3 g5 2. Nxg5 Bg7 3. Nxh7 Bxb2 4. Bxb2 Rxh7 5. Bf6 exf6 6. h3"),
     ("Sportsment Variation", "1. Nh3 g5 2. Nxg5 Bg7 3. Nxh7 Bxb2 4. Bxb2 Rxh7 5. Bd4"),
-    ("Swedish Opening", "1. g3"),
-    ("Zooey Attack", "1. g3 Nh6 2. Nh3 d6 3. Ng5"),
 
-    # ("Croatian Attack", "1. g3 Nh6 2. Nh3 d6 3. g4"), found duplicate
-    ("Wanderertom Attack", "1. g3 Nh6 2. c4"),
-    ("Russian Variation", "1. g3 Nh6 2. b3 g6 3. Nh3"),
+    ("Swedish Opening", "1. g3"),
+    # ("Zooey Attack", "1. g3 Nh6 2. Nh3 d6 3. Ng5"), - bad
+    ("Greenland Attack", "1. g3 Nh6 2. Nh3 d6 3. g4"), # Changed name from Croatian due to duplicate
+    # ("Wanderertom Attack", "1. g3 Nh6 2. c4"), - bad
+    # ("Russian Variation", "1. g3 Nh6 2. b3 g6 3. Nh3"), - bad
     ("Reverse Dragon Attack", "1. g3 Nh6 2. g4"),
     ("Goldovski Defense", "1. g3 c5"),
     ("Hervetlse Race", "1. g3 c5 2. d4 cxd4 3. Qxd4 g5 4. Bxg5 Qa5 5. Qxh8"),
@@ -43,6 +43,9 @@ openings_list = [
     ("Stayalive Variation", "1. g3 c5 2. Nh3 g5 3. Nxg5 Bg7 4. Nxh7 Bxb2 5. Bxb2 Rxh7 6. Bd4"),
     ("Exchange Attack", "1. g3 c5 2. b4"),
     ("Improved Zooey Attack", "1. g3 c5 2. b4 cxb4 3. Nh3"),
+    ("Highlighted Attack", "1. g3 c5 2. Nh3 a5 3. b4 cxb4 4. a3 bxa3 5. Bxa3"), # Custom
+    ("Smooth Defense", "1. g3 Nh6 2. g4 Nxg4 3. Bg2 Nxh2 4. Bxb7 Bxb7 5. Rxh2 Bd5"), # Custom
+    ("Blade Defense", "1. g3 Nh6 2. g4 Nxg4 3. Bg2 Nxh2 4. Bxb7 Bxb7 5. Rxh2 Bf3"), # Custom
     ("Laniakean Attack", "1. a4"),
     ("Wing System Transposition", "1. a4 b6 2. e3"),
     ("Classical Defense", "1. a4 b5"),
