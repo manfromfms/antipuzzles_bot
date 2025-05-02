@@ -5,7 +5,7 @@ from src.cls.Opening import *
 import chess
 
 class Puzzle:
-    def __init__(self, connection: sqlite3.Connection, searchById=''):
+    def __init__(self, connection: sqlite3.Connection, searchById=0):
         self.connection = connection
         self.cursor = self.connection.cursor()
 

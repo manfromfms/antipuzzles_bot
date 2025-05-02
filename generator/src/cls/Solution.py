@@ -1,11 +1,13 @@
 import sqlite3
 
+from src.cls.Puzzle import *
+
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
 class Solution:
-    def __init__(self, connection: sqlite3.Connection):
+    def __init__(self, connection: sqlite3.Connection, puzzle: Puzzle, searchById=''):
         
         self.connection = connection
         self.cursor = connection.cursor()

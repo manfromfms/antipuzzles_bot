@@ -5,6 +5,7 @@ import src.games_loop as games_loop
 from src.cls.Game import *
 from src.cls.Puzzle import *
 from src.cls.Opening import *
+from src.cls.Solution import *
 
 import src.db as db
 
@@ -22,7 +23,9 @@ def process_db(connection: sqlite3.Connection):
     puzzles = select_puzzles(connection, 'SELECT id, isProcessed FROM puzzles WHERE isProcessed = 0')
 
     for puzzle in puzzles:
-        print(1)
+        solution = Solution(connection, puzzle)
+
+        solution.generate()
 
 
 def db_setup(connection: sqlite3.Connection):

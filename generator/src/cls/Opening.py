@@ -4,7 +4,7 @@ import sqlite3
 from src.cls.openings_list import *
 
 class Opening:
-    def __init__(self, connection: sqlite3.Connection, moves_str='', searchById=''):
+    def __init__(self, connection: sqlite3.Connection, moves_str='', searchById=0):
 
         self.connection = connection
         self.cursor = connection.cursor()
