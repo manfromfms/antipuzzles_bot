@@ -21,6 +21,25 @@ class Puzzle:
 
         self.game = Game(connection)
 
+        if searchById != '':
+            self.cursor.execute('SELECT * FROM puzzles WHERE id = ? LIMIT 1', (searchById,))
+            data = self.cursor.fetchone()
+
+            if data is None:
+                return
+            
+            self.id = data[0]
+            self.gameId = data[1]
+            self.elo = data[2]
+            self.elodev = data[3]
+            self.fen = data[4]
+            self.openingId = data[5]
+            self.isProcessed = data[6]
+            self.turn = data[7]
+
+            self.opening = Opening(connection, searchById=self.openingId)
+
+
     def loadFromBoard(self, board: chess.Board):
         self.fen = board.fen()
         self.turn = board.turn
@@ -148,3 +167,17 @@ class Puzzle:
 
         self.connection.commit()
 
+
+def select_puzzles(connection: sqlite3.Connection, query='', params=()) -> list[Puzzle]:
+    cursor = connection.cursor()
+
+    cursor.execute(query, params)
+
+    l = cursor.fetchall()
+
+    puzzles = []
+
+    for p in l:
+        puzzles.append(Puzzle(connection, searchById=p[0]))
+
+    return puzzles

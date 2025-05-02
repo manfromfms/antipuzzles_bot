@@ -17,8 +17,12 @@ def read_file(file_path, connection: sqlite3.Connection):
     return positions
 
 
+# Go through all unprocessed puzzels and process them
 def process_db(connection: sqlite3.Connection):
-    print('2')
+    puzzles = select_puzzles(connection, 'SELECT id, isProcessed FROM puzzles WHERE isProcessed = 0')
+
+    for puzzle in puzzles:
+        
 
 
 def db_setup(connection: sqlite3.Connection):

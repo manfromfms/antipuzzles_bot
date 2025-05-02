@@ -4,7 +4,7 @@ import sqlite3
 from src.cls.openings_list import *
 
 class Opening:
-    def __init__(self, connection: sqlite3.Connection, moves_str=''):
+    def __init__(self, connection: sqlite3.Connection, moves_str='', searchById=''):
 
         self.connection = connection
         self.cursor = connection.cursor()
@@ -22,6 +22,19 @@ class Opening:
                 self.name = found_opening.name
                 self.sequence = found_opening.sequence
                 self.parentId = found_opening.parentId
+
+        if searchById != '':
+            self.cursor.execute('SELECT * FROM openings WHERE id = ? LIMIT 1', (searchById,))
+            data = self.cursor.fetchone()
+
+            if data is None:
+                return
+            
+            self.id = data[0]
+            self.name = data[1]
+            self.sequence = data[2]
+            self.parentId = data[3]
+
 
     def search_opening_by_string(self, moves_str: str):
         moves = []

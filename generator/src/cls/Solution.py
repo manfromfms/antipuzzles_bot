@@ -12,6 +12,7 @@ class Solution:
 
         self.puzzleId = 0
         self.moves = ''
+        self.length = 0
         self.fish_solution = ''
 
     def generate(self):
