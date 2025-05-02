@@ -5,6 +5,7 @@ from chess.engine import Mate, Cp
 import chess.gaviota
 
 from src.cls.Puzzle import *
+from src.cls.Category import *
 
 import chess.variant
 import chess.engine
@@ -14,11 +15,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Solution:
-    def __init__(self, connection: sqlite3.Connection, puzzle: Puzzle, searchById=0):
+    def __init__(self, connection: sqlite3.Connection, puzzle: Puzzle, searchByPuzzleId=0):
         
         self.connection = connection
         self.cursor = connection.cursor()
 
+        self.id = 0
         self.puzzleId = puzzle.id
         self.moves = ''
         self.length = 0
@@ -26,6 +28,21 @@ class Solution:
 
         # Some additional stuff
         self.puzzle = puzzle
+
+        if searchByPuzzleId != '':
+            self.cursor.execute('SELECT * FROM solutions WHERE puzzleId = ? LIMIT 1', (searchByPuzzleId,))
+            data = self.cursor.fetchone()
+
+            if data is None:
+                return
+            
+            self.id = data[0]
+            self.puzzleId = data[1]
+            self.moves = data[2]
+            self.length = data[3]
+            self.fish_solution = data[4]
+
+            self.puzzle = Puzzle(self.connection, searchById=self.puzzleId)
 
 
     def generate(self):
@@ -44,7 +61,11 @@ class Solution:
             result = self.recursive_analysis(board, engine)
 
             if result[2] > 0:
-                print(result)
+                self.moves = ' '.join(result[0])
+                self.fish_solution = self.moves + ' ' + ' '.join(result[1])
+                self.length = result[3]
+
+                Category(self.connection, self.puzzle, self)
             else:
                 self.remove_puzzle()
         else: 
@@ -53,7 +74,7 @@ class Solution:
 
 
     def remove_puzzle(self):
-        print('DELETE')
+        self.cursor.execute('DELETE FROM puzzles WHERE puzzleId = ? LIMIT 1', (self.puzzleId,))
 
 
     def recursive_analysis(self, board: chess.variant.AntichessBoard, engine: chess.engine.SimpleEngine):
@@ -126,6 +147,99 @@ class Solution:
         else:
             print('Stop due to lack of moves for engine')
             return [moves, [], 0]
+
+
+    def setup_database_structure(self):
+        """Create solutions table if it doesn't exist."""
+
+        create_table_sql = """
+        CREATE TABLE IF NOT EXISTS solutions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            puzzleId INTEGER UNIQUE REFERENCES puzzles(id),
+            moves TEXT NOT NULL,
+            length INTEGER NOT NULL,
+            fish_solution TEXT NOT NULL
+        );
+        """
+        
+        index_sql = [
+            "CREATE INDEX IF NOT EXISTS idx_length ON solutions (length)",
+            "CREATE INDEX IF NOT EXISTS idx_puzzleId ON solutions (puzzleId)",
+        ]
+
+        self.cursor.execute(create_table_sql)
+        for index_stmt in index_sql:
+            self.cursor.execute(index_stmt)
+
+
+    def update_database_entry(self):
+        # Somehow this function is working correctly, although I don't have any idea why...
+        try:
+            """
+            Update the whole entry in the database.
+            """
+
+            # First try to update
+            update_query = """
+                UPDATE solutions
+                SET 
+                    puzzleId = ?,
+                    moves = ?,
+                    length = ?,
+                    fish_solution = ?
+                WHERE (id = ?)
+            """
+
+            # Parameters for the update query
+            update_params = (
+                self.puzzleId,
+                self.moves,
+                self.length,
+                self.fish_solution,
+                self.id  # WHERE clause parameter
+            )
+
+            self.cursor.execute(update_query, update_params)
+
+            # If no rows were updated, insert new record
+            if self.cursor.rowcount == 0:
+                self.insert_database_entry()
+
+            self.connection.commit()
+        except sqlite3.IntegrityError:
+            print('Dupelicate entry')
+
+
+    def insert_database_entry(self):
+        insert_query = """
+            INSERT INTO solutions (
+                puzzleId,
+                moves,
+                length,
+                fish_solution
+            ) VALUES (?, ?, ?, ?)
+        """
+
+        insert_params = (
+            self.puzzleId,
+            self.moves,
+            self.length,
+            self.fish_solution,
+        )
+
+        self.cursor.execute(insert_query, insert_params)
+        
+        if self.cursor.rowcount == 1:
+            # New row inserted - get the auto-incremented ID
+            self.id = self.cursor.lastrowid
+        else:
+            # Row already exists - fetch the existing ID
+            select_query = "SELECT id FROM solutions WHERE puzzleId = ?"
+            self.cursor.execute(select_query, (self.puzzleId,))
+            existing_row = self.cursor.fetchone()
+            self.id = existing_row[0]
+
+        self.connection.commit()
 
 
 def get_moves(board: chess.Board) -> list[chess.Move]:

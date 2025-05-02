@@ -2,10 +2,12 @@ import sys
 import os
 
 import src.games_loop as games_loop
+
 from src.cls.Game import *
 from src.cls.Puzzle import *
 from src.cls.Opening import *
 from src.cls.Solution import *
+from src.cls.Category import *
 
 import src.db as db
 
@@ -22,7 +24,7 @@ def read_file(file_path, connection: sqlite3.Connection):
 
 # Go through all unprocessed puzzels and process them
 def process_db(connection: sqlite3.Connection):
-    puzzles = select_puzzles(connection, 'SELECT id, isProcessed FROM puzzles WHERE isProcessed = 0 LIMIT 100')
+    puzzles = select_puzzles(connection, 'SELECT id, isProcessed FROM puzzles WHERE isProcessed = 0 LIMIT 1000000')
 
     for puzzle in tqdm(puzzles):
         solution = Solution(connection, puzzle)

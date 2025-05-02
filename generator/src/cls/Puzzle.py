@@ -2,6 +2,7 @@ import sqlite3
 
 from src.cls.Game import *
 from src.cls.Opening import *
+
 import chess
 
 class Puzzle:
