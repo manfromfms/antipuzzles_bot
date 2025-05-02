@@ -22,7 +22,7 @@ def process_db(connection: sqlite3.Connection):
     puzzles = select_puzzles(connection, 'SELECT id, isProcessed FROM puzzles WHERE isProcessed = 0')
 
     for puzzle in puzzles:
-        
+        print(1)
 
 
 def db_setup(connection: sqlite3.Connection):
