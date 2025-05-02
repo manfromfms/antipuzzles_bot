@@ -17,7 +17,7 @@ def read_file(file_path, connection: sqlite3.Connection):
     return positions
 
 
-def process_db():
+def process_db(connection: sqlite3.Connection):
     print('2')
 
 
@@ -41,6 +41,6 @@ if __name__ == "__main__":
         if os.path.isfile(file_path):
             positions = read_file(file_path, connection)
         
-        process_db()
+        process_db(connection)
     else:
-        process_db()
+        process_db(connection)

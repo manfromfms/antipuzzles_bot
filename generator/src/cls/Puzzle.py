@@ -72,8 +72,6 @@ class Puzzle:
                 self.id  # WHERE clause parameter
             )
 
-            print(update_params)
-
             self.cursor.execute(update_query, update_params)
 
             # If no rows were updated, insert new record
@@ -133,7 +131,7 @@ class Puzzle:
             elo INTEGER,
             elodev INTEGER,
             fen TEXT UNIQUE,
-            openingId TEXT,
+            openingId TEXT REFERENCES openings(id),
             isProcessed INTEGER,
             turn INTEGER
         );

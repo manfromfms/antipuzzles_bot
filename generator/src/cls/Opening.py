@@ -37,8 +37,6 @@ class Opening:
             self.cursor.execute('SELECT * FROM openings WHERE sequence = ?', (string,))
             result = self.cursor.fetchall()
 
-            print(result)
-
             if len(result) > 0:
                 result = result[-1]
 
@@ -121,7 +119,5 @@ def get_opening(node: chess.pgn.Game, connection: sqlite3.Connection) -> Opening
         else:
             move_parts.append(f"{move_number}. {white}")
     move_str = ' '.join(move_parts)
-
-    print(move_str)
     
     return Opening(connection, moves_str=move_str)
