@@ -1,21 +1,137 @@
 import sqlite3
 
+import chess.engine
+from chess.engine import Mate, Cp
+import chess.gaviota
+
 from src.cls.Puzzle import *
+
+import chess.variant
+import chess.engine
 
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
 class Solution:
-    def __init__(self, connection: sqlite3.Connection, puzzle: Puzzle, searchById=''):
+    def __init__(self, connection: sqlite3.Connection, puzzle: Puzzle, searchById=0):
         
         self.connection = connection
         self.cursor = connection.cursor()
 
-        self.puzzleId = 0
+        self.puzzleId = puzzle.id
         self.moves = ''
         self.length = 0
         self.fish_solution = ''
 
+        # Some additional stuff
+        self.puzzle = puzzle
+
+
     def generate(self):
-        print(os.getenv('ffish_path'))
+        board = chess.variant.AntichessBoard(self.puzzle.fen)
+        engine = chess.engine.SimpleEngine.popen_uci(os.getenv('ffish_path'))
+
+        print(board.fen())
+
+        engine.configure({'Hash': os.getenv('ffish_Threads'), 'Hash': os.getenv('ffish_Threads')})
+
+        # 3 seconds for initial analysis
+        info = engine.analyse(board, chess.engine.Limit(time=1))
+
+        # If the mate was found for current player, then do the analysis
+        if info['score'].pov(board.turn) > Mate(100):
+            result = self.recursive_analysis(board, engine)
+
+            if result[2] > 0:
+                print(result)
+            else:
+                self.remove_puzzle()
+        else: 
+            print("Failed to find the solution")
+            self.remove_puzzle()
+
+
+    def remove_puzzle(self):
+        print('DELETE')
+
+
+    def recursive_analysis(self, board: chess.variant.AntichessBoard, engine: chess.engine.SimpleEngine):
+        print('New call')
+        moves = get_moves(board)
+
+        # Check if there are no legal moves at all
+        if len(moves) == 0:
+            print('Stop due to lack of moves for player')
+            return [[], [], 0]
+
+        # Check if there is only one possible move
+        if len(moves) == 1:
+            board.push(moves[0])
+            
+            # Play the engine move
+            if len(get_moves(board)) > 0:
+                engine_move = engine.play(board, chess.engine.Limit(time=0.2)).move
+                board.push(engine_move)
+
+                result = self.recursive_analysis(board, engine)
+
+                # Undo all the moves and return the result
+                board.pop()
+                board.pop()
+
+                result[0].insert(0, engine_move)
+                result[0].insert(0, moves[0])
+
+                return result
+            else:
+                print('Stop due to lack of moves for engine')
+                return [moves, [], 0]
+
+        # Now if there are multiple legal moves
+        # Do wide analysis of every possible move in current position
+        wide_analysis = engine.analyse(board, chess.engine.Limit(time=1.5), multipv=500)
+
+        # If failed to find a solution (might be possible due to limitations of computational time)
+        if wide_analysis[0]['score'].pov(board.turn) < Mate(100):
+            print('Stop due to lack of solution')
+            return [[], [], 0]
+        
+        # Check the amount of good moves (mate as well as generally better for player)
+        # Fairy stockfish sorts all the line by how good they are thus only the second entry has to be checked
+        if wide_analysis[1]['score'].pov(board.turn) > Cp(0):
+            print('Stop due to multiple possible moves')
+            return [[], wide_analysis[0]['pv'], 0]
+                
+        # Now forward the game for further depth analysis
+        correct_move = wide_analysis[0]['pv'][0]
+        board.push(correct_move)
+
+        # Play the engine move
+        if len(get_moves(board)) > 0:
+            engine_move = engine.play(board, chess.engine.Limit(time=0.2)).move
+            board.push(engine_move)
+
+            result = self.recursive_analysis(board, engine)
+
+            # Undo all the moves and return the result
+            board.pop()
+            board.pop()
+
+            result[0].insert(0, engine_move)
+            result[0].insert(0, moves[0])
+            result[2] += 1
+
+            return result
+        else:
+            print('Stop due to lack of moves for engine')
+            return [moves, [], 0]
+
+
+def get_moves(board: chess.Board) -> list[chess.Move]:
+    result = []
+
+    for move in board.legal_moves:
+        result.append(move)
+
+    return result

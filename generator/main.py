@@ -11,6 +11,8 @@ import src.db as db
 
 import sqlite3
 
+from tqdm import tqdm
+
 # Reads a file and returns the positions
 def read_file(file_path, connection: sqlite3.Connection):
     positions = games_loop.loop_through_games(file_path, connection)
@@ -20,9 +22,9 @@ def read_file(file_path, connection: sqlite3.Connection):
 
 # Go through all unprocessed puzzels and process them
 def process_db(connection: sqlite3.Connection):
-    puzzles = select_puzzles(connection, 'SELECT id, isProcessed FROM puzzles WHERE isProcessed = 0')
+    puzzles = select_puzzles(connection, 'SELECT id, isProcessed FROM puzzles WHERE isProcessed = 0 LIMIT 100')
 
-    for puzzle in puzzles:
+    for puzzle in tqdm(puzzles):
         solution = Solution(connection, puzzle)
 
         solution.generate()
