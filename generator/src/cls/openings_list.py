@@ -41,7 +41,7 @@ openings_list = [
     ("Hervetlse Race", "1. g3 c5 2. d4 cxd4 3. Qxd4 g5 4. Bxg5 Qa5 5. Qxh8"),
     ("Stayalive Defense", "1. g3 c5 2. Nh3 g5"),
     ("Stayalive Variation", "1. g3 c5 2. Nh3 g5 3. Nxg5 Bg7 4. Nxh7 Bxb2 5. Bxb2 Rxh7 6. Bd4"),
-    ("Exchange Attack", "1. g3 c5 2. b4"),
+    ("Exchange Attack", "1. g3 c5 2. b4"), 
     ("Improved Zooey Attack", "1. g3 c5 2. b4 cxb4 3. Nh3"),
     ("Highlighted Attack", "1. g3 c5 2. Nh3 a5 3. b4 cxb4 4. a3 bxa3 5. Bxa3"), # Custom
     ("Smooth Defense", "1. g3 Nh6 2. g4 Nxg4 3. Bg2 Nxh2 4. Bxb7 Bxb7 5. Rxh2 Bd5"), # Custom
