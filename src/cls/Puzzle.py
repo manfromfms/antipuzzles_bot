@@ -106,7 +106,8 @@ class Puzzle:
 
             self.connection.commit()
         except sqlite3.IntegrityError:
-            print('Dupelicate entry')
+            # print('Dupelicate entry')
+            1
 
 
     def insert_database_entry(self):
@@ -157,7 +158,7 @@ class Puzzle:
             elo INTEGER,
             elodev INTEGER,
             fen TEXT UNIQUE NOT NULL,
-            openingId TEXT REFERENCES openings(id),
+            openingId INTEGER REFERENCES openings(id),
             isProcessed INTEGER,
             turn INTEGER
         );
