@@ -1,19 +1,29 @@
-from __future__ import annotations # Doesn't work
+from __future__ import annotations
 
 import sqlite3
-from src.cls.Puzzle import *
 
 import src.cls.categories.category_opening as category_opening
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.ModuleLoader import ModuleLoader
+    from src.cls.Solution import Solution
+    from src.cls.Puzzle import Puzzle
+
 class Category:
-    def __init__(self, connection: sqlite3.Connection, puzzle: Puzzle, solution: Solution):
+    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: Puzzle, solution: Solution):
         
         self.id = 0
         self.puzzleId = 0
         self.solutionId = 0
 
-        self.puzzle = Puzzle(connection)
-        self.solution = Solution(connection, self.puzzle)
+        self.connection = connection
+        self.cursor = self.connection.cursor()
+
+        self.ml = ml
+
+        self.puzzle = puzzle
+        self.solution = solution
 
         # Categories list (default downvotes for category is 1 so that corresponding category is rated as -1)
         # Before adding new category it has to be added to the db structure
@@ -28,10 +38,8 @@ class Category:
 
 
     def generate(self):
-        solution = self.puzzle.get_solution()
-
         # Call all selected categories
-        self.opening_upvotes, self.opening_downvotes = category_opening.generate_category(self.puzzle, solution)
+        self.opening_upvotes, self.opening_downvotes = category_opening.generate_category(self.puzzle, self.solution)
 
         # Finish generation by updating the db entry
         self.update_database_entry()
@@ -58,13 +66,14 @@ class Category:
                     middlegame_downvotes = ?,
                     
                     endgame_upvotes = ?,
-                    endgame_downvotes = ?,
-                WHERE (id = ?)
+                    endgame_downvotes = ?
+                WHERE id = ?
             """
 
             # Parameters for the update query
             update_params = (
                 self.puzzleId,
+                self.solutionId,
 
                 self.opening_upvotes,
                 self.opening_downvotes,
@@ -91,7 +100,7 @@ class Category:
 
     def insert_database_entry(self):
         insert_query = """
-            INSERT INTO puzzles (
+            INSERT INTO categories (
                 puzzleId,
                 solutionId,
 
@@ -103,11 +112,12 @@ class Category:
 
                 endgame_upvotes,
                 endgame_downvotes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         insert_params = (
             self.puzzleId,
+            self.solutionId,
 
             self.opening_upvotes,
             self.opening_downvotes,
@@ -138,19 +148,20 @@ class Category:
         """Create puzzles table if it doesn't exist."""
 
         create_table_sql = """
-        CREATE TABLE IF NOT EXISTS puzzles (
+        CREATE TABLE IF NOT EXISTS categories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+
             puzzleId INTEGER REFERENCES puzzles(id),
-            solutionId INTEGER REFERENCES puzzles(id),
+            solutionId INTEGER REFERENCES solutions(id),
 
-            opening_upvotes INTEGER DEFAULT -1,
-            opening_downvotes INTEGER DEFAULT -1,
+            opening_upvotes INTEGER DEFAULT 0,
+            opening_downvotes INTEGER DEFAULT 1,
 
-            middlegame_upvotes INTEGER DEFAULT -1,
-            middlegame_downvotes INTEGER DEFAULT -1,
+            middlegame_upvotes INTEGER DEFAULT 0,
+            middlegame_downvotes INTEGER DEFAULT 1,
 
-            endgame_upvotes INTEGER DEFAULT -1,
-            endgame_downvotes INTEGER DEFAULT -1
+            endgame_upvotes INTEGER DEFAULT 0,
+            endgame_downvotes INTEGER DEFAULT 1
         );
         """
         
@@ -159,6 +170,9 @@ class Category:
         ]
 
         self.cursor.execute(create_table_sql)
+
+        self.connection.commit()
+
         for index_stmt in index_sql:
             self.cursor.execute(index_stmt)
 

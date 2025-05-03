@@ -1,8 +1,14 @@
+from __future__ import annotations
+
 import sqlite3
 import chess.pgn
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.ModuleLoader import ModuleLoader
+
 class Game:
-    def __init__(self, connection: sqlite3.Connection, searchById='', searchByGameId='') -> None:
+    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, searchById=0, searchByGameId='') -> None:
         """
         This class stores game headers.
 
@@ -30,6 +36,8 @@ class Game:
         self.cursor = self.connection.cursor() # sqlite3.Cursor
         self.id = 0
 
+        self.ml = ml
+
         self.Event = ''
         self.Site = ''
         self.Date = ''
@@ -51,7 +59,7 @@ class Game:
         
         self.valid = False # Is the game loaded or not
 
-        if searchById != '':
+        if searchById != 0:
             # TODO: search game by it's id in the database
             print(self.cursor.execute(f"SELECT * FROM games WHERE id = {searchById} LIMIT 1"))
 

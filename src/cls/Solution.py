@@ -1,12 +1,9 @@
+from __future__ import annotations
+
 import sqlite3
 
 import chess.engine
 from chess.engine import Mate, Cp
-import chess.gaviota
-
-from src.cls.Puzzle import *
-from src.cls.Category import *
-
 import chess.variant
 import chess.engine
 
@@ -14,11 +11,18 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.ModuleLoader import ModuleLoader
+    from src.cls.Puzzle import Puzzle
+
 class Solution:
-    def __init__(self, connection: sqlite3.Connection, puzzle: Puzzle, searchByPuzzleId=0):
-        
+    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: Puzzle, searchByPuzzleId=0):
+            
         self.connection = connection
         self.cursor = connection.cursor()
+
+        self.ml = ml
 
         self.id = 0
         self.puzzleId = puzzle.id
@@ -29,7 +33,7 @@ class Solution:
         # Some additional stuff
         self.puzzle = puzzle
 
-        if searchByPuzzleId != '':
+        if searchByPuzzleId != 0:
             self.cursor.execute('SELECT * FROM solutions WHERE puzzleId = ? LIMIT 1', (searchByPuzzleId,))
             data = self.cursor.fetchone()
 
@@ -42,7 +46,7 @@ class Solution:
             self.length = data[3]
             self.fish_solution = data[4]
 
-            self.puzzle = Puzzle(self.connection, searchById=self.puzzleId)
+            self.puzzle = self.ml.Puzzle.Puzzle(self.connection, searchById=self.puzzleId)
 
 
     def generate(self):
@@ -61,11 +65,14 @@ class Solution:
             result = self.recursive_analysis(board, engine)
 
             if result[2] > 0:
-                self.moves = ' '.join(result[0])
-                self.fish_solution = self.moves + ' ' + ' '.join(result[1])
-                self.length = result[3]
+                self.moves = ' '.join([m_.uci() for m_ in result[0]])
+                self.fish_solution = self.moves + ' ' + ' '.join([m_.uci() for m_ in result[1]])
+                self.length = result[2]
 
-                Category(self.connection, self.puzzle, self)
+                self.ml.Category.Category(self.ml, self.connection, self.puzzle, self).generate()
+
+                self.puzzle.isProcessed = True
+                self.puzzle.update_database_entry()
             else:
                 self.remove_puzzle()
         else: 
@@ -74,7 +81,9 @@ class Solution:
 
 
     def remove_puzzle(self):
-        self.cursor.execute('DELETE FROM puzzles WHERE puzzleId = ? LIMIT 1', (self.puzzleId,))
+        self.cursor.execute('DELETE FROM puzzles WHERE (id = ?)', (self.puzzleId,))
+
+        self.connection.commit()
 
 
     def recursive_analysis(self, board: chess.variant.AntichessBoard, engine: chess.engine.SimpleEngine):

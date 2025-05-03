@@ -1,13 +1,22 @@
+from __future__ import annotations
+
 import chess.pgn
 import sqlite3
 
 from src.cls.openings_list import *
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.ModuleLoader import ModuleLoader
+    from src.cls.Opening import Opening
+
 class Opening:
-    def __init__(self, connection: sqlite3.Connection, moves_str='', searchById=0):
+    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, moves_str='', searchById=0):
 
         self.connection = connection
         self.cursor = connection.cursor()
+
+        self.ml = ml
 
         self.id = 0
         self.name = ''
@@ -23,7 +32,7 @@ class Opening:
                 self.sequence = found_opening.sequence
                 self.parentId = found_opening.parentId
 
-        if searchById != '':
+        if searchById != 0:
             self.cursor.execute('SELECT * FROM openings WHERE id = ? LIMIT 1', (searchById,))
             data = self.cursor.fetchone()
 
@@ -53,7 +62,7 @@ class Opening:
             if len(result) > 0:
                 result = result[-1]
 
-                op = Opening(self.connection)
+                op = self.ml.Opening.Opening(self.ml, self.connection)
                 op.id = result[0]
                 op.name = result[1]
                 op.sequence = result[2]
@@ -63,7 +72,7 @@ class Opening:
 
             moves.pop()
 
-        return Opening(self.connection)
+        return self.ml.Opening.Opening(self.ml, self.connection)
 
 
     def setup_database_structure(self):
@@ -84,6 +93,8 @@ class Opening:
         ]
 
         self.cursor.execute(create_table_sql)
+        self.connection.commit()
+
         for index_stmt in index_sql:
             self.cursor.execute(index_stmt)
 
@@ -115,22 +126,22 @@ class Opening:
             self.cursor.execute('UPDATE openings SET parentId = ? WHERE id = ?', (result.id, opening[0]))
 
 
-def get_opening(node: chess.pgn.Game, connection: sqlite3.Connection) -> Opening:
-    moves = []
-    while node.parent is not None:
-        moves.append(node.parent.board().san(node.move))
-        node = node.parent
-    moves.reverse()
-    
-    move_parts = []
-    for j in range(0, len(moves), 2):
-        move_number = (j // 2) + 1
-        white = moves[j]
-        if j + 1 < len(moves):
-            black = moves[j + 1]
-            move_parts.append(f"{move_number}. {white} {black}")
-        else:
-            move_parts.append(f"{move_number}. {white}")
-    move_str = ' '.join(move_parts)
-    
-    return Opening(connection, moves_str=move_str)
+    def get_opening(self, node: chess.pgn.Game) -> Opening:
+        moves = []
+        while node.parent is not None:
+            moves.append(node.parent.board().san(node.move))
+            node = node.parent
+        moves.reverse()
+        
+        move_parts = []
+        for j in range(0, len(moves), 2):
+            move_number = (j // 2) + 1
+            white = moves[j]
+            if j + 1 < len(moves):
+                black = moves[j + 1]
+                move_parts.append(f"{move_number}. {white} {black}")
+            else:
+                move_parts.append(f"{move_number}. {white}")
+        move_str = ' '.join(move_parts)
+        
+        return self.ml.Opening.Opening(self.ml, self.connection, moves_str=move_str)

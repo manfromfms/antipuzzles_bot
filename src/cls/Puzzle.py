@@ -1,14 +1,20 @@
+from __future__ import annotations
+
 import sqlite3
 
-from src.cls.Game import *
-from src.cls.Opening import *
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from src.ModuleLoader import ModuleLoader
+    from src.cls.Game import Game
 
 import chess
 
 class Puzzle:
-    def __init__(self, connection: sqlite3.Connection, searchById=0):
+    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, searchById=0):
         self.connection = connection
         self.cursor = self.connection.cursor()
+
+        self.ml = ml
 
         self.id = 0
         self.gameId = 0
@@ -16,13 +22,13 @@ class Puzzle:
         self.elodev = 256
         self.fen = ''
         self.openingId = 0
-        self.opening = Opening(self.connection)
+        self.opening = self.ml.Opening.Opening(self.ml, self.connection)
         self.isProcessed = False
         self.turn = True
 
-        self.game = Game(connection)
+        self.game = self.ml.Game.Game(self.ml, self.connection)
 
-        if searchById != '':
+        if searchById != 0:
             self.cursor.execute('SELECT * FROM puzzles WHERE id = ? LIMIT 1', (searchById,))
             data = self.cursor.fetchone()
 
@@ -38,7 +44,7 @@ class Puzzle:
             self.isProcessed = data[6]
             self.turn = data[7]
 
-            self.opening = Opening(connection, searchById=self.openingId)
+            self.opening = self.ml.Opening.Opening(self.ml, connection, searchById=self.openingId)
 
 
     def loadFromBoard(self, board: chess.Board):
@@ -150,7 +156,7 @@ class Puzzle:
             gameId INTEGER REFERENCES games(id),
             elo INTEGER,
             elodev INTEGER,
-            fen TEXT UNIQUE,
+            fen TEXT UNIQUE NOT NULL,
             openingId TEXT REFERENCES openings(id),
             isProcessed INTEGER,
             turn INTEGER
@@ -169,16 +175,14 @@ class Puzzle:
         self.connection.commit()
 
 
-def select_puzzles(connection: sqlite3.Connection, query='', params=()) -> list[Puzzle]:
-    cursor = connection.cursor()
+    def select_puzzles(self, query='', params=()) -> list[Puzzle]:
+        self.cursor.execute(query, params)
 
-    cursor.execute(query, params)
+        l = self.cursor.fetchall()
 
-    l = cursor.fetchall()
+        puzzles = []
 
-    puzzles = []
+        for p in l:
+            puzzles.append(self.ml.Puzzle.Puzzle(self.ml, self.connection, searchById=p[0]))
 
-    for p in l:
-        puzzles.append(Puzzle(connection, searchById=p[0]))
-
-    return puzzles
+        return puzzles
