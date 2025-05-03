@@ -69,12 +69,12 @@ class Solution:
                 self.fish_solution = self.moves + ' ' + ' '.join([m_.uci() for m_ in result[1]])
                 self.length = result[2]
 
+                self.update_database_entry()
+
                 self.ml.Category.Category(self.ml, self.connection, self.puzzle, self).generate()
 
                 self.puzzle.isProcessed = True
                 self.puzzle.update_database_entry()
-
-                self.update_database_entry()
             else:
                 self.remove_puzzle()
         else: 
