@@ -73,6 +73,8 @@ class Solution:
 
                 self.puzzle.isProcessed = True
                 self.puzzle.update_database_entry()
+
+                self.update_database_entry()
             else:
                 self.remove_puzzle()
         else: 
