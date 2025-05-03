@@ -14,8 +14,6 @@ class Category:
     def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: Puzzle, solution: Solution):
         
         self.id = 0
-        self.puzzleId = 0
-        self.solutionId = 0
 
         self.connection = connection
         self.cursor = self.connection.cursor()
@@ -24,6 +22,9 @@ class Category:
 
         self.puzzle = puzzle
         self.solution = solution
+
+        self.puzzleId = puzzle.id
+        self.solutionId = solution.id
 
         # Categories list (default downvotes for category is 1 so that corresponding category is rated as -1)
         # Before adding new category it has to be added to the db structure

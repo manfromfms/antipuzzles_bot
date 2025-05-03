@@ -81,6 +81,8 @@ class Solution:
             print("Failed to find the solution")
             self.remove_puzzle()
 
+        engine.close()
+
 
     def remove_puzzle(self):
         self.cursor.execute('DELETE FROM puzzles WHERE (id = ?)', (self.puzzleId,))
