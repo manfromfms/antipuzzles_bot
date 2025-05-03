@@ -49,6 +49,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
         if os.path.isfile(file_path):
+            print('Reading', file_path)
             positions = read_file(file_path, connection)
         
         process_db(connection)
