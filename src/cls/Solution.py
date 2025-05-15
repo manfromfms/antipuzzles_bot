@@ -54,6 +54,9 @@ class Solution:
             self.remove_puzzle()
             return
         
+        self.cursor.execute('INSERT INTO positions (fen) VALUES (?) ON CONFLICT DO NOTHING', (self.puzzle.fen,))
+        self.connection.commit()
+        
         board = chess.variant.AntichessBoard(self.puzzle.fen)
         engine = chess.engine.SimpleEngine.popen_uci(os.getenv('ffish_path')) # type: ignore
 

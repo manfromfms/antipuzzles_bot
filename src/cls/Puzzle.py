@@ -176,6 +176,27 @@ class Puzzle:
         self.connection.commit()
 
 
+    def setup_database_structure_positions(self):
+        """Create positions table if it doesn't exist."""
+
+        create_table_sql = """
+        CREATE TABLE IF NOT EXISTS positions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            fen TEXT NOT NULL UNIQUE
+        );
+        """
+        
+        index_sql = [
+            "CREATE INDEX IF NOT EXISTS idx_gameId ON positions (fen)",
+        ]
+
+        self.cursor.execute(create_table_sql)
+        for index_stmt in index_sql:
+            self.cursor.execute(index_stmt)
+
+        self.connection.commit()
+
+
     def select_puzzles(self, query='', params=()) -> list[Puzzle]:
         self.cursor.execute(query, params)
 

@@ -33,6 +33,7 @@ def db_setup(connection: sqlite3.Connection):
 
     (ml.Game.Game(ml, connection)).setup_database_structure()
     (ml.Puzzle.Puzzle(ml, connection)).setup_database_structure()
+    (ml.Puzzle.Puzzle(ml, connection)).setup_database_structure_positions()
     (ml.Opening.Opening(ml, connection)).setup_database_structure()
     (ml.Solution.Solution(ml, connection, ml.Puzzle.Puzzle(ml, connection))).setup_database_structure()
     (ml.Theme.Theme(ml, connection, ml.Puzzle.Puzzle(ml, connection), ml.Solution.Solution(ml, connection, ml.Puzzle.Puzzle(ml, connection)))).setup_database_structure()
