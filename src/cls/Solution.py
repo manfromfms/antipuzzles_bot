@@ -46,12 +46,12 @@ class Solution:
             self.length = data[3]
             self.fish_solution = data[4]
 
-            self.puzzle = self.ml.Puzzle.Puzzle(self.connection, searchById=self.puzzleId)
+            self.puzzle = self.ml.Puzzle.Puzzle(ml, self.connection, searchById=self.puzzleId)
 
 
     def generate(self):
         board = chess.variant.AntichessBoard(self.puzzle.fen)
-        engine = chess.engine.SimpleEngine.popen_uci(os.getenv('ffish_path'))
+        engine = chess.engine.SimpleEngine.popen_uci(os.getenv('ffish_path')) # type: ignore
 
         print(board.fen())
 
@@ -61,10 +61,10 @@ class Solution:
         info = engine.analyse(board, chess.engine.Limit(time=1))
 
         # If the mate was found for current player, then do the analysis
-        if info['score'].pov(board.turn) > Mate(100):
+        if info['score'].pov(board.turn) > Mate(100): # type: ignore
             result = self.recursive_analysis(board, engine)
 
-            if result[2] > 0:
+            if result[2] > 1:
                 self.moves = ' '.join([m_.uci() for m_ in result[0]])
                 self.fish_solution = self.moves + ' ' + ' '.join([m_.uci() for m_ in result[1]])
                 self.length = result[2]
@@ -106,7 +106,7 @@ class Solution:
             # Play the engine move
             if len(get_moves(board)) > 0:
                 engine_move = engine.play(board, chess.engine.Limit(time=0.2)).move
-                board.push(engine_move)
+                board.push(engine_move) # type: ignore
 
                 result = self.recursive_analysis(board, engine)
 
@@ -114,8 +114,9 @@ class Solution:
                 board.pop()
                 board.pop()
 
-                result[0].insert(0, engine_move)
-                result[0].insert(0, moves[0])
+                if len(result[0]) > 0:
+                    result[0].insert(0, engine_move)
+                    result[0].insert(0, moves[0])
 
                 return result
             else:
@@ -127,24 +128,24 @@ class Solution:
         wide_analysis = engine.analyse(board, chess.engine.Limit(time=1.5), multipv=500)
 
         # If failed to find a solution (might be possible due to limitations of computational time)
-        if wide_analysis[0]['score'].pov(board.turn) < Mate(100):
+        if wide_analysis[0]['score'].pov(board.turn) < Mate(100): # type: ignore
             print('Stop due to lack of solution')
             return [[], [], 0]
         
         # Check the amount of good moves (mate as well as generally better for player)
         # Fairy stockfish sorts all the line by how good they are thus only the second entry has to be checked
-        if wide_analysis[1]['score'].pov(board.turn) > Cp(0):
+        if wide_analysis[1]['score'].pov(board.turn) > Cp(0): # type: ignore
             print('Stop due to multiple possible moves')
-            return [[], wide_analysis[0]['pv'], 0]
+            return [[], wide_analysis[0]['pv'], 0] # type: ignore
                 
         # Now forward the game for further depth analysis
-        correct_move = wide_analysis[0]['pv'][0]
+        correct_move = wide_analysis[0]['pv'][0] # type: ignore
         board.push(correct_move)
 
         # Play the engine move
         if len(get_moves(board)) > 0:
             engine_move = engine.play(board, chess.engine.Limit(time=0.2)).move
-            board.push(engine_move)
+            board.push(engine_move) # type: ignore
 
             result = self.recursive_analysis(board, engine)
 
