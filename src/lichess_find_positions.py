@@ -21,13 +21,13 @@ def find_positions(game: chess.pgn.Game, connection: sqlite3.Connection) -> list
             p = ml.Puzzle.Puzzle(ml, connection)
             p.update_game_parent(g)
 
-            p.opening = (ml.Opening.Opening(ml, connection)).get_opening(game.parent) # Get the opening for a position and save it into the puzzle
+            p.opening = (ml.Opening.Opening(ml, connection)).get_opening(game.parent) # type: ignore # Get the opening for a position and save it into the puzzle 
             p.openingId = p.opening.id
 
-            p.loadFromBoard(game.parent.board()) # Load the puzzle from current board state
+            p.loadFromBoard(game.parent.board()) # type: ignore # Load the puzzle from current board state
 
             positions.append(p)
 
-        game = game.next()
+        game = game.next() # type: ignore
 
     return positions

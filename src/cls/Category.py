@@ -3,6 +3,8 @@ from __future__ import annotations
 import sqlite3
 
 import src.cls.categories.category_opening as category_opening
+import src.cls.categories.category_middlegame as category_middlegame
+import src.cls.categories.category_endgame as category_endgame
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -41,6 +43,8 @@ class Category:
     def generate(self):
         # Call all selected categories
         self.opening_upvotes, self.opening_downvotes = category_opening.generate_category(self.puzzle, self.solution)
+        self.middlegame_upvotes, self.middlegame_downvotes = category_middlegame.generate_category(self.puzzle, self.solution)
+        self.endgame_upvotes, self.endgame_downvotes = category_endgame.generate_category(self.puzzle, self.solution)
 
         # Finish generation by updating the db entry
         self.update_database_entry()
@@ -138,7 +142,7 @@ class Category:
         else:
             # Row already exists - fetch the existing ID
             select_query = "SELECT id FROM categories WHERE puzzleId = ?"
-            self.cursor.execute(select_query, (self.gameId,))
+            self.cursor.execute(select_query, (self.puzzleId,))
             existing_row = self.cursor.fetchone()
             self.id = existing_row[0]
 
@@ -155,14 +159,14 @@ class Category:
             puzzleId INTEGER REFERENCES puzzles(id),
             solutionId INTEGER REFERENCES solutions(id),
 
-            opening_upvotes INTEGER DEFAULT 0,
-            opening_downvotes INTEGER DEFAULT 1,
+            opening_upvotes REAL DEFAULT 0,
+            opening_downvotes REAL DEFAULT 1,
 
-            middlegame_upvotes INTEGER DEFAULT 0,
-            middlegame_downvotes INTEGER DEFAULT 1,
+            middlegame_upvotes REAL DEFAULT 0,
+            middlegame_downvotes REAL DEFAULT 1,
 
-            endgame_upvotes INTEGER DEFAULT 0,
-            endgame_downvotes INTEGER DEFAULT 1
+            endgame_upvotes REAL DEFAULT 0,
+            endgame_downvotes REAL DEFAULT 1
         );
         """
         

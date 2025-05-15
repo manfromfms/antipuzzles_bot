@@ -91,7 +91,7 @@ class Game:
         self.update_database_entry()
 
 
-    def set(self, key: str, value: any):
+    def set(self, key: str, value):
         setattr(self, key, value)
 
 

@@ -12,7 +12,7 @@ import chess
 class Puzzle:
     def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, searchById=0):
         self.connection = connection
-        self.cursor = self.connection.cursor()
+        self.cursor = connection.cursor()
 
         self.ml = ml
 
@@ -61,7 +61,7 @@ class Puzzle:
         self.update_database_entry()
 
 
-    def set(self, key: str, value: any):
+    def set(self, key: str, value):
         setattr(self, key, value)
 
 
@@ -107,7 +107,7 @@ class Puzzle:
             self.connection.commit()
         except sqlite3.IntegrityError:
             # print('Dupelicate entry')
-            1
+            pass
 
 
     def insert_database_entry(self):
@@ -155,8 +155,8 @@ class Puzzle:
         CREATE TABLE IF NOT EXISTS puzzles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             gameId INTEGER REFERENCES games(id),
-            elo INTEGER,
-            elodev INTEGER,
+            elo INTEGER DEFAULT 1000,
+            elodev INTEGER DEFAULT 512,
             fen TEXT UNIQUE NOT NULL,
             openingId INTEGER REFERENCES openings(id),
             isProcessed INTEGER,

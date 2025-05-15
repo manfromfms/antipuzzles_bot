@@ -129,8 +129,8 @@ class Opening:
     def get_opening(self, node: chess.pgn.Game) -> Opening:
         moves = []
         while node.parent is not None:
-            moves.append(node.parent.board().san(node.move))
-            node = node.parent
+            moves.append(node.parent.board().san(node.move)) # type: ignore
+            node = node.parent # type: ignore
         moves.reverse()
         
         move_parts = []

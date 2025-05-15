@@ -4,8 +4,8 @@ from src.cls.Solution import *
 import chess.variant
 
 # This function is required. The name must be the same throughout all the different categories.
-# A tuple of two numbers has to be returned: the amount of upvotes and downvotes
-def generate_category(puzzle: Puzzle, solution: Solution) -> tuple[int, int]:
+# A tuple of two numbers has to be returned: amounts of upvotes and downvotes
+def generate_category(puzzle: Puzzle, solution: Solution) -> tuple[float, float]:
     board = chess.variant.AntichessBoard(puzzle.fen)
 
     all_pieces = board.piece_map().values()

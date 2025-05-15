@@ -8,8 +8,8 @@ import chess.variant
 import chess.engine
 
 import os
-from dotenv import load_dotenv
-load_dotenv()
+from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -50,6 +50,10 @@ class Solution:
 
 
     def generate(self):
+        if len(self.puzzle.fen) < 1:
+            self.remove_puzzle()
+            return
+        
         board = chess.variant.AntichessBoard(self.puzzle.fen)
         engine = chess.engine.SimpleEngine.popen_uci(os.getenv('ffish_path')) # type: ignore
 
