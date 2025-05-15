@@ -75,7 +75,7 @@ class Solution:
 
                 self.update_database_entry()
 
-                self.ml.Category.Category(self.ml, self.connection, self.puzzle, self).generate()
+                self.ml.Theme.Theme(self.ml, self.connection, self.puzzle, self).generate()
 
                 self.puzzle.isProcessed = True
                 self.puzzle.update_database_entry()
