@@ -161,7 +161,7 @@ class Solution:
             board.pop()
 
             result[0].insert(0, engine_move)
-            result[0].insert(0, moves[0])
+            result[0].insert(0, correct_move)
             result[2] += 1
 
             return result
