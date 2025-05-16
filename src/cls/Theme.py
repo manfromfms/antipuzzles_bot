@@ -28,6 +28,8 @@ class Theme:
         self.puzzleId = puzzle.id
         self.solutionId = solution.id
 
+        self.isValid = 1
+
         # Categories list (default downvotes for category is 1 so that corresponding category is rated as -1)
         # Before adding new category it has to be added to the db structure
         self.opening_upvotes = 0
@@ -63,6 +65,8 @@ class Theme:
                 SET 
                     puzzleId = ?,
                     solutionId = ?,
+
+                    isValid = ?,
                     
                     opening_upvotes = ?,
                     opening_downvotes = ?,
@@ -79,6 +83,8 @@ class Theme:
             update_params = (
                 self.puzzleId,
                 self.solutionId,
+
+                self.isValid,   
 
                 self.opening_upvotes,
                 self.opening_downvotes,
@@ -109,6 +115,8 @@ class Theme:
                 puzzleId,
                 solutionId,
 
+                isValid,
+
                 opening_upvotes,
                 opening_downvotes,
 
@@ -117,12 +125,14 @@ class Theme:
 
                 endgame_upvotes,
                 endgame_downvotes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         insert_params = (
             self.puzzleId,
             self.solutionId,
+
+            self.isValid,
 
             self.opening_upvotes,
             self.opening_downvotes,
@@ -158,6 +168,8 @@ class Theme:
 
             puzzleId INTEGER REFERENCES puzzles(id),
             solutionId INTEGER REFERENCES solutions(id),
+
+            isValid INTEGER DEFAULT 1,
 
             opening_upvotes REAL DEFAULT 0,
             opening_downvotes REAL DEFAULT 1,
