@@ -167,7 +167,7 @@ class Solution:
             return result
         else:
             print('Stop due to lack of moves for engine')
-            return [moves, [], 0]
+            return [correct_move, [], 0]
 
 
     def setup_database_structure(self):
