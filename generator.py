@@ -47,6 +47,12 @@ if __name__ == "__main__":
 
     db_setup(connection)
 
+    # Cleanup games table
+    print('Cleaning up games table')
+    cursor = connection.cursor()
+    cursor.execute('DELETE FROM games WHERE id NOT IN (SELECT gameId FROM puzzles)')
+    connection.commit()
+
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
         if os.path.isfile(file_path):
@@ -56,3 +62,9 @@ if __name__ == "__main__":
         process_db(connection)
     else:
         process_db(connection)
+
+    # Cleanup games table
+    print('Cleaning up games table')
+    cursor = connection.cursor()
+    cursor.execute('DELETE FROM games WHERE id NOT IN (SELECT gameId FROM puzzles)')
+    connection.commit()

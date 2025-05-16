@@ -64,8 +64,8 @@ class Solution:
 
         engine.configure({'Hash': os.getenv('ffish_Threads'), 'Hash': os.getenv('ffish_Threads')})
 
-        # 3 seconds for initial analysis
-        info = engine.analyse(board, chess.engine.Limit(time=1))
+        # 2 seconds for initial analysis
+        info = engine.analyse(board, chess.engine.Limit(time=2))
 
         # If the mate was found for current player, then do the analysis
         if info['score'].pov(board.turn) > Mate(100): # type: ignore
@@ -112,7 +112,7 @@ class Solution:
             
             # Play the engine move
             if len(get_moves(board)) > 0:
-                engine_move = engine.play(board, chess.engine.Limit(time=0.2)).move
+                engine_move = engine.play(board, chess.engine.Limit(time=0.4)).move
                 board.push(engine_move) # type: ignore
 
                 result = self.recursive_analysis(board, engine)
