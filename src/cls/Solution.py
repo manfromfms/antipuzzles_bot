@@ -112,7 +112,7 @@ class Solution:
             
             # Play the engine move
             if len(get_moves(board)) > 0:
-                engine_move = engine.play(board, chess.engine.Limit(time=0.4)).move
+                engine_move = engine.play(board, chess.engine.Limit(time=0.6)).move
                 board.push(engine_move) # type: ignore
 
                 result = self.recursive_analysis(board, engine)

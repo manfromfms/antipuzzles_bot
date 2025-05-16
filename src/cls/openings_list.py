@@ -221,4 +221,9 @@ openings_list = [
     ('Classical Wing System', '1. e3 b6 2. a4 b5 3. Bxb5'),
     ('FishTest Defense', '1. e3 b6 2. a4 e6 3. Ra3 Bxa3 4. Nxa3 b5 5. Bxb5 Qe7'),
     ('Watkins Finale', '1. e3 b6 2. a4 e6 3. Ra3 Bxa3 4. Nxa3 b5 5. Bxb5 Qg5'),
+
+    # Croatian Attack 1. g4
+    ("Grob Attack", "1. g4 g6 2. b3"),
+    ("Pusher's Attack", "1. g4 g6 2. g5"),
+    ("Norm Defense", "1. g4 f5"),
 ]
