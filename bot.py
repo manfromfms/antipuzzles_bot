@@ -20,6 +20,7 @@ db_path = './puzzles.db'
 
 # Setup required database tables
 (ml.User.User(ml, sqlite3.connect(db_path))).setup_database_structure()
+(ml.User.User(ml, sqlite3.connect(db_path))).setup_database_structure_played()
 
 
 bot = telebot.TeleBot((os.getenv('telegram_token').replace('\\x3a', ':')), parse_mode="Markdown") # type: ignore

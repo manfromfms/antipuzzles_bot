@@ -29,7 +29,18 @@ def select_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, bo
     show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
 
 
-def update_ratings(user: 'User', puzzle: 'Puzzle', userWon):
+def update_ratings(connection: sqlite3.Connection, user: 'User', puzzle: 'Puzzle', userWon):
+    cursor = connection.cursor()
+
+    cursor.execute('''SELECT EXISTS(
+        SELECT 1 
+        FROM played 
+        WHERE userId = ? AND puzzleId = ?
+    );''', (user.id, puzzle.id))
+
+    if cursor.fetchone()[0] == 1:
+        return 0
+
     results = calculate_rating_changes(
         user.elo,
         user.elodev,
@@ -42,6 +53,8 @@ def update_ratings(user: 'User', puzzle: 'Puzzle', userWon):
         1 if userWon else 0
     )
 
+    dif = results[0] - user.elo
+
     user.elo = results[0]
     user.elodev = results[1]
     user.volatility = results[2]
@@ -52,6 +65,11 @@ def update_ratings(user: 'User', puzzle: 'Puzzle', userWon):
 
     user.update_database_entry()
     puzzle.update_database_entry()
+
+    cursor.execute('INSERT INTO played (userId, puzzleId, won) VALUES (?, ?, ?)', (user.id, puzzle.id, 1 if userWon else 0))
+
+    connection.commit()
+    return dif
 
 
 def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, call: telebot.types.CallbackQuery):
@@ -64,13 +82,22 @@ def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection,
     check_current_puzzle = call.data.split(':')[1] # type: ignore
     check_current_puzzle_move = call.data.split(':')[2] # type: ignore
 
+
     if user.current_puzzle_move != int(check_current_puzzle_move):
-        bot.send_message(call.message.chat.id, 'Это уже старая позиция!')
+        bot.send_message(call.message.chat.id, 'Это уже старая позиция! Возможно стоит запросить позицию заново: /puzzle')
         return
     
+
     if user.current_puzzle != int(check_current_puzzle):
-        bot.send_message(call.message.chat.id, 'Это уже старая позиция!')
+        bot.send_message(call.message.chat.id, 'Это уже старая позиция! Возможно стоит запросить позицию заново: /puzzle')
         return
+    
+
+    if user.current_puzzle_move*2 >= len(solution_moves):
+        bot.send_message(call.message.chat.id, 'Возникла неопознанная ошибка! Выбираем следующую задачу.')
+
+        user.puzzle_selection_policy()
+        show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
 
     if solution_moves[user.current_puzzle_move*2] == user_move:
         # Move was correct
@@ -80,9 +107,9 @@ def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection,
         if user.current_puzzle_move*2 >= len(solution_moves):
             # TODO: Puzzle end
             puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
-            update_ratings(user, puzzle, True)
+            dif = int(update_ratings(connection, user, puzzle, True))
 
-            bot.send_message(call.message.chat.id, f'Верно!\n\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
+            bot.send_message(call.message.chat.id, f'Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
 
             user.puzzle_selection_policy()
             show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
@@ -94,9 +121,9 @@ def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection,
     else:
         # TODO: Incorrect move
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
-        update_ratings(user, puzzle, False)
+        dif = int(update_ratings(connection, user, puzzle, False))
         
-        bot.send_message(call.message.chat.id, f'Ошибка!\n\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
+        bot.send_message(call.message.chat.id, f'Ошибка! Правильный ход: {solution_moves[user.current_puzzle_move*2]}\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
 
         user.puzzle_selection_policy()
         show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
@@ -166,7 +193,7 @@ def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.Tele
         keyboard.add(button1)       
         
         # Send PNG image
-        bot.send_photo(message.chat.id, png_bytes, caption=complile_puzzle_info(puzzle), reply_markup=keyboard)
+        bot.send_photo(message.chat.id, png_bytes, caption=complile_puzzle_info(connection, puzzle), reply_markup=keyboard)
 
     else:
         bot.send_message(message.chat.id, 'Вот ваша текущая задача')

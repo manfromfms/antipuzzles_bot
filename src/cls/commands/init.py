@@ -9,4 +9,6 @@ import telebot
 def init(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, message: telebot.types.Message | telebot.types.InlineQuery):
     user = ml.User.User(ml, connection, id=message.from_user.id, searchById=message.from_user.id)  # type: ignore
 
+    user.nickname = message.from_user.full_name # type: ignore
+
     user.update_database_entry()

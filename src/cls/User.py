@@ -50,7 +50,18 @@ class User:
 
 
     def puzzle_selection_policy(self):
-        self.cursor.execute('SELECT * FROM puzzles WHERE elo = ( SELECT elo FROM puzzles ORDER BY ABS(elo - ?) LIMIT 1);', (self.elo,))
+        self.cursor.execute('''SELECT * FROM puzzles 
+            WHERE elo = (
+                SELECT elo 
+                FROM puzzles 
+                WHERE id NOT IN (
+                    SELECT puzzleId 
+                    FROM played 
+                    WHERE userId = ?
+                )
+                ORDER BY ABS(elo - ?) 
+                LIMIT 1
+            );  ''', (self.id, self.elo,))
 
         id = self.cursor.fetchone()[0]
 
@@ -130,6 +141,31 @@ class User:
         self.cursor.execute(insert_query, insert_params)
 
         self.connection.commit()
+
+    
+    def setup_database_structure_played(self):
+        """Create played table if it doesn't exist."""
+
+        create_table_sql = """
+        CREATE TABLE IF NOT EXISTS played (
+            id INTEGER PRIMARY KEY,
+            puzzleId INTEGER DEFAULT 0 REFERENCES puzzles (id),
+            userId INTEGER DEFAULT 0 REFERENCES users (id),
+            won INTEGER DEFAULT 0
+        );
+        """
+        
+        index_sql = [
+            "CREATE INDEX IF NOT EXISTS idx_puzzleId_played ON played (puzzleId)",
+            "CREATE INDEX IF NOT EXISTS idx_userId_played ON played (userId)",
+        ]
+
+        self.cursor.execute(create_table_sql)
+        for index_stmt in index_sql:
+            self.cursor.execute(index_stmt)
+
+        self.connection.commit()
+        
 
 
     def setup_database_structure(self):
