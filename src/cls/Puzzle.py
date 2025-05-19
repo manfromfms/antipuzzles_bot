@@ -60,6 +60,11 @@ class Puzzle:
 
         self.update_database_entry()
 
+    def load_game(self) -> Game:
+        self.game = self.ml.Game.Game(self.ml, self.connection, searchById=self.gameId) # type: ignore
+
+        return self.game
+
 
     def set(self, key: str, value):
         setattr(self, key, value)

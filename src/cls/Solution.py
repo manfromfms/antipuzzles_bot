@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from src.cls.Puzzle import Puzzle
 
 class Solution:
-    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: Puzzle, searchByPuzzleId=0):
+    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: 'Puzzle', searchByPuzzleId=0):
             
         self.connection = connection
         self.cursor = connection.cursor()

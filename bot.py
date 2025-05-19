@@ -1,4 +1,5 @@
 import telebot
+from telebot import apihelper
 
 import os
 from dotenv import load_dotenv
@@ -21,22 +22,25 @@ db_path = './puzzles.db'
 
 
 bot = telebot.TeleBot((os.getenv('telegram_token').replace('\\x3a', ':')), parse_mode=None) # type: ignore
+apihelper.proxy = {'https': 'socks5://localhost:1080'}
 
 # Handle start command
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['start', 'старт'])
 def start(message: telebot.types.Message):
     connection = sqlite3.connect(db_path)
     print('Command execution:', message.from_user.id, 'start') # type: ignore
     command_init.init(ml, connection, bot, message)
+
     command_start.start(ml, connection, bot, message)
 
 
 # Handle puzzle selection by id
-@bot.message_handler(commands=['puzzle'])
+@bot.message_handler(commands=['puzzle', 'задача'])
 def puzzle(message: telebot.types.Message):
     connection = sqlite3.connect(db_path)
     print('Command execution:', message.from_user.id, 'puzzle') # type: ignore
     command_init.init(ml, connection, bot, message)
+
     command_puzzle.puzzle(ml, connection, bot, message)
 
 
@@ -45,7 +49,23 @@ def puzzle(message: telebot.types.Message):
 def echo_message(message: telebot.types.Message):
     connection = sqlite3.connect(db_path)
     command_init.init(ml, connection, bot, message)
-    bot.reply_to(message, 'Unknown action')
+
+    bot.reply_to(message, 'Неизвестная команда')
 
 
-bot.infinity_polling()
+# Handle button clicks
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call: telebot.types.CallbackQuery):
+    print('Button execution:', call.from_user.id, call.data) # type: ignore
+    connection = sqlite3.connect(db_path)
+    command_init.init(ml, connection, bot, call) # type: ignore
+
+    if 'Switch to puzzle' in call.data:  # type: ignore
+        command_puzzle.select_puzzle_handler(ml, connection, bot, call)
+
+    elif 'Make move' in call.data:  # type: ignore
+        command_puzzle.make_move_puzzle_handler(ml, connection, bot, call)
+
+    bot.answer_callback_query(callback_query_id=call.id)
+
+bot.infinity_polling(123)

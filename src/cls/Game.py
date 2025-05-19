@@ -60,12 +60,32 @@ class Game:
         self.valid = False # Is the game loaded or not
 
         if searchById != 0:
-            # TODO: search game by it's id in the database
-            print(self.cursor.execute(f"SELECT * FROM games WHERE id = {searchById} LIMIT 1"))
+            self.cursor.execute(f"SELECT * FROM games WHERE id = {searchById} LIMIT 1")
+            data = self.cursor.fetchone()
+
+            self.id = data[0]
+            self.Event = data[1]
+            self.Site = data[2]
+            self.Date = data[3]
+            self.White = data[4]
+            self.Black = data[5]
+            self.Result = data[6]
+            self.GameId = data[7]
+            self.UTCDate = data[8]
+            self.UTCTime = data[9]
+            self.WhiteElo = data[10]
+            self.BlackElo = data[11]
+            self.WhiteRatingDiff = data[12]
+            self.BlackRatingDiff = data[13]
+            self.Variant = data[14]
+            self.TimeControl = data[15]
+            self.ECO = data[16]
+            self.Termination = data[17]
+            self.Annotator = data[18]
 
         elif searchByGameId != '':
             # TODO: search game by GameId (provided by lichess)
-            print(self.cursor.execute(f"SELECT * FROM games WHERE id = {searchById} LIMIT 1"))
+            print(self.cursor.execute(f"SELECT * FROM games WHERE gameId = {searchById} LIMIT 1"))
         
 
     def loadFromHeaders(self, headers: chess.pgn.Headers):

@@ -6,5 +6,7 @@ import sqlite3
 import telebot
 
 # This function is supposed to make a new entry of a user in the database. The function must be silent.
-def init(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, message: telebot.types.Message):
-    bot.reply_to(message, 'INIT')
+def init(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, message: telebot.types.Message | telebot.types.InlineQuery):
+    user = ml.User.User(ml, connection, id=message.from_user.id, searchById=message.from_user.id)  # type: ignore
+
+    user.update_database_entry()
