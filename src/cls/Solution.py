@@ -132,7 +132,7 @@ class Solution:
 
         # Now if there are multiple legal moves
         # Do wide analysis of every possible move in current position
-        wide_analysis = engine.analyse(board, chess.engine.Limit(time=1.5), multipv=500)
+        wide_analysis = engine.analyse(board, chess.engine.Limit(time=2), multipv=500)
 
         # If failed to find a solution (might be possible due to limitations of computational time)
         if wide_analysis[0]['score'].pov(board.turn) < Mate(100): # type: ignore
