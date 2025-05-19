@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.ModuleLoader import ModuleLoader
     from src.cls.User import User
+    from src.cls.Puzzle import Puzzle
 
 import sqlite3
 
@@ -18,7 +19,7 @@ import numpy as np
 from src.cls.commands.util.convert_args import *
 from src.cls.commands.util.puzzle_info import complile_puzzle_info
 from src.cls.commands.util.move_to_emoji import convert_move_to_emoji
-
+from src.cls.commands.util.rating_calc import calculate_rating_changes
 
 
 def select_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, call: telebot.types.CallbackQuery):
@@ -26,6 +27,31 @@ def select_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, bo
     user.select_another_puzzle(int(call.data.split(':')[1])) # type: ignore
 
     show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
+
+
+def update_ratings(user: 'User', puzzle: 'Puzzle', userWon):
+    results = calculate_rating_changes(
+        user.elo,
+        user.elodev,
+        user.volatility,
+
+        puzzle.elo,
+        puzzle.elodev,
+        puzzle.volatility,
+
+        1 if userWon else 0
+    )
+
+    user.elo = results[0]
+    user.elodev = results[1]
+    user.volatility = results[2]
+
+    puzzle.elo = results[3]
+    puzzle.elodev = results[4]
+    puzzle.volatility = results[5]
+
+    user.update_database_entry()
+    puzzle.update_database_entry()
 
 
 def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, call: telebot.types.CallbackQuery):
@@ -47,21 +73,18 @@ def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection,
         return
 
     if solution_moves[user.current_puzzle_move*2] == user_move:
-        # TODO: Correct move
+        # Move was correct
         user.current_puzzle_move += 1
         user.update_database_entry()
 
         if user.current_puzzle_move*2 >= len(solution_moves):
-            bot.send_message(call.message.chat.id, 'Конец задачи!')
-
             # TODO: Puzzle end
+            puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
+            update_ratings(user, puzzle, True)
 
-            cursor = connection.cursor()
-            cursor.execute('SELECT * FROM puzzles INNER JOIN solutions ON puzzles.id = solutions.puzzleId ORDER BY RANDOM() LIMIT 1')
+            bot.send_message(call.message.chat.id, f'Верно!\n\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
 
-            id = cursor.fetchone()[0]
-
-            user.select_another_puzzle(id)
+            user.puzzle_selection_policy()
             show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
 
             return
@@ -70,7 +93,13 @@ def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection,
 
     else:
         # TODO: Incorrect move
-        bot.send_message(call.message.chat.id, 'Неверный ход, но пока я ничего не могу с этим поделать')
+        bot.send_message(call.message.chat.id, f'Ошибка!\n\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
+
+        puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
+        update_ratings(user, puzzle, True)
+
+        user.puzzle_selection_policy()
+        show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
 
 
 

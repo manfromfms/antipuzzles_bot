@@ -21,7 +21,7 @@ db_path = './puzzles.db'
 (ml.User.User(ml, sqlite3.connect(db_path))).setup_database_structure()
 
 
-bot = telebot.TeleBot((os.getenv('telegram_token').replace('\\x3a', ':')), parse_mode=None) # type: ignore
+bot = telebot.TeleBot((os.getenv('telegram_token').replace('\\x3a', ':')), parse_mode="Markdown") # type: ignore
 apihelper.proxy = {'https': 'socks5://localhost:1080'}
 
 # Handle start command

@@ -17,7 +17,8 @@ class User:
         self.id = id
         self.nickname = ''
         self.elo = 1000
-        self.elo_dev = 256
+        self.elodev = 350
+        self.volatility = 0.06
         self.pgroup = 1000
         self.current_puzzle = 0
         self.current_puzzle_move = 0
@@ -34,10 +35,11 @@ class User:
                 self.id = data[0]
                 self.nickname = data[1]
                 self.elo = data[2]
-                self.elo_dev = data[3]
-                self.pgroup = data[4]
-                self.current_puzzle = data[5]
-                self.current_puzzle_move = data[6]
+                self.elodev = data[3]
+                self.volatility = data[4]
+                self.pgroup = data[5]
+                self.current_puzzle = data[6]
+                self.current_puzzle_move = data[7]
 
 
     def select_another_puzzle(self, id):
@@ -45,6 +47,14 @@ class User:
         self.current_puzzle_move = 0
 
         self.update_database_entry()
+
+
+    def puzzle_selection_policy(self):
+        self.cursor.execute('SELECT * FROM puzzles WHERE elo = ( SELECT elo FROM puzzles ORDER BY ABS(elo - ?) LIMIT 1);', (self.elo,))
+
+        id = self.cursor.fetchone()[0]
+
+        self.select_another_puzzle(id)
         
 
     def update_database_entry(self):
@@ -60,7 +70,8 @@ class User:
                 SET 
                     nickname = ?,
                     elo = ?,
-                    elo_dev = ?,
+                    elodev = ?,
+                    volatility = ?,
                     pgroup = ?,
                     current_puzzle = ?,
                     current_puzzle_move = ?
@@ -71,7 +82,8 @@ class User:
             update_params = (
                 self.nickname,
                 self.elo,
-                self.elo_dev,
+                self.elodev,
+                self.volatility,
                 self.pgroup,
                 self.current_puzzle,
                 self.current_puzzle_move,
@@ -96,18 +108,20 @@ class User:
                 id,
                 nickname,
                 elo,
-                elo_dev,
+                elodev,
+                volatility,
                 pgroup,
                 current_puzzle,
                 current_puzzle_move
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         insert_params = (
             self.id,
             self.nickname,
             self.elo,
-            self.elo_dev,
+            self.elodev,
+            self.volatility,
             self.pgroup,
             self.current_puzzle,
             self.current_puzzle_move,
@@ -126,7 +140,8 @@ class User:
             id INTEGER PRIMARY KEY,
             nickname TEXT NOT NULL,
             elo REAL DEFAULT 1000,
-            elo_dev REAL DEFAULT 256,
+            elodev REAL DEFAULT 350,
+            volatility REAL DEFAULT 0.06,
             pgroup INTEGER DEFAULT 1000,
             current_puzzle INTEGER DEFAULT 1 REFERENCES puzzles (id),
             current_puzzle_move INTEGER DEFAULT 0 NOT NULL

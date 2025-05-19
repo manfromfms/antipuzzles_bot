@@ -167,7 +167,7 @@ class Puzzle:
             gameId INTEGER REFERENCES games(id),
             elo REAL DEFAULT 1000,
             elodev REAL DEFAULT 350,
-            volatility REAL DEFAULT 0.06
+            volatility REAL DEFAULT 0.06,
             fen TEXT UNIQUE NOT NULL,
             openingId INTEGER REFERENCES openings(id),
             isProcessed INTEGER,
