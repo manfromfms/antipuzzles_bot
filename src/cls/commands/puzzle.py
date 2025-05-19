@@ -93,10 +93,10 @@ def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection,
 
     else:
         # TODO: Incorrect move
-        bot.send_message(call.message.chat.id, f'Ошибка!\n\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
-
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
-        update_ratings(user, puzzle, True)
+        update_ratings(user, puzzle, False)
+        
+        bot.send_message(call.message.chat.id, f'Ошибка!\n\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
 
         user.puzzle_selection_policy()
         show_current_puzzle_state(ml, connection, bot, call.message.chat, user)

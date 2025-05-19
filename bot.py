@@ -8,6 +8,7 @@ load_dotenv()
 import src.cls.commands.start as command_start
 import src.cls.commands.init as command_init
 import src.cls.commands.puzzle as command_puzzle
+import src.cls.commands.me as command_me
 
 from src.ModuleLoader import ModuleLoader
 ml = ModuleLoader()
@@ -34,7 +35,7 @@ def start(message: telebot.types.Message):
     command_start.start(ml, connection, bot, message)
 
 
-# Handle puzzle selection by id
+# Handle puzzle command
 @bot.message_handler(commands=['puzzle', 'задача'])
 def puzzle(message: telebot.types.Message):
     connection = sqlite3.connect(db_path)
@@ -42,6 +43,16 @@ def puzzle(message: telebot.types.Message):
     command_init.init(ml, connection, bot, message)
 
     command_puzzle.puzzle(ml, connection, bot, message)
+
+
+# Handle me command
+@bot.message_handler(commands=['me', 'я'])
+def me(message: telebot.types.Message):
+    connection = sqlite3.connect(db_path)
+    print('Command execution:', message.from_user.id, 'me') # type: ignore
+    command_init.init(ml, connection, bot, message)
+
+    command_me.me(ml, connection, bot, message)
 
 
 # Handle all other messages with content_type 'text' (content_types defaults to ['text'])
