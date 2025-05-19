@@ -19,7 +19,8 @@ class Puzzle:
         self.id = 0
         self.gameId = 0
         self.elo = 1000
-        self.elodev = 256
+        self.elodev = 350
+        self.volatility = 0.06
         self.fen = ''
         self.openingId = 0
         self.opening = self.ml.Opening.Opening(self.ml, self.connection)
@@ -39,10 +40,11 @@ class Puzzle:
             self.gameId = data[1]
             self.elo = data[2]
             self.elodev = data[3]
-            self.fen = data[4]
-            self.openingId = data[5]
-            self.isProcessed = data[6]
-            self.turn = data[7]
+            self.volatility = data[4]
+            self.fen = data[5]
+            self.openingId = data[6]
+            self.isProcessed = data[7]
+            self.turn = data[8]
 
             self.opening = self.ml.Opening.Opening(self.ml, connection, searchById=self.openingId)
 
@@ -84,6 +86,7 @@ class Puzzle:
                     gameId = ?,
                     elo = ?,
                     elodev = ?,
+                    volatility = ?,
                     fen = ?,
                     openingId = ?,
                     isProcessed = ?,
@@ -96,6 +99,7 @@ class Puzzle:
                 self.gameId,
                 self.elo,
                 self.elodev,
+                self.volatility,
                 self.fen,
                 self.openingId,
                 self.isProcessed,
@@ -121,11 +125,12 @@ class Puzzle:
                 gameId,
                 elo,
                 elodev,
+                volatility,
                 fen,
                 openingId,
                 isProcessed,
                 turn
-            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         insert_params = (
@@ -160,8 +165,9 @@ class Puzzle:
         CREATE TABLE IF NOT EXISTS puzzles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             gameId INTEGER REFERENCES games(id),
-            elo INTEGER DEFAULT 1000,
-            elodev INTEGER DEFAULT 512,
+            elo REAL DEFAULT 1000,
+            elodev REAL DEFAULT 350,
+            volatility REAL DEFAULT 0.06
             fen TEXT UNIQUE NOT NULL,
             openingId INTEGER REFERENCES openings(id),
             isProcessed INTEGER,
