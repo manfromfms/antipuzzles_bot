@@ -109,11 +109,6 @@ def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection,
             puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
             dif = int(update_ratings(connection, user, puzzle, True))
 
-            try: # This sometimes would give an error
-                bot.send_message(call.message.chat.id, str('Информация о задаче:\n\n'+complile_puzzle_info(connection, puzzle)))
-            except:
-                pass
-
             bot.send_message(call.message.chat.id, f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
 
             user.puzzle_selection_policy()
@@ -127,11 +122,6 @@ def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection,
         # TODO: Puzzle solved incorrecly (any incorrect move)
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
         dif = int(update_ratings(connection, user, puzzle, False))
-
-        try: # This sometimes would give an error
-            bot.send_message(call.message.chat.id, str('Информация о задаче:\n\n'+complile_puzzle_info(connection, puzzle)))
-        except():
-            pass
         
         bot.send_message(call.message.chat.id, f'❌ Ошибка! Правильный ход: {solution_moves[user.current_puzzle_move*2]}\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
 
