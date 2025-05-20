@@ -13,6 +13,9 @@ import src.cls.commands.me as command_me
 from src.ModuleLoader import ModuleLoader
 ml = ModuleLoader()
 
+import time
+from datetime import datetime, timedelta, timezone
+
 import sqlite3
 
 db_path = './puzzles.db'
@@ -30,7 +33,7 @@ apihelper.proxy = {'https': 'socks5://localhost:1080'}
 @bot.message_handler(commands=['start', 'старт'])
 def start(message: telebot.types.Message):
     connection = sqlite3.connect(db_path)
-    print('Command execution:', message.from_user.id, 'start') # type: ignore
+    print(datetime.fromtimestamp(time.time(), timezone(timedelta(seconds=abs(time.timezone)))), 'Command execution:', message.from_user.id, 'start') # type: ignore
     command_init.init(ml, connection, bot, message)
 
     command_start.start(ml, connection, bot, message)
@@ -40,7 +43,7 @@ def start(message: telebot.types.Message):
 @bot.message_handler(commands=['puzzle', 'задача'])
 def puzzle(message: telebot.types.Message):
     connection = sqlite3.connect(db_path)
-    print('Command execution:', message.from_user.id, 'puzzle') # type: ignore
+    print(datetime.fromtimestamp(time.time(), timezone(timedelta(seconds=abs(time.timezone)))), 'Command execution:', message.from_user.id, 'puzzle') # type: ignore
     command_init.init(ml, connection, bot, message)
 
     command_puzzle.puzzle(ml, connection, bot, message)
@@ -50,7 +53,7 @@ def puzzle(message: telebot.types.Message):
 @bot.message_handler(commands=['me', 'я'])
 def me(message: telebot.types.Message):
     connection = sqlite3.connect(db_path)
-    print('Command execution:', message.from_user.id, 'me') # type: ignore
+    print(datetime.fromtimestamp(time.time(), timezone(timedelta(seconds=abs(time.timezone)))), 'Command execution:', message.from_user.id, 'me') # type: ignore
     command_init.init(ml, connection, bot, message)
 
     command_me.me(ml, connection, bot, message)
@@ -68,7 +71,7 @@ def echo_message(message: telebot.types.Message):
 # Handle button clicks
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call: telebot.types.CallbackQuery):
-    print('Button execution:', call.from_user.id, call.data) # type: ignore
+    print(datetime.fromtimestamp(time.time(), timezone(timedelta(seconds=abs(time.timezone)))), 'Button execution:', call.from_user.id, call.data) # type: ignore
     connection = sqlite3.connect(db_path)
     command_init.init(ml, connection, bot, call) # type: ignore
 

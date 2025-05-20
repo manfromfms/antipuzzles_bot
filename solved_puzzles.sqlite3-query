@@ -1,0 +1,4 @@
+-- database: ./puzzles.db
+
+SELECT * FROM puzzles WHERE elo != 1000
+ORDER BY `elo` DESC;
