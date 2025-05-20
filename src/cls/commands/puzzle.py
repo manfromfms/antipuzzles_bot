@@ -1,13 +1,14 @@
 from typing import TYPE_CHECKING
+
+import telegram
+from io import BytesIO
+
 if TYPE_CHECKING:
     from src.ModuleLoader import ModuleLoader
     from src.cls.User import User
     from src.cls.Puzzle import Puzzle
 
 import sqlite3
-
-import telebot
-from telebot import types
 
 from wand.image import Image
 
@@ -22,11 +23,12 @@ from src.cls.commands.util.move_to_emoji import convert_move_to_emoji
 from src.cls.commands.util.rating_calc import calculate_rating_changes
 
 
-def select_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, call: telebot.types.CallbackQuery):
-    user = ml.User.User(ml, connection, searchById=call.from_user.id)
-    user.select_another_puzzle(int(call.data.split(':')[1])) # type: ignore
+async def select_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, query: telegram.InlineQuery):
+    message = query.message
+    user = ml.User.User(ml, connection, searchById=message.from_user.id) # type: ignore
+    user.select_another_puzzle(int(message.data.split(':')[1])) # type: ignore
 
-    show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
+    await show_current_puzzle_state(ml, connection, message, user)
 
 
 def update_ratings(connection: sqlite3.Connection, user: 'User', puzzle: 'Puzzle', userWon):
@@ -72,32 +74,33 @@ def update_ratings(connection: sqlite3.Connection, user: 'User', puzzle: 'Puzzle
     return dif
 
 
-def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, call: telebot.types.CallbackQuery):
-    user = ml.User.User(ml, connection, searchById=call.from_user.id)
-    solution = ml.Solution.Solution(ml, connection, ml.Puzzle.Puzzle(ml, connection), searchByPuzzleId=user.current_puzzle) # type: ignore
+async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, query: telegram.InlineQuery):
+    message: telegram.Message = query.message
+    user = ml.User.User(ml, connection, searchById=query.from_user.id)
+    solution = ml.Solution.Solution(ml, connection, ml.Puzzle.Puzzle(ml, connection), searchByPuzzleId=user.current_puzzle)
 
-    user_move = call.data.split(':')[3] # type: ignore
+    user_move = query.data.split(':')[3] # type: ignore
     solution_moves = solution.moves.split(' ')
 
-    check_current_puzzle = call.data.split(':')[1] # type: ignore
-    check_current_puzzle_move = call.data.split(':')[2] # type: ignore
+    check_current_puzzle = query.data.split(':')[1] # type: ignore
+    check_current_puzzle_move = query.data.split(':')[2] # type: ignore
 
 
     if user.current_puzzle_move != int(check_current_puzzle_move):
-        bot.send_message(call.message.chat.id, 'Это уже старая позиция! Возможно стоит запросить позицию заново: /puzzle')
+        await message.chat.send_message('Это уже старая позиция! Возможно стоит запросить позицию заново: /puzzle')
         return
     
 
     if user.current_puzzle != int(check_current_puzzle):
-        bot.send_message(call.message.chat.id, 'Это уже старая позиция! Возможно стоит запросить позицию заново: /puzzle')
+        await message.chat.send_message('Это уже старая позиция! Возможно стоит запросить позицию заново: /puzzle')
         return
     
 
     if user.current_puzzle_move*2 >= len(solution_moves):
-        bot.send_message(call.message.chat.id, 'Возникла неопознанная ошибка! Выбираем следующую задачу.')
+        await message.chat.send_message('Возникла неопознанная ошибка! Выбираем следующую задачу.')
 
         user.puzzle_selection_policy()
-        show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
+        await show_current_puzzle_state(ml, connection, message, user)
 
     if solution_moves[user.current_puzzle_move*2] == user_move:
         # Move was correct
@@ -109,28 +112,28 @@ def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection,
             puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
             dif = int(update_ratings(connection, user, puzzle, True))
 
-            bot.send_message(call.message.chat.id, f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
+            await message.chat.send_message(f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
 
             user.puzzle_selection_policy()
-            show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
+            await show_current_puzzle_state(ml, connection, message, user)
 
             return
 
-        show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
+        await show_current_puzzle_state(ml, connection, message, user)
 
     else:
         # TODO: Puzzle solved incorrecly (any incorrect move)
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
         dif = int(update_ratings(connection, user, puzzle, False))
         
-        bot.send_message(call.message.chat.id, f'❌ Ошибка! Правильный ход: {solution_moves[user.current_puzzle_move*2]}\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
+        await message.chat.send_message(f'❌ Ошибка! Правильный ход: {solution_moves[user.current_puzzle_move*2]}\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
 
         user.puzzle_selection_policy()
-        show_current_puzzle_state(ml, connection, bot, call.message.chat, user)
+        await show_current_puzzle_state(ml, connection, message, user)
 
 
 
-def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, chat: telebot.types.Chat, user: 'User'):
+async def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegram.Message, user: 'User'):
     puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
     solution = ml.Solution.Solution(ml, connection, puzzle, searchByPuzzleId=puzzle.id) # type: ignore
 
@@ -152,34 +155,34 @@ def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Connection
         img.format = "png"
         png_bytes = img.make_blob()
 
+    buffer = BytesIO(png_bytes) # type: ignore
+
     rows = [[]]
     for move in board.legal_moves:
         emoji = convert_move_to_emoji(move, board)
-        button = types.InlineKeyboardButton(text=emoji + board.san(move), callback_data=f"Make move:{puzzle.id}:{user.current_puzzle_move}:{move.uci()}")
+        button = telegram.InlineKeyboardButton(text=emoji + board.san(move), callback_data=f"Make move:{puzzle.id}:{user.current_puzzle_move}:{move.uci()}")
         if len(rows[-1]) == 3:
             rows.append([])
 
         rows[-1].append(button)
 
-    keyboard = types.InlineKeyboardMarkup(rows)         
+    keyboard = telegram.InlineKeyboardMarkup(rows)         
                
-    
     # Send PNG image
-    bot.send_photo(chat.id, png_bytes, caption='Найдите лучший ход в позиции', reply_markup=keyboard)
+    await message.chat.send_photo(buffer, caption='Найдите лучший ход в позиции', reply_markup=keyboard)
 
 
-def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.TeleBot, message: telebot.types.Message):
+async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegram.Message):
     if message.text is None:
-        bot.send_message(message.chat.id, 'Отсутствует текст сообщения')
+        await message.chat.send_message('Отсутствует текст сообщения')
     
-    args = convert_args(telebot.util.extract_arguments(message.text)) # type: ignore
-    print(args)
+    args = convert_args(message.text) # type: ignore
 
     if 'id' in args:
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=args['id'])
 
         if puzzle.id == 0:
-            bot.send_message(message.chat.id, 'Задача не найдена')
+            await message.chat.send_message('Задача не найдена')
             return
 
         svg = chess.svg.board(chess.variant.AntichessBoard(puzzle.fen), flipped=not chess.variant.AntichessBoard(puzzle.fen).turn) 
@@ -188,15 +191,16 @@ def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, bot: telebot.Tele
             img.format = "png"
             png_bytes = img.make_blob()
 
-        keyboard = types.InlineKeyboardMarkup()
-        button1 = types.InlineKeyboardButton(text="Решить задачу", callback_data=f"Switch to puzzle:{puzzle.id}")
-        keyboard.add(button1)       
+        buffer = BytesIO(png_bytes) # type: ignore
+
+        button1 = telegram.InlineKeyboardButton(text="Решить задачу", callback_data=f"Switch to puzzle:{puzzle.id}")
+        keyboard = telegram.InlineKeyboardMarkup([[button1]])    
         
         # Send PNG image
-        bot.send_photo(message.chat.id, png_bytes, caption=complile_puzzle_info(connection, puzzle), reply_markup=keyboard)
+        await message.chat.send_photo(buffer, caption=complile_puzzle_info(connection, puzzle), reply_markup=keyboard)
 
     else:
-        bot.send_message(message.chat.id, 'Вот ваша текущая задача')
+        await message.chat.send_message('Вот ваша текущая задача')
 
         user = ml.User.User(ml, connection, searchById=message.from_user.id) # type: ignore
-        show_current_puzzle_state(ml, connection, bot, chat=message.chat, user=user) # type: ignore
+        await show_current_puzzle_state(ml, connection, message, user=user) # type: ignore
