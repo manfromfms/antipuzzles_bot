@@ -1,5 +1,8 @@
 import telebot
 from telebot import apihelper
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 import os
 from dotenv import load_dotenv
@@ -20,14 +23,25 @@ import sqlite3
 
 db_path = './puzzles.db'
 
+# Create a session with retries
+session = requests.Session()
+retry = Retry(
+    total=5,
+    backoff_factor=0.5,
+    status_forcelist=[500, 502, 503, 504]
+)
+session.mount('https://', HTTPAdapter(max_retries=retry))
+
 
 # Setup required database tables
 (ml.User.User(ml, sqlite3.connect(db_path))).setup_database_structure()
 (ml.User.User(ml, sqlite3.connect(db_path))).setup_database_structure_played()
+(ml.Preferences.Preferences(ml, sqlite3.connect(db_path))).setup_database_structure()
 
 
 bot = telebot.TeleBot((os.getenv('telegram_token').replace('\\x3a', ':')), parse_mode="Markdown") # type: ignore
 apihelper.proxy = {'https': 'socks5://localhost:1080'}
+apihelper.session = session
 
 # Handle start command
 @bot.message_handler(commands=['start', 'старт'])

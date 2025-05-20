@@ -4,6 +4,8 @@ import src.cls.Opening as Opening
 import src.cls.Solution as Solution
 import src.cls.Theme as Theme
 import src.cls.User as User
+import src.cls.Preferences as Preferences
+
 
 class ModuleLoader:
     def __init__(self):
@@ -13,3 +15,4 @@ class ModuleLoader:
         self.Solution = Solution
         self.Theme = Theme
         self.User = User
+        self.Preferences = Preferences

@@ -50,6 +50,8 @@ class User:
 
 
     def puzzle_selection_policy(self):
+        preferences = self.ml.Preferences.Preferences(self.ml, self.connection, searchByUserId=self.id)
+
         self.cursor.execute('''SELECT * FROM puzzles 
             WHERE elo = (
                 SELECT elo 
@@ -61,10 +63,9 @@ class User:
                 )
                 ORDER BY ABS(elo - ?) 
                 LIMIT 1
-            );  ''', (self.id, self.elo,))
-
+            );  ''', (self.id, self.elo + preferences.rating_difference,))
+        
         id = self.cursor.fetchone()[0]
-
         self.select_another_puzzle(id)
         
 
