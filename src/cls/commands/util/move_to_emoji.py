@@ -20,21 +20,21 @@ def convert_move_to_emoji(move: chess.Move, board: chess.Board) -> str:
         return '♖'
     
     if board.piece_at(move.from_square).symbol() == 'k': # type: ignore
-        return '♚'
+        return '♔'
     
     if board.piece_at(move.from_square).symbol() == 'q': # type: ignore
-        return '♛'
+        return '♕'
     
     if board.piece_at(move.from_square).symbol() == 'b': # type: ignore
-        return '♝'
+        return '♗'
     
     if board.piece_at(move.from_square).symbol() == 'n': # type: ignore
-        return '♞'
+        return '♘'
     
     if board.piece_at(move.from_square).symbol() == 'p': # type: ignore
-        return '♟'
+        return '♙'
     
     if board.piece_at(move.from_square).symbol() == 'r': # type: ignore
-        return '♜'
+        return '♖'
     
     return ''
