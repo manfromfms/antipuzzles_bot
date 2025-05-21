@@ -24,7 +24,7 @@ from src.cls.commands.util.rating_calc import calculate_rating_changes
 
 
 async def select_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, query: telegram.InlineQuery):
-    message = query.message
+    message = query.message # type: ignore
     user = ml.User.User(ml, connection, searchById=message.from_user.id) # type: ignore
     user.select_another_puzzle(int(message.data.split(':')[1])) # type: ignore
 
@@ -75,7 +75,7 @@ def update_ratings(connection: sqlite3.Connection, user: 'User', puzzle: 'Puzzle
 
 
 async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, query: telegram.InlineQuery):
-    message: telegram.Message = query.message
+    message: telegram.Message = query.message # type: ignore
     user = ml.User.User(ml, connection, searchById=query.from_user.id)
     solution = ml.Solution.Solution(ml, connection, ml.Puzzle.Puzzle(ml, connection), searchByPuzzleId=user.current_puzzle)
 
