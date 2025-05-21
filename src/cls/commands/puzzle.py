@@ -25,8 +25,8 @@ from src.cls.commands.util.rating_calc import calculate_rating_changes
 
 async def select_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, query: telegram.InlineQuery):
     message = query.message # type: ignore
-    user = ml.User.User(ml, connection, searchById=message.from_user.id) # type: ignore
-    user.select_another_puzzle(int(message.data.split(':')[1])) # type: ignore
+    user = ml.User.User(ml, connection, searchById=query.from_user.id) # type: ignore
+    user.select_another_puzzle(int(query.data.split(':')[1])) # type: ignore
 
     await show_current_puzzle_state(ml, connection, message, user)
 
@@ -203,4 +203,7 @@ async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: te
         await message.chat.send_message('Вот ваша текущая задача')
 
         user = ml.User.User(ml, connection, searchById=message.from_user.id) # type: ignore
+        puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
+
+        await message.chat.send_message(complile_puzzle_info(connection, puzzle))
         await show_current_puzzle_state(ml, connection, message, user=user) # type: ignore

@@ -10,7 +10,7 @@ async def start(ml: 'ModuleLoader', connection: sqlite3.Connection, message: tel
         '[GitHub](https://github.com/manfromfms/antipuzzles_bot)\n\n' \
         'Список команд:\n\n' \
         '/puzzle\n' \
-        '\tБез аргументов - текущая позиция\n' \
+        '\tБез аргументов - отобразить текущую позицию и информацию о текущей задаче\n' \
         '\tid:[число] - информация о задаче\n\n' \
         '/me\n' \
         '\tБез аргументов - информация о себе\n\n' \
