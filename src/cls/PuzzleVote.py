@@ -19,15 +19,17 @@ class PuzzleVote:
         self.vote = 0
 
         if userId != 0 and puzzleId != 0:
-            self.cursor.execute('SELECT * FROM puzzle_votes WHERE (userId=? AND puzzleId=?)', (userId, puzzleId))
+            self.cursor.execute('SELECT * FROM puzzle_votes WHERE userId=? AND puzzleId=?', (userId, puzzleId))
 
             data = self.cursor.fetchone()
 
             if data is None:
                 self.create_entry()
 
-                self.cursor.execute('SELECT * FROM puzzle_votes WHERE (userId=? AND puzzleId=?)', (userId, puzzleId))
+                self.cursor.execute('SELECT * FROM puzzle_votes WHERE userId=? AND puzzleId=?', (userId, puzzleId))
                 data = self.cursor.fetchone()
+
+            print(data)
 
             self.id = data[0]
             self.vote = data[3]

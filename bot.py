@@ -124,7 +124,7 @@ async def callback_inline(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await command_preferences.update_rating_difference(ml, connection, query)
 
     elif 'puzzle vote' in query.data: # type: ignore
-        vote = ml.PuzzleVote.PuzzleVote(ml, sqlite3.connect(db_path), query.from_user.id, int(query.data.split(':')[1]))
+        vote = ml.PuzzleVote.PuzzleVote(ml, sqlite3.connect(db_path), userId=query.from_user.id, puzzleId=int(query.data.split(':')[1]))
         vote.another_vote(float(query.data.split(':')[2]))
 
     await query.answer() # type: ignore

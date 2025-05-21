@@ -119,6 +119,8 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
                 telegram.InlineKeyboardButton('🟥', callback_data=f'puzzle vote:{puzzle.id}:-1'),
             ]]
 
+            await message.chat.send_message(complile_puzzle_info(connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
+
             await message.chat.send_message(f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons))
 
             await show_current_puzzle_state(ml, connection, message, user)
@@ -137,6 +139,9 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
             telegram.InlineKeyboardButton('🟩', callback_data=f'puzzle vote:{puzzle.id}:0.1'),
             telegram.InlineKeyboardButton('🟥', callback_data=f'puzzle vote_{puzzle.id}:-0.1'),
         ]]
+        
+        await message.chat.send_message(complile_puzzle_info(connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
+        
         
         await message.chat.send_message(f'❌ Ошибка! Правильный ход: {solution_moves[user.current_puzzle_move*2]}\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons))
 
