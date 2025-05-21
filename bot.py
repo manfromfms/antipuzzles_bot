@@ -37,6 +37,7 @@ logger = logging.getLogger()
 (ml.User.User(ml, sqlite3.connect(db_path))).setup_database_structure()
 (ml.User.User(ml, sqlite3.connect(db_path))).setup_database_structure_played()
 (ml.Preferences.Preferences(ml, sqlite3.connect(db_path))).setup_database_structure()
+(ml.PuzzleVote.PuzzleVote(ml, sqlite3.connect(db_path))).setup_database_structure()
 
 app = ApplicationBuilder()\
     .token((os.getenv('telegram_token')\
@@ -121,6 +122,10 @@ async def callback_inline(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif 'preferences_rating_difference' in query.data: # type: ignore
         await command_preferences.update_rating_difference(ml, connection, query)
+
+    elif 'puzzle vote' in query.data: # type: ignore
+        vote = ml.PuzzleVote.PuzzleVote(ml, sqlite3.connect(db_path), query.from_user.id, int(query.data.split(':')[1]))
+        vote.another_vote(float(query.data.split(':')[2]))
 
     await query.answer() # type: ignore
 app.add_handler(CallbackQueryHandler(callback_inline))

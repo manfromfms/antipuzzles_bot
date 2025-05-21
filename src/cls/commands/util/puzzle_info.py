@@ -11,12 +11,16 @@ def complile_puzzle_info(connection: sqlite3.Connection, puzzle: 'Puzzle'):
     cursor.execute('SELECT COUNT(*) FROM played WHERE puzzleId = ?;', (puzzle.id,))
     count = cursor.fetchone()[0]
 
-    # TODO: оценка задачи 
-    s = f'Задача:\n\t{puzzle.id}\n' \
-        +f'Рейтинг:\n\t{int(puzzle.elo)}±{int(puzzle.elodev)}\n'\
-        +f'Решена:\n\t{count} раз\n'\
-        +f'Из партии:\n\t{game.Black} vs. {game.White}'
+    # TODO: оценка задачи     
     
-        #+f'Оценка:\n\tIn Progress\n'\
+    s = f'''
+🔥 *Задача id:{puzzle.id}* 🔥
+
+📊 *Рейтинг:*  `{int(puzzle.elo)}±{int(puzzle.elodev)}`
+✅ *Решено:*  {count} раз
+⚔️ *Партия:*  [{game.Black}] vs [{game.White}]
+    '''
+    
+    #+f'Оценка:\n\tIn Progress\n'\
 
     return s

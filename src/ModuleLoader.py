@@ -5,6 +5,7 @@ import src.cls.Solution as Solution
 import src.cls.Theme as Theme
 import src.cls.User as User
 import src.cls.Preferences as Preferences
+import src.cls.PuzzleVote as PuzzleVote
 
 
 class ModuleLoader:
@@ -16,3 +17,5 @@ class ModuleLoader:
         self.Theme = Theme
         self.User = User
         self.Preferences = Preferences
+        self.PuzzleVote = PuzzleVote
+        

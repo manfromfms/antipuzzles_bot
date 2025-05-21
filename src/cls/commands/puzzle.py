@@ -68,7 +68,7 @@ def update_ratings(connection: sqlite3.Connection, user: 'User', puzzle: 'Puzzle
     user.update_database_entry()
     puzzle.update_database_entry()
 
-    cursor.execute('INSERT INTO played (userId, puzzleId, won) VALUES (?, ?, ?)', (user.id, puzzle.id, 1 if userWon else 0))
+    cursor.execute('INSERT INTO played (userId, puzzleId, won, elochange) VALUES (?, ?, ?, ?)', (user.id, puzzle.id, 1 if userWon else 0, dif))
 
     connection.commit()
     return dif
@@ -98,6 +98,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
 
     if user.current_puzzle_move*2 >= len(solution_moves):
         await message.chat.send_message('Возникла неопознанная ошибка! Выбираем следующую задачу.')
+        print('Неопознанная ошибка')
 
         user.puzzle_selection_policy()
         await show_current_puzzle_state(ml, connection, message, user)
@@ -111,10 +112,15 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
             # TODO: Puzzle solved correctly
             puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
             dif = int(update_ratings(connection, user, puzzle, True))
-
-            await message.chat.send_message(f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
-
             user.puzzle_selection_policy()
+
+            buttons = [[
+                telegram.InlineKeyboardButton('🟩', callback_data=f'puzzle vote:{puzzle.id}:1'),
+                telegram.InlineKeyboardButton('🟥', callback_data=f'puzzle vote:{puzzle.id}:-1'),
+            ]]
+
+            await message.chat.send_message(f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons))
+
             await show_current_puzzle_state(ml, connection, message, user)
 
             return
@@ -125,10 +131,15 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
         # TODO: Puzzle solved incorrecly (any incorrect move)
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
         dif = int(update_ratings(connection, user, puzzle, False))
-        
-        await message.chat.send_message(f'❌ Ошибка! Правильный ход: {solution_moves[user.current_puzzle_move*2]}\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача? (В процессе)')
-
         user.puzzle_selection_policy()
+
+        buttons = [[
+            telegram.InlineKeyboardButton('🟩', callback_data=f'puzzle vote:{puzzle.id}:0.1'),
+            telegram.InlineKeyboardButton('🟥', callback_data=f'puzzle vote_{puzzle.id}:-0.1'),
+        ]]
+        
+        await message.chat.send_message(f'❌ Ошибка! Правильный ход: {solution_moves[user.current_puzzle_move*2]}\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons))
+
         await show_current_puzzle_state(ml, connection, message, user)
 
 
@@ -161,7 +172,7 @@ async def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Conn
     for move in board.legal_moves:
         emoji = convert_move_to_emoji(move, board)
         button = telegram.InlineKeyboardButton(text=emoji + board.san(move), callback_data=f"Make move:{puzzle.id}:{user.current_puzzle_move}:{move.uci()}")
-        if len(rows[-1]) == 3:
+        if len(rows[-1]) == 4:
             rows.append([])
 
         rows[-1].append(button)
@@ -197,7 +208,7 @@ async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: te
         keyboard = telegram.InlineKeyboardMarkup([[button1]])    
         
         # Send PNG image
-        await message.chat.send_photo(buffer, caption=complile_puzzle_info(connection, puzzle), reply_markup=keyboard)
+        await message.chat.send_photo(buffer, caption=complile_puzzle_info(connection, puzzle), reply_markup=keyboard, parse_mode=telegram.constants.ParseMode('Markdown'))
 
     else:
         await message.chat.send_message('Вот ваша текущая задача')
@@ -205,5 +216,5 @@ async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: te
         user = ml.User.User(ml, connection, searchById=message.from_user.id) # type: ignore
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
 
-        await message.chat.send_message(complile_puzzle_info(connection, puzzle))
+        await message.chat.send_message(complile_puzzle_info(connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
         await show_current_puzzle_state(ml, connection, message, user=user) # type: ignore
