@@ -135,7 +135,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
 
         buttons = [[
             telegram.InlineKeyboardButton('🟩', callback_data=f'puzzle vote:{puzzle.id}:0.1'),
-            telegram.InlineKeyboardButton('🟥', callback_data=f'puzzle vote_{puzzle.id}:-0.1'),
+            telegram.InlineKeyboardButton('🟥', callback_data=f'puzzle vote:{puzzle.id}:-0.1'),
         ]]
         
         await message.chat.send_message(complile_puzzle_info(connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
