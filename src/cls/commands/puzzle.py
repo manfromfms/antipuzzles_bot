@@ -15,8 +15,6 @@ from wand.image import Image
 import chess.svg
 import chess.variant
 
-import numpy as np
-
 from src.cls.commands.util.convert_args import *
 from src.cls.commands.util.puzzle_info import complile_puzzle_info
 from src.cls.commands.util.move_to_emoji import convert_move_to_emoji
