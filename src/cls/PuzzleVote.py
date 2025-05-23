@@ -18,21 +18,22 @@ class PuzzleVote:
         self.puzzleId = puzzleId
         self.vote = 0
 
-        if userId != 0 and puzzleId != 0:
-            self.cursor.execute('SELECT * FROM puzzle_votes WHERE userId=? AND puzzleId=?', (userId, puzzleId))
+        if self.userId != 0 and self.puzzleId != 0:
+            # Select puzzle if exists, else add new entry with vote=0
+            select_query = """
+                SELECT id, vote FROM puzzle_votes
+                WHERE userId = ? AND puzzleId = ?
+                LIMIT 1
+            """
+            select_params = (self.userId, self.puzzleId)
 
-            data = self.cursor.fetchone()
+            self.cursor.execute(select_query, select_params)
+            result = self.cursor.fetchone()
 
-            if data is None:
+            if result is not None:
+                self.id, self.vote = result
+            else:
                 self.create_entry()
-
-                self.cursor.execute('SELECT * FROM puzzle_votes WHERE userId=? AND puzzleId=?', (userId, puzzleId))
-                data = self.cursor.fetchone()
-
-            print(data)
-
-            self.id = data[0]
-            self.vote = data[3]
 
 
     def another_vote(self, value):
@@ -101,7 +102,6 @@ class PuzzleVote:
                 userId,
                 puzzleId
             ) VALUES (?, ?)
-            ON CONFLICT DO NOTHING
         """
 
         insert_params = (
@@ -113,6 +113,19 @@ class PuzzleVote:
 
         self.connection.commit()
 
+        # Fetch the newly inserted row to update self.id and self.vote
+        select_query = """
+            SELECT id, vote FROM puzzle_votes
+            WHERE userId = ? AND puzzleId = ?
+        """
+        select_params = (self.userId, self.puzzleId)
+
+        self.cursor.execute(select_query, select_params)
+        result = self.cursor.fetchone()
+
+        if result is not None:
+            self.id, self.vote = result
+
 
     def setup_database_structure(self):
         """Create puzzle_votes table if it doesn't exist."""
@@ -120,8 +133,8 @@ class PuzzleVote:
         create_table_sql = """
         CREATE TABLE IF NOT EXISTS puzzle_votes (
             id INTEGER PRIMARY KEY,
-            userId INTEGER NOT NULL UNIQUE REFERENCES users (id),
-            puzzleId INTEGER NOT NULL UNIQUE REFERENCES puzzles (id),
+            userId INTEGER NOT NULL REFERENCES users (id),
+            puzzleId INTEGER NOT NULL REFERENCES puzzles (id),
             vote REAL DEFAULT 0
         );
         """

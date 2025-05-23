@@ -93,17 +93,6 @@ async def preferences(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await command_preferences.preferences(ml, connection, message) # type: ignore
 app.add_handler(CommandHandler(['preferences'], preferences))
 
-
-'''
-# Handle all other messages with content_type 'text' (content_types defaults to ['text'])
-@bot.message_handler(func=lambda message: True)
-def echo_message(message: telebot.types.Message):
-    connection = sqlite3.connect(db_path)
-    command_init.init(ml, connection, bot, message)
-
-    bot.reply_to(message, 'Неизвестная команда')
-'''
-
 # Handle button clicks
 async def callback_inline(update: Update, context: ContextTypes.DEFAULT_TYPE):
     connection = sqlite3.connect(db_path)
@@ -124,8 +113,12 @@ async def callback_inline(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await command_preferences.update_rating_difference(ml, connection, query)
 
     elif 'puzzle vote' in query.data: # type: ignore
-        vote = ml.PuzzleVote.PuzzleVote(ml, sqlite3.connect(db_path), userId=query.from_user.id, puzzleId=int(query.data.split(':')[1]))
-        vote.another_vote(float(query.data.split(':')[2]))
+        vote = ml.PuzzleVote.PuzzleVote(
+            ml, sqlite3.connect(db_path), 
+            userId=query.from_user.id, 
+            puzzleId=int(query.data.split(':')[1])
+        )
+        vote.another_vote(float(query.data.split(':')[2])) 
 
     await query.answer() # type: ignore
 app.add_handler(CallbackQueryHandler(callback_inline))
