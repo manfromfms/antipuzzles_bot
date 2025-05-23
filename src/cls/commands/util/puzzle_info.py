@@ -18,9 +18,7 @@ def complile_puzzle_info(connection: sqlite3.Connection, puzzle: 'Puzzle'):
 
 📊 *Рейтинг:*  `{int(puzzle.elo)}±{int(puzzle.elodev)}`
 ✅ *Решено:*  {count} раз
-⚔️ *Партия:*  {'*' if float(game.Result.split('-')[0]) > 0 else ''}[{game.White}]{'*' if float(game.Result.split('-')[0]) > 0 else ''} vs {'*' if float(game.Result.split('-')[1]) > 0 else ''}[{game.Black}]{'*' if float(game.Result.split('-')[1]) > 0 else ''}
+⚔️ *Партия:*  {'*' if game.Result.split('-')[0] == '1' else ''}[{game.White}]{'*' if game.Result.split('-')[0] == '1' else ''} vs {'*' if game.Result.split('-')[1] == '1' else ''}[{game.Black}]{'*' if game.Result.split('-')[1] == '1' else ''}
     '''
-
-    #+f'Оценка:\n\tIn Progress\n'\
 
     return s
