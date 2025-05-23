@@ -14,13 +14,13 @@ def complile_puzzle_info(connection: sqlite3.Connection, puzzle: 'Puzzle'):
     # TODO: оценка задачи     
     
     s = f'''
-🔥 *Задача id:{puzzle.id}* 🔥
+ℹ️ *Задача id:{puzzle.id}*
 
 📊 *Рейтинг:*  `{int(puzzle.elo)}±{int(puzzle.elodev)}`
 ✅ *Решено:*  {count} раз
-⚔️ *Партия:*  [{game.Black}] vs [{game.White}]
+⚔️ *Партия:*  {'*' if float(game.Result.split('-')[0]) > 0 else ''}[{game.White}]{'*' if float(game.Result.split('-')[0]) > 0 else ''} vs {'*' if float(game.Result.split('-')[1]) > 0 else ''}[{game.Black}]{'*' if float(game.Result.split('-')[1]) > 0 else ''}
     '''
-    
+
     #+f'Оценка:\n\tIn Progress\n'\
 
     return s

@@ -9,7 +9,7 @@ async def start(ml: 'ModuleLoader', connection: sqlite3.Connection, message: tel
     await message.reply_markdown('Бот с задачами по antichess.\n' \
         '[GitHub](https://github.com/manfromfms/antipuzzles_bot)\n\n' \
         'Список команд:\n\n' \
-        '/puzzle\n' \
+        '/puzzle /p\n' \
         '\tБез аргументов - отобразить текущую позицию и информацию о текущей задаче\n' \
         '\tid:[число] - информация о задаче\n\n' \
         '/me\n' \

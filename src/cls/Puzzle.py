@@ -137,6 +137,7 @@ class Puzzle:
             self.gameId,
             self.elo,
             self.elodev,
+            self.volatility,
             self.fen,
             self.openingId,
             self.isProcessed,

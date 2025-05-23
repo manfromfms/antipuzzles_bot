@@ -90,7 +90,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
     
 
     if user.current_puzzle != int(check_current_puzzle):
-        await message.chat.send_message('Это уже старая позиция! Возможно стоит запросить позицию заново: /puzzle')
+        await message.chat.send_message('Это уже старая задача! Возможно стоит запросить позицию заново: /puzzle')
         return
     
 
@@ -101,13 +101,15 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
         user.puzzle_selection_policy()
         await show_current_puzzle_state(ml, connection, message, user)
 
+        return
+
     if solution_moves[user.current_puzzle_move*2] == user_move:
         # Move was correct
         user.current_puzzle_move += 1
         user.update_database_entry()
 
         if user.current_puzzle_move*2 >= len(solution_moves):
-            # TODO: Puzzle solved correctly
+            # Puzzle successfuly finished
             puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
             dif = int(update_ratings(connection, user, puzzle, True))
             user.puzzle_selection_policy()
@@ -119,7 +121,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
 
             await message.chat.send_message(complile_puzzle_info(connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
 
-            await message.chat.send_message(f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons))
+            await message.chat.send_message(f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\nАнализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen.replace(' ', '%20')})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
 
             await show_current_puzzle_state(ml, connection, message, user)
 
@@ -128,7 +130,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
         await show_current_puzzle_state(ml, connection, message, user)
 
     else:
-        # TODO: Puzzle solved incorrecly (any incorrect move)
+        # Wrong move = puzzle failed
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
         dif = int(update_ratings(connection, user, puzzle, False))
         user.puzzle_selection_policy()
@@ -141,13 +143,16 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
         await message.chat.send_message(complile_puzzle_info(connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
         
         
-        await message.chat.send_message(f'❌ Ошибка! Правильный ход: {solution_moves[user.current_puzzle_move*2]}\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons))
+        await message.chat.send_message(f'❌ Ошибка! Правильный ход: *{solution_moves[user.current_puzzle_move*2]}*\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\nАнализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
 
         await show_current_puzzle_state(ml, connection, message, user)
 
 
 
 async def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegram.Message, user: 'User'):
+    if user.current_puzzle is None:
+        return await message.reply_text('Мы не можем найти для вас задачу')
+
     puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
     solution = ml.Solution.Solution(ml, connection, puzzle, searchByPuzzleId=puzzle.id) # type: ignore
 
@@ -183,7 +188,7 @@ async def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Conn
     keyboard = telegram.InlineKeyboardMarkup(rows)         
                
     # Send PNG image
-    await message.chat.send_photo(buffer, caption='Найдите лучший ход в позиции', reply_markup=keyboard)
+    await message.chat.send_photo(buffer, caption=f'{'⚪' if board.turn == chess.WHITE else '⬛'} *Найдите лучший ход за {'белых' if board.turn == chess.WHITE else 'черных'}* {'⬜' if board.turn == chess.WHITE else '⚫'}', reply_markup=keyboard, parse_mode='markdown')
 
 
 async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegram.Message):

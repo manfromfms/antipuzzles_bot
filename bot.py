@@ -68,7 +68,7 @@ async def puzzle(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await command_init.init(ml, connection, message) # type: ignore
     await command_puzzle.puzzle(ml, connection, message) # type: ignore
-app.add_handler(CommandHandler(['puzzle'], puzzle))
+app.add_handler(CommandHandler(['puzzle', 'p'], puzzle))
 
 # Handle me command
 async def me(update: Update, context: ContextTypes.DEFAULT_TYPE):
