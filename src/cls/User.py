@@ -1,5 +1,7 @@
 import sqlite3
 
+import random
+
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -42,6 +44,16 @@ class User:
                 self.current_puzzle_move = data[7]
 
 
+    def count_solved_puzzles(self):
+        self.cursor.execute('''
+            SELECT COUNT(*)
+            FROM played
+            WHERE userId = ?;
+        ''', (self.id,))
+
+        return self.cursor.fetchone()[0]
+
+
     def select_another_puzzle(self, id):
         self.current_puzzle = id
         self.current_puzzle_move = 0
@@ -52,20 +64,29 @@ class User:
     def puzzle_selection_policy(self):
         preferences = self.ml.Preferences.Preferences(self.ml, self.connection, searchByUserId=self.id)
 
-        self.cursor.execute('''SELECT * FROM puzzles 
-            WHERE elo = (
-                SELECT elo 
-                FROM puzzles 
-                WHERE id NOT IN (
-                    SELECT puzzleId 
-                    FROM played 
-                    WHERE userId = ?
-                )
-                ORDER BY ABS(elo - ?) 
-                LIMIT 1
-            );  ''', (self.id, self.elo + preferences.rating_difference,))
+        self.cursor.execute('''SELECT * FROM puzzles
+WHERE elo = (
+    SELECT elo
+    FROM (
+        SELECT DISTINCT p.id, p.elo
+        FROM puzzles p
+        LEFT JOIN solutions s ON p.id = s.puzzleId
+        WHERE p.id NOT IN (
+            SELECT puzzleId
+            FROM played
+            WHERE userId = ?
+        )
+        AND (s.puzzleId IS NULL OR s.puzzleId NOT IN (
+            SELECT puzzleId
+            FROM played
+            WHERE userId = ?
+        ))
+    ) AS eligible_puzzles
+    ORDER BY ABS(elo - ?)
+    LIMIT 1
+);''', (self.id, self.id, self.elo + preferences.rating_difference,))
         
-        id = self.cursor.fetchone()[0]
+        id = random.sample(self.cursor.fetchall(), 1)[0][0]
         self.select_another_puzzle(id)
         
 

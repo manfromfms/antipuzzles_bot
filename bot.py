@@ -14,6 +14,7 @@ import src.cls.commands.init as command_init
 import src.cls.commands.puzzle as command_puzzle
 import src.cls.commands.me as command_me
 import src.cls.commands.preferences as command_preferences
+import src.cls.commands.top as command_top
 
 from src.ModuleLoader import ModuleLoader
 ml = ModuleLoader()
@@ -82,6 +83,18 @@ async def me(update: Update, context: ContextTypes.DEFAULT_TYPE):
 app.add_handler(CommandHandler(['me'], me))
 
 
+# Handle top command
+async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    connection = sqlite3.connect(db_path)
+    message = update.message
+
+    logger.info(('Command execution:', message.from_user.id, 'top')) # type: ignore
+    
+    await command_init.init(ml, connection, message) # type: ignore
+    await command_top.top(ml, connection, message) # type: ignore
+app.add_handler(CommandHandler(['top'], top))
+
+
 # Handle preferences command
 async def preferences(update: Update, context: ContextTypes.DEFAULT_TYPE):
     connection = sqlite3.connect(db_path)
@@ -92,6 +105,7 @@ async def preferences(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await command_init.init(ml, connection, message) # type: ignore
     await command_preferences.preferences(ml, connection, message) # type: ignore
 app.add_handler(CommandHandler(['preferences'], preferences))
+
 
 # Handle button clicks
 async def callback_inline(update: Update, context: ContextTypes.DEFAULT_TYPE):
