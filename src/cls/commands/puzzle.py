@@ -119,7 +119,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
                 telegram.InlineKeyboardButton('🟥', callback_data=f'puzzle vote:{puzzle.id}:-1'),
             ]]
 
-            await message.chat.send_message(complile_puzzle_info(connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
+            await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
 
             await message.chat.send_message(f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\nАнализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen.replace(' ', '%20')})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
 
@@ -131,19 +131,23 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
 
     else:
         # Wrong move = puzzle failed
+
+        # Lost against the puzzle
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
         dif = int(update_ratings(connection, user, puzzle, False))
         user.puzzle_selection_policy()
 
+        # Add vote buttons
         buttons = [[
             telegram.InlineKeyboardButton('🟩', callback_data=f'puzzle vote:{puzzle.id}:0.1'),
             telegram.InlineKeyboardButton('🟥', callback_data=f'puzzle vote:{puzzle.id}:-0.1'),
         ]]
         
-        await message.chat.send_message(complile_puzzle_info(connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
+        # Send messages
+        await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
         
         
-        await message.chat.send_message(f'❌ Ошибка! Правильный ход: *{solution_moves[user.current_puzzle_move*2]}*\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\nАнализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
+        await message.chat.send_message(f'❌ Ошибка! Правильный ход: *{solution_moves[int(check_current_puzzle_move)*2]}*\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\nАнализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
 
         await show_current_puzzle_state(ml, connection, message, user)
 
@@ -216,7 +220,7 @@ async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: te
         keyboard = telegram.InlineKeyboardMarkup([[button1]])    
         
         # Send PNG image
-        await message.chat.send_photo(buffer, caption=complile_puzzle_info(connection, puzzle), reply_markup=keyboard, parse_mode=telegram.constants.ParseMode('Markdown'))
+        await message.chat.send_photo(buffer, caption=complile_puzzle_info(ml, connection, puzzle), reply_markup=keyboard, parse_mode=telegram.constants.ParseMode('Markdown'))
 
     else:
         await message.chat.send_message('Вот ваша текущая задача')
@@ -224,5 +228,5 @@ async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: te
         user = ml.User.User(ml, connection, searchById=message.from_user.id) # type: ignore
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
 
-        await message.chat.send_message(complile_puzzle_info(connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
+        await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
         await show_current_puzzle_state(ml, connection, message, user=user) # type: ignore

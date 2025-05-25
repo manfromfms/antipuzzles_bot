@@ -4,6 +4,42 @@ import sqlite3
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.ModuleLoader import ModuleLoader
+    from src.cls.Puzzle import Puzzle
+
+
+def get_puzzle_votes(puzzle: 'Puzzle'):
+    # Get the puzzle ID
+    puzzle_id = puzzle.id
+
+    # Query to get the sum of positive and negative votes
+    query = """
+        SELECT
+            SUM(CASE WHEN vote > 0 THEN vote ELSE 0 END) AS positive_votes,
+            SUM(CASE WHEN vote < 0 THEN -vote ELSE 0 END) AS negative_votes
+        FROM puzzle_votes
+        WHERE puzzleId = ?
+    """
+
+    # Execute the query
+    cursor = puzzle.connection.cursor()
+    cursor.execute(query, (puzzle_id,))
+    result = cursor.fetchone()
+
+    # If no votes are found, return -1
+    if result is None or (result[0] is None and result[1] is None):
+        return -1
+
+    # Extract positive and negative votes
+    positive_votes = result[0] if result[0] is not None else 0
+    negative_votes = result[1] if result[1] is not None else 0
+
+    # Calculate the rating
+    if positive_votes + negative_votes == 0:
+        return -1
+
+    rating = (positive_votes - negative_votes) / (positive_votes + negative_votes)
+
+    return rating
 
 
 class PuzzleVote:
