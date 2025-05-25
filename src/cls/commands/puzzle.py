@@ -121,7 +121,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
 
             await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
 
-            await message.chat.send_message(f'✅ Верно!\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\nАнализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen.replace(' ', '%20')})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
+            await message.chat.send_message(f'✅ *Верно!*\n\n📈 Изменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\n📊 Новый рейтинг: {int(user.elo)}±{int(user.elodev)}\n🖥️ Анализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen.replace(' ', '%20')})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
 
             await show_current_puzzle_state(ml, connection, message, user)
 
@@ -147,7 +147,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
         await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
         
         
-        await message.chat.send_message(f'❌ Ошибка! Правильный ход: *{solution_moves[int(check_current_puzzle_move)*2]}*\n\nИзменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\nНовый рейтинг: {int(user.elo)}±{int(user.elodev)}\nАнализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
+        await message.chat.send_message(f'❌ *Ошибка!* Правильный ход: *{solution_moves[int(check_current_puzzle_move)*2]}*\n\n📉 Изменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\n📊 Новый рейтинг: {int(user.elo)}±{int(user.elodev)}\n🖥️ Анализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
 
         await show_current_puzzle_state(ml, connection, message, user)
 
