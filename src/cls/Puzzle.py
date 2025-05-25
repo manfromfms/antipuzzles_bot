@@ -179,6 +179,7 @@ class Puzzle:
         index_sql = [
             "CREATE INDEX IF NOT EXISTS idx_gameId ON puzzles (gameId)",
             "CREATE INDEX IF NOT EXISTS idx_turn ON puzzles (turn)",
+            "CREATE INDEX IF NOT EXISTS idx_puzzles_elo ON puzzles (elo)",
         ]
 
         self.cursor.execute(create_table_sql)
