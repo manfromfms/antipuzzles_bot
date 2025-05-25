@@ -16,6 +16,8 @@ async def start(ml: 'ModuleLoader', connection: sqlite3.Connection, message: tel
         '    Без аргументов - информация о себе\n\n' \
         '/top\n' \
         '    Без аргументов - топ игроков\n\n' \
+        '/hardest\n' \
+        '    Без аргументов - самые сложные задачи\n\n' \
         '/preferences\n' \
         '    Без аргументов - редактировать настройки\n\n' \
         'Пример использования команд с параметрами:\n`/puzzle id:1238\n\n`' \
