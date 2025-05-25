@@ -70,7 +70,7 @@ WHERE elo = (
     FROM (
         SELECT DISTINCT p.id, p.elo
         FROM puzzles p
-        LEFT JOIN solutions s ON p.id = s.puzzleId
+        INNER JOIN solutions s ON p.id = s.puzzleId
         WHERE p.id NOT IN (
             SELECT puzzleId
             FROM played
