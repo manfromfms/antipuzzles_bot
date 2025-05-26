@@ -76,6 +76,7 @@ WHERE elo = (
             FROM played
             WHERE userId = ?
         )
+        AND p.isProcessed = 1
         AND (s.puzzleId IS NULL OR s.puzzleId NOT IN (
             SELECT puzzleId
             FROM played
