@@ -64,28 +64,14 @@ class User:
     def puzzle_selection_policy(self):
         preferences = self.ml.Preferences.Preferences(self.ml, self.connection, searchByUserId=self.id)
 
-        self.cursor.execute('''SELECT * FROM puzzles
-WHERE elo = (
-    SELECT elo
-    FROM (
-        SELECT DISTINCT p.id, p.elo
-        FROM puzzles p
-        INNER JOIN solutions s ON p.id = s.puzzleId
-        WHERE p.id NOT IN (
-            SELECT puzzleId
-            FROM played
-            WHERE userId = ?
-        )
-        AND p.isProcessed = 1
-        AND (s.puzzleId IS NULL OR s.puzzleId NOT IN (
-            SELECT puzzleId
-            FROM played
-            WHERE userId = ?
-        ))
-    ) AS eligible_puzzles
-    ORDER BY ABS(elo - ?)
-    LIMIT 1
-);''', (self.id, self.id, self.elo + preferences.rating_difference,))
+        self.cursor.execute('''
+SELECT *
+FROM puzzles
+LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ?
+WHERE puzzles.isProcessed = 1 
+AND played.puzzleId IS NULL
+ORDER BY ABS(puzzles.elo - ?);
+''', (self.id, self.elo + preferences.rating_difference,))
         
         id = random.sample(self.cursor.fetchall(), 1)[0][0]
         self.select_another_puzzle(id)
