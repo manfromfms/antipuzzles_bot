@@ -156,6 +156,10 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
 async def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegram.Message, user: 'User'):
     if user.current_puzzle is None:
         return await message.reply_text('Мы не можем найти для вас задачу')
+    
+    if user.current_puzzle == 0:
+        return await message.reply_text('Похоже задачи закончились! Возможно стоит изменить выборку. Если вы считаете, что произошла ошибка, обратитесь к администратору бота @NormChell_2889.')
+
 
     puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
     solution = ml.Solution.Solution(ml, connection, puzzle, searchByPuzzleId=puzzle.id) # type: ignore

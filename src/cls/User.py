@@ -73,7 +73,12 @@ AND played.puzzleId IS NULL
 ORDER BY ABS(puzzles.elo - ?);
 ''', (self.id, self.elo + preferences.rating_difference,))
         
-        id = random.sample(self.cursor.fetchall(), 1)[0][0]
+        p = self.cursor.fetchall()
+
+        if len(p) == 0:
+            self.select_another_puzzle(0)
+        
+        id = random.sample(p, 1)[0][0]
         self.select_another_puzzle(id)
         
 
