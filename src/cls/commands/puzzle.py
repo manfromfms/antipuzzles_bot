@@ -188,7 +188,7 @@ async def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Conn
     for move in board.legal_moves:
         emoji = convert_move_to_emoji(move, board)
         button = telegram.InlineKeyboardButton(text=emoji + board.san(move), callback_data=f"Make move:{puzzle.id}:{user.current_puzzle_move}:{move.uci()}")
-        if len(rows[-1]) == 4:
+        if len(rows[-1]) == (4 if board.legal_moves.count() <= 28 else 5):
             rows.append([])
 
         rows[-1].append(button)
