@@ -23,7 +23,7 @@ class Puzzle:
         self.volatility = 0.06
         self.fen = ''
         self.openingId = 0
-        self.opening = self.ml.Opening.Opening(self.ml, self.connection)
+        self.opening = self.ml.Opening.Opening(self.ml, self.connection, searchById=self.openingId)
         self.isProcessed = False
         self.turn = True
 

@@ -16,6 +16,8 @@ import src.cls.commands.me as command_me
 import src.cls.commands.preferences as command_preferences
 import src.cls.commands.top as command_top
 import src.cls.commands.hardest as command_hardest
+import src.cls.commands.reroll as command_reroll
+import src.cls.commands.opening as command_opening
 
 from src.ModuleLoader import ModuleLoader
 ml = ModuleLoader()
@@ -96,6 +98,18 @@ async def top(update: Update, context: ContextTypes.DEFAULT_TYPE):
 app.add_handler(CommandHandler(['top'], top))
 
 
+# Handle reroll command
+async def reroll(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    connection = sqlite3.connect(db_path)
+    message = update.message
+
+    logger.info(('Command execution:', message.from_user.id, 'reroll')) # type: ignore
+    
+    await command_init.init(ml, connection, message) # type: ignore
+    await command_reroll.reroll(ml, connection, message) # type: ignore
+app.add_handler(CommandHandler(['reroll'], reroll))
+
+
 # Handle hardest command
 async def hardest(update: Update, context: ContextTypes.DEFAULT_TYPE):
     connection = sqlite3.connect(db_path)
@@ -117,7 +131,19 @@ async def preferences(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     await command_init.init(ml, connection, message) # type: ignore
     await command_preferences.preferences(ml, connection, message) # type: ignore
-app.add_handler(CommandHandler(['preferences'], preferences))
+app.add_handler(CommandHandler(['preferences', 'pref'], preferences))
+
+
+# Handle opening command
+async def opening(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    connection = sqlite3.connect(db_path)
+    message = update.message
+
+    logger.info(('Command execution:', message.from_user.id, 'opening')) # type: ignore
+    
+    await command_init.init(ml, connection, message) # type: ignore
+    await command_opening.opening(ml, connection, message) # type: ignore
+app.add_handler(CommandHandler(['opening', 'op'], opening))
 
 
 # Handle button clicks
@@ -138,6 +164,9 @@ async def callback_inline(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif 'preferences_rating_difference' in query.data: # type: ignore
         await command_preferences.update_rating_difference(ml, connection, query)
+
+    elif 'preferences_remove_opening' in query.data:
+        await command_preferences.preferences_remove_opening(ml, connection, query)
 
     elif 'puzzle vote' in query.data: # type: ignore
         vote = ml.PuzzleVote.PuzzleVote(

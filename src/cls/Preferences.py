@@ -19,6 +19,9 @@ class Preferences:
 
         self.rating_difference = 0
 
+        self.openingId = 0
+        self.opening_explicit = 0
+
         if searchByUserId != 0:
             self.cursor.execute('SELECT * FROM preferences WHERE userId=? LIMIT 1', (searchByUserId,))
 
@@ -27,7 +30,10 @@ class Preferences:
             if data is not None:
                 self.id = data[0]
                 self.userId = data[1]
+
                 self.rating_difference = data[2]
+                self.openingId = data[3]
+                self.opening_explicit = data[4]
         
 
     def update_database_entry(self):
@@ -41,13 +47,17 @@ class Preferences:
             update_query = """
                 UPDATE preferences
                 SET 
-                    rating_difference = ?
+                    rating_difference = ?,
+                    openingId = ?,
+                    opening_explicit = ?
                 WHERE (id = ?)
             """
 
             # Parameters for the update query
             update_params = (
                 self.rating_difference,
+                self.openingId,
+                self.opening_explicit,
                 self.id  # WHERE clause parameter
             )
 
@@ -67,13 +77,17 @@ class Preferences:
         insert_query = """
             INSERT INTO preferences (
                 userId,
-                rating_difference
-            ) VALUES (?, ?)
+                rating_difference,
+                openingId,
+                opening_explicit
+            ) VALUES (?, ?, ?, ?)
         """
 
         insert_params = (
             self.userId,
             self.rating_difference,
+            self.openingId,
+            self.opening_explicit,
         )
 
         self.cursor.execute(insert_query, insert_params)
@@ -105,7 +119,9 @@ class Preferences:
         CREATE TABLE IF NOT EXISTS preferences (
             id INTEGER PRIMARY KEY,
             userId INTEGER NOT NULL UNIQUE REFERENCES users (id),
-            rating_difference REAL DEFAULT 0
+            rating_difference REAL DEFAULT 0,
+            openingId INTEGER REFERENCES openings (id) DEFAULT 0,
+            opening_explicit INTEGER DEFAULT 0
         );
         """
         

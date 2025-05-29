@@ -45,6 +45,26 @@ class Opening:
             self.parentId = data[3]
 
 
+    def get_children(self):
+        ids = set([self.id])
+        result = ids
+
+        while len(ids) > 0:
+            self.cursor.execute(f'SELECT * FROM openings WHERE parentId IN ({','.join('?' * len(ids))})', list(ids))
+
+            openings = self.cursor.fetchall()
+
+            ids = set()
+
+            for o in openings:
+                if o[0] == 0:
+                    continue
+                ids.add(o[0])
+                result.add(o[0])
+
+        return list(result)
+
+
     def search_opening_by_string(self, moves_str: str):
         moves = []
         moves = moves_str.split(' ')

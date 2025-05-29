@@ -64,19 +64,40 @@ class User:
     def puzzle_selection_policy(self):
         preferences = self.ml.Preferences.Preferences(self.ml, self.connection, searchByUserId=self.id)
 
-        self.cursor.execute('''
-SELECT *
-FROM puzzles
-LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ?
-WHERE puzzles.isProcessed = 1 
-AND played.puzzleId IS NULL
-ORDER BY ABS(puzzles.elo - ?);
-''', (self.id, self.elo + preferences.rating_difference,))
+        opening_ids = []
+
+        if preferences.opening_explicit == 1 or preferences.openingId == 0:
+            opening_ids = [preferences.openingId]
+        else:
+            opening_ids = (self.ml.Opening.Opening(self.ml, self.connection, searchById=preferences.openingId)).get_children()
+
+        if preferences.openingId == 0:
+            self.cursor.execute('''
+                SELECT *
+                FROM puzzles
+                LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ?
+                WHERE puzzles.isProcessed = 1
+                AND played.puzzleId IS NULL
+                ORDER BY ABS(puzzles.elo - ?)
+            ''', (self.id, self.elo + preferences.rating_difference,))
+        else:
+            self.cursor.execute(f'''
+                SELECT *
+                FROM puzzles
+                LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ?
+                WHERE puzzles.isProcessed = 1 AND puzzles.openingId IN ({','.join('?' * len(opening_ids))})
+                AND played.puzzleId IS NULL
+                ORDER BY ABS(puzzles.elo - ?)
+            ''', [self.id] + opening_ids + [self.elo + preferences.rating_difference])
         
         p = self.cursor.fetchall()
 
         if len(p) == 0:
             self.select_another_puzzle(0)
+
+        elo = p[0][2]
+
+        p = [a for a in p if a[2] == elo]
         
         id = random.sample(p, 1)[0][0]
         self.select_another_puzzle(id)
