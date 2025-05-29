@@ -11,8 +11,14 @@ def generate_category(puzzle: Puzzle, solution: Solution) -> tuple[float, float]
     all_pieces = board.piece_map().values()
     total_pieces = len(all_pieces)
     
-    queens = sum(1 for piece in all_pieces if piece.piece_type == chess.QUEEN)
-    rooks = sum(1 for piece in all_pieces if piece.piece_type == chess.ROOK)
+    queens = min(
+        sum(1 for piece in all_pieces if piece.piece_type == chess.QUEEN and piece.color == chess.WHITE),
+        sum(1 for piece in all_pieces if piece.piece_type == chess.QUEEN and piece.color == chess.BLACK)
+    )*0.9
+    rooks = min(
+        sum(1 for piece in all_pieces if piece.piece_type == chess.ROOK and piece.color == chess.WHITE),
+        sum(1 for piece in all_pieces if piece.piece_type == chess.ROOK and piece.color == chess.BLACK)
+    )*0.7
     
     # Here each queen gives one upvote where each missing piece gives 0.15 downvotes
-    return (32-total_pieces)*0.075, (queens+rooks)
+    return (32-total_pieces)*0.4, (queens+rooks)

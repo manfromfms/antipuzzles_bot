@@ -43,15 +43,15 @@ def generate_category(puzzle: Puzzle, solution: Solution) -> tuple[float, float]
 
         if board.is_capture(move):
             if board.turn == player:
-                down += 0.15**(i - len(moves) + 1)
+                down += 0.08**(i - len(moves) + 1)
             else:
-                up += 0.15**(i - len(moves) + 1)
+                up += 0.2**(i - len(moves) + 1)
 
         else:
             if board.turn == player:
-                up += 0.05**(i - len(moves) + 1)
+                up += 0.03**(i - len(moves) + 1)
             else:
-                down += 0.15**(i - len(moves) + 1)
+                down += 0.08**(i - len(moves) + 1)
 
         board.push(move)
 

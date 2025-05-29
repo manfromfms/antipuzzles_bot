@@ -21,4 +21,4 @@ def generate_category(puzzle: Puzzle, solution: Solution) -> tuple[float, float]
     )*3
     
     # Here each queen gives one upvote where each missing piece gives 0.15 downvotes
-    return max(7-abs(6-queens-rooks), 0), abs(18-total_pieces)*0.1
+    return max(4-abs(10-queens-rooks), 0), abs(18-total_pieces)*0.1

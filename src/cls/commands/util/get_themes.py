@@ -33,6 +33,14 @@ def get_themes(ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: 'Puzz
             'Зачистка',
             (theme.cleaning_upvotes - theme.cleaning_downvotes) / (theme.cleaning_upvotes + theme.cleaning_downvotes),
         ],
+        [
+            'Queen Race',
+            (theme.queenrace_upvotes - theme.queenrace_downvotes) / (theme.queenrace_upvotes + theme.queenrace_downvotes),
+        ],
+        [
+            'Превращение пешки',
+            (theme.promotion_upvotes - theme.promotion_downvotes) / (theme.promotion_upvotes + theme.promotion_downvotes),
+        ],
     ]
 
     return sorted(themes, key=lambda x: x[1], reverse=True)
