@@ -74,7 +74,7 @@ if __name__ == "__main__":
                 print('Reading', file_path)
                 positions = read_file(file_path, connection)
         
-        process_db(connection)
+            process_db(connection)
     else:
         process_db(connection)
 
