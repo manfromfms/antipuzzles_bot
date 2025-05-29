@@ -125,6 +125,10 @@ class Solution:
                     result[0].insert(0, engine_move)
                     result[0].insert(0, moves[0])
 
+                else:
+                    result[1].insert(0, engine_move)
+                    result[1].insert(0, moves[0])
+
                 return result
             else:
                 print('Stop due to lack of moves for engine')
