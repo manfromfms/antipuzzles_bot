@@ -54,10 +54,25 @@ if __name__ == "__main__":
     connection.commit()
 
     if len(sys.argv) > 1:
-        file_path = sys.argv[1]
-        if os.path.isfile(file_path):
-            print('Reading', file_path)
-            positions = read_file(file_path, connection)
+        if sys.argv[1] == 'themes':
+            print('Updating themes')
+
+            cursor.execute('SELECT id FROM themes')
+            data = cursor.fetchall()
+
+            empty_puzzle = ml.Puzzle.Puzzle(ml, connection)
+            empty_solution = ml.Solution.Solution(ml, connection, empty_puzzle)
+
+            for (id,) in tqdm(data):
+                theme = ml.Theme.Theme(ml, connection, empty_puzzle, empty_solution, searchById=id)
+
+                theme.generate()
+
+        else:
+            file_path = sys.argv[1]
+            if os.path.isfile(file_path):
+                print('Reading', file_path)
+                positions = read_file(file_path, connection)
         
         process_db(connection)
     else:

@@ -5,6 +5,7 @@ import sqlite3
 import src.cls.themes.theme_opening as theme_opening
 import src.cls.themes.theme_middlegame as theme_middlegame
 import src.cls.themes.theme_endgame as theme_endgame
+import src.cls.themes.theme_zugzwang as theme_zugzwang
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -13,9 +14,9 @@ if TYPE_CHECKING:
     from src.cls.Puzzle import Puzzle
 
 class Theme:
-    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: Puzzle, solution: Solution):
+    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: Puzzle, solution: Solution, searchById=0, searchByPuzzleId=0):
         
-        self.id = 0
+        self.id = searchById
 
         self.connection = connection
         self.cursor = self.connection.cursor()
@@ -41,12 +42,52 @@ class Theme:
         self.endgame_upvotes = 0
         self.endgame_downvotes = 1
 
+        self.zugzwang_upvotes = 0
+        self.zugzwang_downvotes = 1
+
+        if searchById != 0 or searchByPuzzleId != 0:
+
+            if searchById != 0:
+                self.cursor.execute('SELECT * FROM themes WHERE id = ?', (searchById,))
+            elif searchByPuzzleId != 0:
+                self.cursor.execute('SELECT * FROM themes WHERE puzzleId = ?', (searchByPuzzleId,))
+
+            data = self.cursor.fetchone()
+
+            if data is None:
+                return
+
+            self.id = data[0]
+
+            self.puzzleId = data[1]
+            self.solutionId = data[2]
+
+            self.puzzle = ml.Puzzle.Puzzle(self.ml, self.connection, searchById=self.puzzleId)
+            self.solution = ml.Solution.Solution(self.ml, self.connection, self.puzzle, searchByPuzzleId=self.puzzleId)
+
+            self.isValid = data[3]
+
+            # Categories list (default downvotes for category is 1 so that corresponding category is rated as -1)
+            # Before adding new category it has to be added to the db structure
+            self.opening_upvotes = data[4]
+            self.opening_downvotes = data[5]
+
+            self.middlegame_upvotes = data[6]
+            self.middlegame_downvotes = data[7]
+
+            self.endgame_upvotes = data[8]
+            self.endgame_downvotes = data[9]
+
+            self.zugzwang_upvotes = data[10]
+            self.zugzwang_downvotes = data[11]
+
 
     def generate(self):
         # Call all selected categories
         self.opening_upvotes, self.opening_downvotes = theme_opening.generate_category(self.puzzle, self.solution)
         self.middlegame_upvotes, self.middlegame_downvotes = theme_middlegame.generate_category(self.puzzle, self.solution)
         self.endgame_upvotes, self.endgame_downvotes = theme_endgame.generate_category(self.puzzle, self.solution)
+        self.zugzwang_upvotes, self.zugzwang_downvotes = theme_zugzwang.generate_category(self.puzzle, self.solution)
 
         # Finish generation by updating the db entry
         self.update_database_entry()
@@ -75,7 +116,10 @@ class Theme:
                     middlegame_downvotes = ?,
                     
                     endgame_upvotes = ?,
-                    endgame_downvotes = ?
+                    endgame_downvotes = ?,
+                    
+                    zugzwang_upvotes = ?,
+                    zugzwang_downvotes = ?
                 WHERE id = ?
             """
 
@@ -94,6 +138,9 @@ class Theme:
 
                 self.endgame_upvotes,
                 self.endgame_downvotes,
+
+                self.zugzwang_upvotes,
+                self.zugzwang_downvotes,
 
                 self.id  # WHERE clause parameter
             )
@@ -124,8 +171,11 @@ class Theme:
                 middlegame_downvotes,
 
                 endgame_upvotes,
-                endgame_downvotes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                endgame_downvotes,
+                    
+                zugzwang_upvotes,
+                zugzwang_downvotes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         insert_params = (
@@ -142,6 +192,9 @@ class Theme:
 
             self.endgame_upvotes,
             self.endgame_downvotes,
+
+            self.zugzwang_upvotes,
+            self.zugzwang_downvotes,
         )
 
         self.cursor.execute(insert_query, insert_params)
@@ -178,7 +231,10 @@ class Theme:
             middlegame_downvotes REAL DEFAULT 1,
 
             endgame_upvotes REAL DEFAULT 0,
-            endgame_downvotes REAL DEFAULT 1
+            endgame_downvotes REAL DEFAULT 1,
+
+            zugzwang_upvotes REAL DEFAULT 0,
+            zugzwang_downvotes REAL DEFAULT 1
         );
         """
         

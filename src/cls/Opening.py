@@ -129,7 +129,7 @@ class Opening:
         for opening in openings_list:
             self.cursor.execute(insert_sql, opening)
 
-        self.cursor.execute('INSERT INTO openings (id, name, sequence) VALUES (?, ?, ?)', (0, '', ''))
+        self.cursor.execute('INSERT INTO openings (id, name, sequence) VALUES (?, ?, ?) ON CONFLICT DO NOTHING', (0, '', ''))
 
         self.fix_openings_parents()
 
