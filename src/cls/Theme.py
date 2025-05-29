@@ -6,6 +6,7 @@ import src.cls.themes.theme_opening as theme_opening
 import src.cls.themes.theme_middlegame as theme_middlegame
 import src.cls.themes.theme_endgame as theme_endgame
 import src.cls.themes.theme_zugzwang as theme_zugzwang
+import src.cls.themes.theme_cleaning as theme_cleaning
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -45,6 +46,9 @@ class Theme:
         self.zugzwang_upvotes = 0
         self.zugzwang_downvotes = 1
 
+        self.cleaning_upvotes = 0
+        self.cleaning_downvotes = 1
+
         if searchById != 0 or searchByPuzzleId != 0:
 
             if searchById != 0:
@@ -81,6 +85,9 @@ class Theme:
             self.zugzwang_upvotes = data[10]
             self.zugzwang_downvotes = data[11]
 
+            self.cleaning_upvotes = data[12]
+            self.cleaning_downvotes = data[13]
+
 
     def generate(self):
         # Call all selected categories
@@ -88,6 +95,7 @@ class Theme:
         self.middlegame_upvotes, self.middlegame_downvotes = theme_middlegame.generate_category(self.puzzle, self.solution)
         self.endgame_upvotes, self.endgame_downvotes = theme_endgame.generate_category(self.puzzle, self.solution)
         self.zugzwang_upvotes, self.zugzwang_downvotes = theme_zugzwang.generate_category(self.puzzle, self.solution)
+        self.cleaning_upvotes, self.cleaning_downvotes = theme_cleaning.generate_category(self.puzzle, self.solution)
 
         # Finish generation by updating the db entry
         self.update_database_entry()
@@ -119,7 +127,10 @@ class Theme:
                     endgame_downvotes = ?,
                     
                     zugzwang_upvotes = ?,
-                    zugzwang_downvotes = ?
+                    zugzwang_downvotes = ?,
+                    
+                    cleaning_upvotes = ?,
+                    cleaning_downvotes = ?
                 WHERE id = ?
             """
 
@@ -141,6 +152,9 @@ class Theme:
 
                 self.zugzwang_upvotes,
                 self.zugzwang_downvotes,
+
+                self.cleaning_upvotes,
+                self.cleaning_downvotes,
 
                 self.id  # WHERE clause parameter
             )
@@ -174,8 +188,11 @@ class Theme:
                 endgame_downvotes,
                     
                 zugzwang_upvotes,
-                zugzwang_downvotes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                zugzwang_downvotes,
+                    
+                cleaning_upvotes,
+                cleaning_downvotes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         insert_params = (
@@ -195,6 +212,9 @@ class Theme:
 
             self.zugzwang_upvotes,
             self.zugzwang_downvotes,
+
+            self.cleaning_upvotes,
+            self.cleaning_downvotes,
         )
 
         self.cursor.execute(insert_query, insert_params)
@@ -234,7 +254,10 @@ class Theme:
             endgame_downvotes REAL DEFAULT 1,
 
             zugzwang_upvotes REAL DEFAULT 0,
-            zugzwang_downvotes REAL DEFAULT 1
+            zugzwang_downvotes REAL DEFAULT 1,
+
+            cleaning_upvotes REAL DEFAULT 0,
+            cleaning_downvotes REAL DEFAULT 1
         );
         """
         

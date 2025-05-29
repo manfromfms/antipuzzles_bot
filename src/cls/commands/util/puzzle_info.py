@@ -29,14 +29,12 @@ def complile_puzzle_info(ml: 'ModuleLoader', connection: sqlite3.Connection, puz
     if full:
         themes = get_themes(ml, connection, puzzle)
 
-        print(themes)
-
         s += '''\n🔎 *Темы:*'''
 
         for theme in themes:
             if theme[1] < 0:
                 break
 
-            s += f'\n    {theme[0]} - {int(theme[1]*10)/10}'
+            s += f'\n    {theme[0]}: `{int(theme[1]*10)/10}`'
 
     return s
