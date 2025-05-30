@@ -12,7 +12,7 @@ async def top(ml: 'ModuleLoader', connection: sqlite3.Connection, message: teleg
     cursor.execute('''
         SELECT id, nickname, elo, elodev,
             ROW_NUMBER() OVER (ORDER BY elo DESC) as rank
-        FROM users
+        FROM users WHERE elo != 1000
         ORDER BY elo DESC
     ''')
     data = cursor.fetchall()

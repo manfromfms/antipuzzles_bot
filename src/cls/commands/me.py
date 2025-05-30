@@ -37,7 +37,7 @@ async def me(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegr
     poly = lambda x, a, b, c: a + b*x + c*x**2
 
     x = np.array(list(range(max(len(elo)+1-50, 1), len(elo)+1)))
-    popt, _ = curve_fit(poly, x, elo[max(len(elo)-50, 1):len(elo)])
+    popt, _ = curve_fit(poly, x, elo[max(len(elo)-50, 0):len(elo)])
     y = poly(x, popt[0], popt[1], popt[2])
 
     # Draw a plot
