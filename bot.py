@@ -42,6 +42,7 @@ logger = logging.getLogger()
 (ml.User.User(ml, sqlite3.connect(db_path))).setup_database_structure_played()
 (ml.Preferences.Preferences(ml, sqlite3.connect(db_path))).setup_database_structure()
 (ml.PuzzleVote.PuzzleVote(ml, sqlite3.connect(db_path))).setup_database_structure()
+(ml.Puzzle.Puzzle(ml, sqlite3.connect(db_path))).setup_database_structure_telegramImageId()
 
 app = ApplicationBuilder()\
     .token((os.getenv('telegram_token')\

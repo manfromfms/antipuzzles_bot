@@ -15,31 +15,31 @@ def get_themes(ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: 'Puzz
     themes = [
         [
             'Дебют',
-            (theme.opening_upvotes - theme.opening_downvotes) / (theme.opening_upvotes + theme.opening_downvotes),
+            0 if (theme.opening_upvotes + theme.opening_downvotes) == 0 else (theme.opening_upvotes - theme.opening_downvotes) / (theme.opening_upvotes + theme.opening_downvotes),
         ],
         [
             'Миттельшпиль',
-            (theme.middlegame_upvotes - theme.middlegame_downvotes) / (theme.middlegame_upvotes + theme.middlegame_downvotes),
+            0 if (theme.middlegame_upvotes + theme.middlegame_downvotes) == 0 else (theme.middlegame_upvotes - theme.middlegame_downvotes) / (theme.middlegame_upvotes + theme.middlegame_downvotes),
         ],
         [
             'Эндшпль',
-            (theme.endgame_upvotes - theme.endgame_downvotes) / (theme.endgame_upvotes + theme.endgame_downvotes),
+            0 if (theme.endgame_upvotes + theme.endgame_downvotes) == 0 else (theme.endgame_upvotes - theme.endgame_downvotes) / (theme.endgame_upvotes + theme.endgame_downvotes),
         ],
         [
             'Цугцванг',
-            (theme.zugzwang_upvotes - theme.zugzwang_downvotes) / (theme.zugzwang_upvotes + theme.zugzwang_downvotes),
+            0 if (theme.zugzwang_upvotes + theme.zugzwang_downvotes) == 0 else (theme.zugzwang_upvotes - theme.zugzwang_downvotes) / (theme.zugzwang_upvotes + theme.zugzwang_downvotes),
         ],
         [
             'Зачистка',
-            (theme.cleaning_upvotes - theme.cleaning_downvotes) / (theme.cleaning_upvotes + theme.cleaning_downvotes),
+            0 if (theme.cleaning_upvotes + theme.cleaning_downvotes) == 0 else (theme.cleaning_upvotes - theme.cleaning_downvotes) / (theme.cleaning_upvotes + theme.cleaning_downvotes),
         ],
         [
             'Queen Race',
-            (theme.queenrace_upvotes - theme.queenrace_downvotes) / (theme.queenrace_upvotes + theme.queenrace_downvotes),
+            0 if (theme.queenrace_upvotes + theme.queenrace_downvotes) == 0 else (theme.queenrace_upvotes - theme.queenrace_downvotes) / (theme.queenrace_upvotes + theme.queenrace_downvotes),
         ],
         [
             'Превращение пешки',
-            (theme.promotion_upvotes - theme.promotion_downvotes) / (theme.promotion_upvotes + theme.promotion_downvotes),
+            0 if (theme.promotion_upvotes + theme.promotion_downvotes) == 0 else (theme.promotion_upvotes - theme.promotion_downvotes) / (theme.promotion_upvotes + theme.promotion_downvotes),
         ],
     ]
 
