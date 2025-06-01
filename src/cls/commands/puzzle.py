@@ -19,6 +19,7 @@ from src.cls.commands.util.convert_args import *
 from src.cls.commands.util.puzzle_info import complile_puzzle_info
 from src.cls.commands.util.move_to_emoji import convert_move_to_emoji
 from src.cls.commands.util.rating_calc import calculate_rating_changes
+import src.cls.commands.util.get_file_id as tgfid
 
 
 async def select_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Connection, query: telegram.InlineQuery):
@@ -176,13 +177,20 @@ async def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Conn
 
     lastmove = chess.Move.from_uci(solution_moves[user.current_puzzle_move*2-1]) if user.current_puzzle_move > 0 else None
 
-    svg = chess.svg.board(board, flipped=not chess.variant.AntichessBoard(puzzle.fen).turn, lastmove=lastmove) # type: ignore
-        
-    with Image(blob=svg.encode('utf-8'), format="svg") as img:
-        img.format = "png"
-        png_bytes = img.make_blob()
+    buffer = ''
 
-    buffer = BytesIO(png_bytes) # type: ignore
+    # Check if position has file_id in telegram
+    file_id = tgfid.get_file_id(connection, board.fen())
+    if file_id is not None:
+        buffer = file_id
+    else:
+        svg = chess.svg.board(board, flipped=not chess.variant.AntichessBoard(puzzle.fen).turn, lastmove=lastmove) # type: ignore
+            
+        with Image(blob=svg.encode('utf-8'), format="svg") as img:
+            img.format = "png"
+            png_bytes = img.make_blob()
+
+        buffer = BytesIO(png_bytes) # type: ignore
 
     rows = [[]]
     for move in board.legal_moves:
@@ -196,7 +204,10 @@ async def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Conn
     keyboard = telegram.InlineKeyboardMarkup(rows)         
                
     # Send PNG image
-    await message.chat.send_photo(buffer, caption=f'{'⚪' if board.turn == chess.WHITE else '⬛'} *Найдите лучший ход за {'белых' if board.turn == chess.WHITE else 'черных'}* {'⬜' if board.turn == chess.WHITE else '⚫'}', reply_markup=keyboard, parse_mode='markdown')
+    msg = await message.chat.send_photo(buffer, caption=f'{'⚪' if board.turn == chess.WHITE else '⬛'} *Найдите лучший ход за {'белых' if board.turn == chess.WHITE else 'черных'}* {'⬜' if board.turn == chess.WHITE else '⚫'}', reply_markup=keyboard, parse_mode='markdown')
+
+    if file_id is None and len(msg.photo) > 0:
+        tgfid.add_file_id(connection, board.fen(), msg.photo[0].file_id)
 
 
 async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegram.Message):
