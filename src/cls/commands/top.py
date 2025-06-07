@@ -19,7 +19,7 @@ async def top(ml: 'ModuleLoader', connection: sqlite3.Connection, message: teleg
 
     medals = ['🥇', '🥈', '🥉']
 
-    s = ''''''
+    s = '''*---------------- ✨ ТОП 5 ✨ ----------------*\n'''
 
     # Display top 5 users
     for i in range(5):
@@ -46,7 +46,7 @@ async def top(ml: 'ModuleLoader', connection: sqlite3.Connection, message: teleg
 '''
 
     elif u[4] > 6:
-        s += '-----------------------------------------------\n'
+        s += '''\n*---------- 🔗 ВАШ РЕЙТИНГ 🔗 ----------*\n'''
 
         s += f'''
 {str(u[4]-1) + ') '}*{data[u[4]-2][1]}*
