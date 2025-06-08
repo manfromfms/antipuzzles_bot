@@ -62,7 +62,7 @@ class Solution:
 
         print(board.fen())
 
-        engine.configure({'Hash': os.getenv('ffish_Threads'), 'Hash': os.getenv('ffish_Threads')})
+        engine.configure({'Threads': os.getenv('ffish_Threads'), 'Hash': os.getenv('ffish_Hash')})
 
         # 2 seconds for initial analysis
         info = engine.analyse(board, chess.engine.Limit(time=2))
