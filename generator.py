@@ -23,7 +23,15 @@ def read_file(file_path, connection: sqlite3.Connection):
 def process_db(connection: sqlite3.Connection):
     puzzles = (ml.Puzzle.Puzzle(ml, connection)).select_puzzles('SELECT id, isProcessed FROM puzzles WHERE isProcessed = 0 LIMIT 1000000')
 
-    for puzzle in tqdm(puzzles):
+    for puzzle in tqdm(puzzles, unit='puzzle'):
+        puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=puzzle.id)
+
+        if puzzle.isProcessed != 0:
+            continue
+
+        puzzle.isProcessed = -1
+        puzzle.update_database_entry()
+
         solution = ml.Solution.Solution(ml, connection, puzzle)
 
         solution.generate()
@@ -74,9 +82,11 @@ if __name__ == "__main__":
                 print('Reading', file_path)
                 positions = read_file(file_path, connection)
         
-            process_db(connection)
+            if 'nogen' not in sys.argv:
+                process_db(connection)
     else:
-        process_db(connection)
+        if 'nogen' not in sys.argv:
+            process_db(connection)
 
     # Cleanup games table
     print('Cleaning up games table')
