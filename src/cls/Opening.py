@@ -44,6 +44,47 @@ class Opening:
             self.sequence = data[2]
             self.parentId = data[3]
 
+    
+    def get_children_class(self):
+        l = self.get_children_first()
+
+        return [Opening(self.ml, self.connection, searchById=id) for id in l]
+    
+
+    def count_puzzles(self):
+        l = self.get_children()
+
+        self.cursor.execute(f'SELECT count(*) FROM puzzles WHERE openingId IN ({','.join('?' * len(l))})', list(l))
+
+        return self.cursor.fetchone()[0]
+    
+
+    def count_puzzles_solved(self, userId=0):
+        l = self.get_children()
+
+        if userId == 0:
+            self.cursor.execute(f'SELECT count(*) FROM puzzles WHERE EXISTS (SELECT 1 FROM played WHERE played.puzzleId = puzzles.id) AND puzzles.openingId IN ({','.join('?' * len(l))})', list(l))
+        else:
+            i = list(l)
+            i = [userId] + i
+            self.cursor.execute(f'SELECT count(*) FROM puzzles WHERE EXISTS (SELECT 1 FROM played WHERE played.puzzleId = puzzles.id AND played.userId = ?) AND puzzles.openingId IN ({','.join('?' * len(l))})', i)
+
+        return self.cursor.fetchone()[0]
+    
+
+    def get_children_first(self):
+        self.cursor.execute(f'SELECT * FROM openings WHERE parentId = ?', (self.id,))
+
+        openings = self.cursor.fetchall()
+
+        ids = set()
+
+        for o in openings:
+            if o[0] == 0:
+                continue
+            ids.add(o[0])
+
+        return list(ids)
 
     def get_children(self):
         ids = set([self.id])

@@ -7,7 +7,7 @@ import telegram
 
 async def start(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegram.Message):
     await message.reply_markdown('Бот с задачами по antichess.\n' \
-        '[GitHub](https://github.com/manfromfms/antipuzzles_bot)\n\n' \
+        '[GitHub](https://github.com/manfromfms/antipuzzles_bot/wiki/RU)\n\n' \
         'Список команд:\n\n' \
         '/puzzle /p\n' \
         '    Без аргументов - отобразить текущую позицию и информацию о текущей задаче\n' \

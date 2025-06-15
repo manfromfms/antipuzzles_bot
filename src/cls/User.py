@@ -78,8 +78,8 @@ class User:
                 LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ?
                 WHERE puzzles.isProcessed = 1
                 AND played.puzzleId IS NULL
-                ORDER BY ABS(puzzles.elo - ?)
-            ''', (self.id, self.elo + preferences.rating_difference,))
+                ORDER BY MAX(ABS(puzzles.elo + puzzles.elodev/3 - ?), ABS(puzzles.elo - puzzles.elodev/3 - ?)) ASC
+            ''', (self.id, self.elo + preferences.rating_difference, self.elo + preferences.rating_difference))
         else:
             self.cursor.execute(f'''
                 SELECT *
@@ -87,13 +87,15 @@ class User:
                 LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ?
                 WHERE puzzles.isProcessed = 1 AND puzzles.openingId IN ({','.join('?' * len(opening_ids))})
                 AND played.puzzleId IS NULL
-                ORDER BY ABS(puzzles.elo - ?)
-            ''', [self.id] + opening_ids + [self.elo + preferences.rating_difference])
+                ORDER BY MAX(ABS(puzzles.elo + puzzles.elodev/3 - ?), ABS(puzzles.elo - puzzles.elodev/3 - ?)) ASC
+            ''', [self.id] + opening_ids + [self.elo + preferences.rating_difference, self.elo + preferences.rating_difference])
         
         p = self.cursor.fetchall()
 
         if len(p) == 0:
             self.select_another_puzzle(0)
+
+            return 1
 
         elo = p[0][2]
 
@@ -101,6 +103,8 @@ class User:
         
         id = random.sample(p, 1)[0][0]
         self.select_another_puzzle(id)
+
+        return 0
         
 
     def update_database_entry(self):

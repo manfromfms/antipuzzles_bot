@@ -22,6 +22,8 @@ async def hardest(ml: 'ModuleLoader', connection: sqlite3.Connection, message: t
 
     buttons = [[]]
 
+    s = '🔥 Самые *сложные* задачи 🔥'
+
     for puzzle in data:
         buttons[-1].append(
             telegram.InlineKeyboardButton(f'{puzzle[0]}: {int(puzzle[2])}±{int(puzzle[3])}', callback_data=f"Switch to puzzle:{puzzle[0]} ")
@@ -30,6 +32,15 @@ async def hardest(ml: 'ModuleLoader', connection: sqlite3.Connection, message: t
         if len(buttons[-1]) >= 3:
             buttons.append([])
 
+        cursor.execute('SELECT count(*) FROM played WHERE puzzleId = ?', (puzzle[0],))
+        count = cursor.fetchone()[0]
+
+        s += f'''
+id: `{puzzle[0]}`
+    Попыток: `{count}`
+    Рейтинг: `{int(puzzle[2])}±{int(puzzle[3])}`
+'''
+
     keyboard = telegram.InlineKeyboardMarkup(buttons)
 
-    await message.chat.send_message('🔥 Самые *сложные* задачи 🔥', reply_markup=keyboard, parse_mode='markdown')
+    await message.chat.send_message(s, reply_markup=keyboard, parse_mode='markdown')

@@ -54,12 +54,12 @@ if __name__ == "__main__":
     connection = db.create_db('./puzzles.db')
 
     db_setup(connection)
-
-    # Cleanup games table
-    print('Cleaning up games table')
     cursor = connection.cursor()
+
+    # Cleanup games table (removed from the beginning for better multithread performance)
+    '''print('Cleaning up games table')
     cursor.execute('DELETE FROM games WHERE id NOT IN (SELECT gameId FROM puzzles)')
-    connection.commit()
+    connection.commit()'''
 
     if len(sys.argv) > 1:
         if sys.argv[1] == 'themes':

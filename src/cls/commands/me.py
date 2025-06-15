@@ -23,8 +23,19 @@ async def me(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegr
 
     # Get all puzzles with elochange != 0
     cursor = connection.cursor()
-    cursor.execute('SELECT elochange FROM played WHERE userId=? AND elochange!=0', (user.id,))
 
+    cursor.execute('SELECT count(*) FROM played WHERE userId=?', (user.id,))
+    countall = cursor.fetchone()[0]
+
+    cursor.execute('SELECT count(*) FROM played WHERE userId=? AND elochange > 0', (user.id,))
+    countpositive = cursor.fetchone()[0]
+
+    if countall == 0:
+        await message.reply_text('Сначала стоит решить несколько задач!')
+
+        return
+
+    cursor.execute('SELECT elochange FROM played WHERE userId=? AND elochange!=0', (user.id,))
 
     # Convert to array of elo
     changes = [i[0] for i in cursor.fetchall()]
@@ -79,7 +90,7 @@ async def me(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegr
 
 
     # Send additional data
-    cursor.execute('SELECT count(*) FROM played WHERE userId=?', (user.id,))
-    count = cursor.fetchone()[0]
 
-    await message.chat.send_photo(buf1, caption=f'📊 *Рейтинг*: `{int(user.elo)}±{int(user.elodev)}`\n🧮 *Решено задач*: `{count}`\nДинамика рейтинга: {int(10*(popt[1] + 2*popt[2]*x[-1]))/10} elo/задача\nГрафик построен за {elapsed_ms}мс', parse_mode='markdown')
+    await message.chat.send_photo(buf2)
+
+    await message.chat.send_photo(buf1, caption=f'📊 *Рейтинг*: `{int(user.elo)}±{int(user.elodev)}`\n🧮 *Верно решено задач*: `{countpositive}/{countall} ({int(countpositive/countall*100)}%)`\nДинамика рейтинга: {int(10*(popt[1] + 2*popt[2]*x[-1]))/10} elo/задача\nГрафик построен за {elapsed_ms}мс', parse_mode='markdown')

@@ -1,0 +1,9 @@
+-- database: ./puzzles.db
+
+SELECT 
+    p.id,
+    COUNT(m.puzzleId) as match_count
+FROM puzzles p
+LEFT JOIN played m ON m.puzzleId = p.id
+GROUP BY p.id
+ORDER BY match_count DESC;

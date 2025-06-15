@@ -14,13 +14,17 @@ def complile_puzzle_info(ml: 'ModuleLoader', connection: sqlite3.Connection, puz
     cursor.execute('SELECT COUNT(*) FROM played WHERE puzzleId = ?;', (puzzle.id,))
     count = cursor.fetchone()[0]
 
+    cursor = connection.cursor()
+    cursor.execute('SELECT COUNT(*) FROM played WHERE puzzleId = ? AND elochange >= 0;', (puzzle.id,))
+    success = cursor.fetchone()[0]
+
     vote = ml.PuzzleVote.get_puzzle_votes(puzzle)
     
     s = f'''
 ℹ️ *Задача id:{puzzle.id}*
 
 📊 *Рейтинг:*  `{int(puzzle.elo)}±{int(puzzle.elodev)}`
-✅ *Решено:*  {count} раз
+✅ *Решено:*  {success}/{count}
 ⚔️ *Партия:*  {'*' if game.Result.split('-')[0] == '1' else ''}[{game.White}]{'*' if game.Result.split('-')[0] == '1' else ''} vs {'*' if game.Result.split('-')[1] == '1' else ''}[{game.Black}]{'*' if game.Result.split('-')[1] == '1' else ''}
 📖 *Дебют:* {puzzle.opening.name + f' ({puzzle.openingId})' if puzzle.openingId != 0 else 'Без дебюта'}
 🔗 *Оценка:* {int(vote*10)/10}

@@ -84,6 +84,10 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
     check_current_puzzle = query.data.split(':')[1] # type: ignore
     check_current_puzzle_move = query.data.split(':')[2] # type: ignore
 
+    if user.pgroup > 1000:
+        await message.chat.send_message('У вас нет доступа к решению задач. Если вы считате, что произошла ошибка - свяжитесь с ответственным за бота.')
+        return
+
 
     if user.current_puzzle_move != int(check_current_puzzle_move):
         await message.chat.send_message('Это уже старая позиция! Возможно стоит запросить позицию заново: /puzzle')
@@ -196,7 +200,7 @@ async def show_current_puzzle_state(ml: 'ModuleLoader', connection: sqlite3.Conn
     for move in board.legal_moves:
         emoji = convert_move_to_emoji(move, board)
         button = telegram.InlineKeyboardButton(text=emoji + board.san(move), callback_data=f"Make move:{puzzle.id}:{user.current_puzzle_move}:{move.uci()}")
-        if len(rows[-1]) == (4 if board.legal_moves.count() <= 28 else 5):
+        if len(rows[-1]) == (4 if board.legal_moves.count() <= 24 else 5):
             rows.append([])
 
         rows[-1].append(button)

@@ -1,0 +1,13 @@
+-- database: ./puzzles.db
+
+SELECT 
+    played.id,
+    played.elochange,
+    puzzles.id as puzzleId,
+    puzzles.elo,
+    puzzles.elodev
+FROM played
+LEFT JOIN puzzles ON puzzles.id = played.puzzleId
+WHERE played.userId = 1505427158
+AND played.elochange != 0
+ORDER BY played.id DESC;

@@ -33,7 +33,7 @@ async def preferences(ml: 'ModuleLoader', connection: sqlite3.Connection, messag
             telegram.InlineKeyboardButton('+300', callback_data='preferences_rating_difference:300'),
         ],
         [
-            telegram.InlineKeyboardButton('Убрать выбор дебюта', callback_data='preferences_remove_opening'),
+            telegram.InlineKeyboardButton('Отменить выбор дебюта', callback_data='preferences_remove_opening'),
         ]
     ]
 

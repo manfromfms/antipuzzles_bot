@@ -69,6 +69,10 @@ def get_themes_performance(ml: 'ModuleLoader', connection: sqlite3.Connection, u
             'Превращение пешки',
             get_single_theme(cursor, 'promotion', user.id),
         ],
+        [
+            'Взятие на проходе',
+            get_single_theme(cursor, 'enpassant', user.id),
+        ],
     ]
 
     return sorted(themes, key=lambda x: x[1], reverse=True)

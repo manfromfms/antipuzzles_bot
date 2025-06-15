@@ -177,6 +177,12 @@ async def callback_inline(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         vote.another_vote(float(query.data.split(':')[2])) 
 
+    elif 'show opening' in query.data:
+        await command_opening.opening_button(ml, connection, query)
+
+    elif 'select opening' in query.data:
+        await command_opening.select_opening(ml, connection, query)
+
     await query.answer() # type: ignore
 app.add_handler(CallbackQueryHandler(callback_inline))
 

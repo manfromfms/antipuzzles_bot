@@ -41,6 +41,10 @@ def get_themes(ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: 'Puzz
             'Превращение пешки',
             0 if (theme.promotion_upvotes + theme.promotion_downvotes) == 0 else (theme.promotion_upvotes - theme.promotion_downvotes) / (theme.promotion_upvotes + theme.promotion_downvotes),
         ],
+        [
+            'Взятие на проходе',
+            0 if (theme.enpassant_upvotes + theme.enpassant_downvotes) == 0 else (theme.enpassant_upvotes - theme.enpassant_downvotes) / (theme.enpassant_upvotes + theme.enpassant_downvotes),
+        ],
     ]
 
     return sorted(themes, key=lambda x: x[1], reverse=True)

@@ -9,7 +9,7 @@ import chess.engine
 
 import os
 from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
+load_dotenv(find_dotenv('.env'))
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -62,7 +62,8 @@ class Solution:
 
         print(board.fen())
 
-        engine.configure({'Threads': os.getenv('ffish_Threads'), 'Hash': os.getenv('ffish_Hash')})
+        #engine.configure({'Threads': os.getenv('ffish_Threads'), 'Hash': os.getenv('ffish_Hash')})
+        engine.configure({'Threads': 1, 'Hash': 64})
 
         # 2 seconds for initial analysis
         info = engine.analyse(board, chess.engine.Limit(time=2))
