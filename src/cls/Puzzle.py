@@ -26,6 +26,7 @@ class Puzzle:
         self.opening = self.ml.Opening.Opening(self.ml, self.connection, searchById=self.openingId)
         self.isProcessed = False
         self.turn = True
+        self.moveTime = 0
 
         self.game = self.ml.Game.Game(self.ml, self.connection)
 
@@ -45,6 +46,7 @@ class Puzzle:
             self.openingId = data[6]
             self.isProcessed = data[7]
             self.turn = data[8]
+            self.moveTime = data[9]
 
             self.opening = self.ml.Opening.Opening(self.ml, connection, searchById=self.openingId)
 
@@ -90,7 +92,8 @@ class Puzzle:
                     fen = ?,
                     openingId = ?,
                     isProcessed = ?,
-                    turn = ?
+                    turn = ?,
+                    moveTime = ?
                 WHERE (id = ?)
             """
 
@@ -104,6 +107,7 @@ class Puzzle:
                 self.openingId,
                 self.isProcessed,
                 self.turn,
+                self.moveTime,
                 self.id  # WHERE clause parameter
             )
 
@@ -129,8 +133,9 @@ class Puzzle:
                 fen,
                 openingId,
                 isProcessed,
-                turn
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                turn,
+                moveTime
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         insert_params = (
@@ -142,6 +147,7 @@ class Puzzle:
             self.openingId,
             self.isProcessed,
             self.turn,
+            self.moveTime
         )
 
         self.cursor.execute(insert_query, insert_params)
@@ -172,7 +178,8 @@ class Puzzle:
             fen TEXT UNIQUE NOT NULL,
             openingId INTEGER REFERENCES openings(id),
             isProcessed INTEGER,
-            turn INTEGER
+            turn INTEGER,
+            moveTime INTEGER
         );
         """
         
