@@ -92,10 +92,10 @@ async def opening_true(ml: 'ModuleLoader', connection: sqlite3.Connection, user:
         child = children[i]
 
         keyboard.append([
-            telegram.InlineKeyboardButton(f'{child.name} ({child.id})', callback_data=f'show opening:{child.id}'),
+            telegram.InlineKeyboardButton(f'{child.name} ({child.id}) {child.movesFromParent()}', callback_data=f'show opening:{child.id}'),
         ])
 
-    msg = await chat.send_photo(buffer, caption=f'*{opening.name}* ({opening.id})\nПозиция: `{opening.sequence}`\nВсего задач: `{opening.count_puzzles()}`\nРешенных задач: `{opening.count_puzzles_solved()}`\nРешено вами: `{opening.count_puzzles_solved(userId=user.id)}`', parse_mode='markdown', reply_markup=telegram.InlineKeyboardMarkup(keyboard))
+    msg = await chat.send_photo(buffer, caption=f'*{opening.name}* ({opening.id})\nПозиция: `{opening.sequence if len(opening.sequence) > 0 else 'начальная'}`\nВсего задач: `{opening.count_puzzles()}`\nРешенных задач: `{opening.count_puzzles_solved()}`\nРешено вами: `{opening.count_puzzles_solved(userId=user.id)}`', parse_mode='markdown', reply_markup=telegram.InlineKeyboardMarkup(keyboard))
     
 
     if file_id is None and len(msg.photo) > 0:

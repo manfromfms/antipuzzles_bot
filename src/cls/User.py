@@ -93,7 +93,7 @@ class User:
         p = self.cursor.fetchall()
 
         if len(p) == 0:
-            self.select_another_puzzle(0)
+            self.select_another_puzzle(3)
 
             return 1
 

@@ -24,7 +24,7 @@ def complile_puzzle_info(ml: 'ModuleLoader', connection: sqlite3.Connection, puz
 ℹ️ *Задача id:{puzzle.id}*
 
 📊 *Рейтинг:*  `{int(puzzle.elo)}±{int(puzzle.elodev)}`
-✅ *Решено:*  {success}/{count}
+👥 *Решено:*  {success}/{count}
 ⚔️ *Партия:*  {'*' if game.Result.split('-')[0] == '1' else ''}[{game.White}]{'*' if game.Result.split('-')[0] == '1' else ''} vs {'*' if game.Result.split('-')[1] == '1' else ''}[{game.Black}]{'*' if game.Result.split('-')[1] == '1' else ''}
 📖 *Дебют:* {puzzle.opening.name + f' ({puzzle.openingId})' if puzzle.openingId != 0 else 'Без дебюта'}
 🔗 *Оценка:* {int(vote*10)/10}

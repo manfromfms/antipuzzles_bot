@@ -35,7 +35,7 @@ def get_single_theme(cursor: sqlite3.Cursor, theme: str, userId: int):
     elochange = [d[1]*d[4] for d in data]
     total = [d[4] for d in data]
 
-    return sum(elochange) / sum(total)
+    return 0 if sum(total) == 0 else sum(elochange) / sum(total)
 
 def get_themes_performance(ml: 'ModuleLoader', connection: sqlite3.Connection, user: 'User'):
     cursor = connection.cursor()

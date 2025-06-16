@@ -44,6 +44,19 @@ class Opening:
             self.sequence = data[2]
             self.parentId = data[3]
 
+
+    def movesFromParent(self):
+        parent = Opening(self.ml, self.connection, searchById=self.parentId)
+
+        s = self.sequence.replace(parent.sequence, '--').replace('-- ', '') if len(parent.sequence) > 0 else self.sequence
+
+        points = s.split(' ')
+
+        if points[0][0] not in '0123456789':
+            s = parent.sequence.split(' ')[-2] + '.. ' + s
+
+        return s
+
     
     def get_children_class(self):
         l = self.get_children_first()

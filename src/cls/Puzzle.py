@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 import chess
 
 class Puzzle:
-    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, searchById=0):
+    def __init__(self, ml: 'ModuleLoader', connection: sqlite3.Connection, searchById=0, searchByGameId=''):
         self.connection = connection
         self.cursor = connection.cursor()
 
@@ -29,6 +29,26 @@ class Puzzle:
         self.moveTime = 0
 
         self.game = self.ml.Game.Game(self.ml, self.connection)
+
+        if searchByGameId != '':
+            self.cursor.execute('SELECT * FROM puzzles JOIN games ON puzzles.gameId = games.id WHERE games.GameId = ?', (searchByGameId,))
+            data = self.cursor.fetchone()
+
+            if data is None:
+                return
+            
+            self.id = data[0]
+            self.gameId = data[1]
+            self.elo = data[2]
+            self.elodev = data[3]
+            self.volatility = data[4]
+            self.fen = data[5]
+            self.openingId = data[6]
+            self.isProcessed = data[7]
+            self.turn = data[8]
+            self.moveTime = data[9]
+
+            self.opening = self.ml.Opening.Opening(self.ml, connection, searchById=self.openingId)
 
         if searchById != 0:
             self.cursor.execute('SELECT * FROM puzzles WHERE id = ? LIMIT 1', (searchById,))

@@ -22,7 +22,7 @@ async def hardest(ml: 'ModuleLoader', connection: sqlite3.Connection, message: t
 
     buttons = [[]]
 
-    s = '🔥 Самые *сложные* задачи 🔥'
+    s = '🔥 Самые *сложные* задачи 🔥\n'
 
     for puzzle in data:
         buttons[-1].append(
@@ -35,10 +35,13 @@ async def hardest(ml: 'ModuleLoader', connection: sqlite3.Connection, message: t
         cursor.execute('SELECT count(*) FROM played WHERE puzzleId = ?', (puzzle[0],))
         count = cursor.fetchone()[0]
 
+        cursor.execute('SELECT count(*) FROM played WHERE puzzleId = ? AND won = 1', (puzzle[0],))
+        success = cursor.fetchone()[0]
+
         s += f'''
-id: `{puzzle[0]}`
-    Попыток: `{count}`
-    Рейтинг: `{int(puzzle[2])}±{int(puzzle[3])}`
+🧩 id: `{puzzle[0]}`
+    👥 Решено: `{success}/{count}`
+    📊 Рейтинг: `{int(puzzle[2])}±{int(puzzle[3])}`
 '''
 
     keyboard = telegram.InlineKeyboardMarkup(buttons)
