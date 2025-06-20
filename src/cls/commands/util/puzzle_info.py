@@ -1,13 +1,14 @@
 import sqlite3 
 
 from src.cls.commands.util.get_themes import *
+from src.cls.commands.util.languages import Language
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.cls.Puzzle import Puzzle
     from src.ModuleLoader import ModuleLoader
 
-def complile_puzzle_info(ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: 'Puzzle', full=False):
+def complile_puzzle_info(ml: 'ModuleLoader', connection: sqlite3.Connection, puzzle: 'Puzzle', lang: Language, full=False):
     game = puzzle.load_game()
 
     cursor = connection.cursor()
@@ -21,19 +22,19 @@ def complile_puzzle_info(ml: 'ModuleLoader', connection: sqlite3.Connection, puz
     vote = ml.PuzzleVote.get_puzzle_votes(puzzle)
     
     s = f'''
-ℹ️ *Задача id:{puzzle.id}*
+🧩 *{lang.translations['Puzzle']} id:{puzzle.id}*
 
-📊 *Рейтинг:*  `{int(puzzle.elo)}±{int(puzzle.elodev)}`
-👥 *Решено:*  {success}/{count}
-⚔️ *Партия:*  {'*' if game.Result.split('-')[0] == '1' else ''}[{game.White}]{'*' if game.Result.split('-')[0] == '1' else ''} vs {'*' if game.Result.split('-')[1] == '1' else ''}[{game.Black}]{'*' if game.Result.split('-')[1] == '1' else ''}
-📖 *Дебют:* {puzzle.opening.name + f' ({puzzle.openingId})' if puzzle.openingId != 0 else 'Без дебюта'}
-🔗 *Оценка:* {int(vote*10)/10}
+📊 *{lang.translations['Rating']}:*  `{int(puzzle.elo)}±{int(puzzle.elodev)}`
+👥 *{lang.translations['Solved']}:*  {success}/{count}
+⚔️ *{lang.translations['Game']}:*  {'*' if game.Result.split('-')[0] == '1' else ''}[{game.White}]{'*' if game.Result.split('-')[0] == '1' else ''} vs {'*' if game.Result.split('-')[1] == '1' else ''}[{game.Black}]{'*' if game.Result.split('-')[1] == '1' else ''}
+📖 *{lang.translations['Opening']}:* {puzzle.opening.name + f' ({puzzle.openingId})' if puzzle.openingId != 0 else 'Без дебюта'}
+🔗 *{lang.translations['Popularity']}:* {int(vote*10)/10}
 '''
     
     if full:
         themes = get_themes(ml, connection, puzzle)
 
-        s += '''\n🔎 *Темы:*'''
+        s += f'''\n🔎 *{lang.translations['Themes']}:*'''
 
         for theme in themes:
             if theme[1] < 0:

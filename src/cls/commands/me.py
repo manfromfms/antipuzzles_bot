@@ -27,7 +27,7 @@ async def me(ml: 'ModuleLoader', connection: sqlite3.Connection, message: telegr
     cursor.execute('SELECT count(*) FROM played WHERE userId=?', (user.id,))
     countall = cursor.fetchone()[0]
 
-    cursor.execute('SELECT count(*) FROM played WHERE userId=? AND elochange > 0', (user.id,))
+    cursor.execute('SELECT count(*) FROM played WHERE userId=? AND won = 1', (user.id,))
     countpositive = cursor.fetchone()[0]
 
     if countall == 0:

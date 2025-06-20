@@ -59,7 +59,7 @@ class Theme:
         self.promotion_downvotes = 1
 
         self.enpassant_upvotes = 0
-        self.endgame_downvotes = 1
+        self.enpassant_downvotes = 1
 
         if searchById != 0 or searchByPuzzleId != 0:
 
@@ -123,7 +123,7 @@ class Theme:
         self.cleaning_upvotes, self.cleaning_downvotes = theme_cleaning.generate_category(self.puzzle, self.solution)
         self.queenrace_upvotes, self.queenrace_downvotes = theme_queenrace.generate_category(self.puzzle, self.solution)
         self.promotion_upvotes, self.promotion_downvotes = theme_promotion.generate_category(self.puzzle, self.solution)
-        self.enpassant_upvotes, self.endgame_downvotes = theme_enpassant.generate_category(self.puzzle, self.solution)
+        self.enpassant_upvotes, self.enpassant_downvotes = theme_enpassant.generate_category(self.puzzle, self.solution)
 
         # Finish generation by updating the db entry
         self.update_database_entry()

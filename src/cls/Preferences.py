@@ -22,6 +22,8 @@ class Preferences:
         self.openingId = 0
         self.opening_explicit = 0
 
+        self.lang = ''
+
         if searchByUserId != 0:
             self.cursor.execute('SELECT * FROM preferences WHERE userId=? LIMIT 1', (searchByUserId,))
 
@@ -34,6 +36,8 @@ class Preferences:
                 self.rating_difference = data[2]
                 self.openingId = data[3]
                 self.opening_explicit = data[4]
+
+                self.lang = data[5]
         
 
     def update_database_entry(self):
@@ -49,7 +53,8 @@ class Preferences:
                 SET 
                     rating_difference = ?,
                     openingId = ?,
-                    opening_explicit = ?
+                    opening_explicit = ?,
+                    lang = ?,
                 WHERE (id = ?)
             """
 
@@ -58,6 +63,7 @@ class Preferences:
                 self.rating_difference,
                 self.openingId,
                 self.opening_explicit,
+                self.lang,
                 self.id  # WHERE clause parameter
             )
 
@@ -79,8 +85,9 @@ class Preferences:
                 userId,
                 rating_difference,
                 openingId,
-                opening_explicit
-            ) VALUES (?, ?, ?, ?)
+                opening_explicit,
+                lang
+            ) VALUES (?, ?, ?, ?, ?)
         """
 
         insert_params = (
@@ -88,6 +95,7 @@ class Preferences:
             self.rating_difference,
             self.openingId,
             self.opening_explicit,
+            self.lang,
         )
 
         self.cursor.execute(insert_query, insert_params)
@@ -95,16 +103,20 @@ class Preferences:
         self.connection.commit()
 
 
-    def create_entry(self):
+    def create_entry(self, lang="en"):
         insert_query = """
             INSERT INTO preferences (
-                userId
-            ) VALUES (?)
+                userId,
+                lang
+            ) VALUES (?, ?)
             ON CONFLICT DO NOTHING
         """
 
+        self.lang = lang
+
         insert_params = (
             self.userId,
+            self.lang,
         )
 
         self.cursor.execute(insert_query, insert_params)
@@ -121,7 +133,8 @@ class Preferences:
             userId INTEGER NOT NULL UNIQUE REFERENCES users (id),
             rating_difference REAL DEFAULT 0,
             openingId INTEGER REFERENCES openings (id) DEFAULT 0,
-            opening_explicit INTEGER DEFAULT 0
+            opening_explicit INTEGER DEFAULT 0,
+            lang TEXT DEFAULT 'en'
         );
         """
         

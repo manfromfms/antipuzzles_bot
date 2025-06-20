@@ -13,7 +13,7 @@ async def init(ml: 'ModuleLoader', connection: sqlite3.Connection, message: tele
     preferences = ml.Preferences.Preferences(ml, connection, searchByUserId=user.id)
 
     if preferences.id == 0:
-        preferences.create_entry()
+        preferences.create_entry(lang=message.from_user.language_code)
 
     user.nickname = message.from_user.full_name # type: ignore
 

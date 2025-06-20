@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING
 import telegram
 from io import BytesIO
 
+from src.cls.commands.util.languages import Language
+
 if TYPE_CHECKING:
     from src.ModuleLoader import ModuleLoader
     from src.cls.User import User
@@ -124,7 +126,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
                 telegram.InlineKeyboardButton('🟥', callback_data=f'puzzle vote:{puzzle.id}:-1'),
             ]]
 
-            await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle, full=True), parse_mode=telegram.constants.ParseMode('Markdown'))
+            await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle, lang=Language(message.from_user.language_code), full=True), parse_mode=telegram.constants.ParseMode('Markdown'))
 
             await message.chat.send_message(f'✅ *Верно!*\n\n📈 Изменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\n📊 Новый рейтинг: {int(user.elo)}±{int(user.elodev)}\n🖥️ Анализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen.replace(' ', '%20')})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
 
@@ -149,7 +151,7 @@ async def make_move_puzzle_handler(ml: 'ModuleLoader', connection: sqlite3.Conne
         ]]
         
         # Send messages
-        await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle, full=True), parse_mode=telegram.constants.ParseMode('Markdown'))
+        await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle, lang=Language(message.from_user.language_code), full=True), parse_mode=telegram.constants.ParseMode('Markdown'))
         
         
         await message.chat.send_message(f'❌ *Ошибка!* Правильный ход: *{solution_moves[int(check_current_puzzle_move)*2]}*\n\n📉 Изменение рейтинга: {('' if dif <= 0 else '+') + str(dif)}\n📊 Новый рейтинг: {int(user.elo)}±{int(user.elodev)}\n🖥️ Анализ: [lichess](https://lichess.org/analysis/antichess/{puzzle.fen})\n\nПонравилась ли вам задача?', reply_markup=telegram.InlineKeyboardMarkup(buttons), parse_mode='markdown')
@@ -239,7 +241,7 @@ async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: te
         keyboard = telegram.InlineKeyboardMarkup([[button1]])    
         
         # Send PNG image
-        await message.chat.send_photo(buffer, caption=complile_puzzle_info(ml, connection, puzzle), reply_markup=keyboard, parse_mode=telegram.constants.ParseMode('Markdown'))
+        await message.chat.send_photo(buffer, caption=complile_puzzle_info(ml, connection, puzzle, lang=Language(message.from_user.language_code)), reply_markup=keyboard, parse_mode=telegram.constants.ParseMode('Markdown'))
 
     else:
         await message.chat.send_message('Вот ваша текущая задача')
@@ -247,5 +249,5 @@ async def puzzle(ml: 'ModuleLoader', connection: sqlite3.Connection, message: te
         user = ml.User.User(ml, connection, searchById=message.from_user.id) # type: ignore
         puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
 
-        await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle), parse_mode=telegram.constants.ParseMode('Markdown'))
+        await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle, lang=Language(message.from_user.language_code)), parse_mode=telegram.constants.ParseMode('Markdown'))
         await show_current_puzzle_state(ml, connection, message, user=user) # type: ignore
