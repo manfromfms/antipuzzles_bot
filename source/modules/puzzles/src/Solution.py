@@ -12,7 +12,7 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv('.env'))
 
 from .Puzzle import Puzzle
-from .database import get_connection
+from ...database import get_connection
 
 class Solution:
     def __init__(self, puzzle: Puzzle, searchByPuzzleId=0):
@@ -223,6 +223,18 @@ class Solution:
             self.id = existing_row[0]
 
         self.connection.commit()
+
+
+    def __repr__(self):
+        return (
+            f"puzzles.Solution("
+            f"id={self.id}, "
+            f"puzzleId={self.puzzleId}, "
+            f"moves='{self.moves}', "
+            f"length={self.length}, "
+            f"fish_solution='{self.fish_solution}'"
+            f")"
+        )
 
 
 def get_moves(board: chess.Board) -> list[chess.Move]:

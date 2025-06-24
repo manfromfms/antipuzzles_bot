@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import sqlite3
 import chess.pgn
 
-from .database import get_connection
+from ...database import get_connection
 
 class Game:
     """This class stores game headers.
@@ -28,10 +30,10 @@ class Game:
     [Annotator "lichess.org"]
     """
 
-    def __init__(self, searchById=0, searchByGameId='') -> None:
+    def __init__(self) -> None:
         self.connection = get_connection()
         self.cursor = self.connection.cursor() # sqlite3.Cursor
-        self.id = 0
+        self.id: int = 0
 
         self.Event = ''
         self.Site = ''
@@ -51,36 +53,40 @@ class Game:
         self.ECO = ''
         self.Termination = ''
         self.Annotator = ''
-        
-        self.valid = False # Is the game loaded or not
 
-        if searchById != 0:
-            self.cursor.execute(f"SELECT * FROM games WHERE id = {searchById} LIMIT 1")
-            data = self.cursor.fetchone()
+    
+    @staticmethod
+    def searchById(id: int) -> Game:
+        connection = get_connection()
+        cursor = connection.cursor() # sqlite3.Cursor
 
-            self.id = data[0]
-            self.Event = data[1]
-            self.Site = data[2]
-            self.Date = data[3]
-            self.White = data[4]
-            self.Black = data[5]
-            self.Result = data[6]
-            self.GameId = data[7]
-            self.UTCDate = data[8]
-            self.UTCTime = data[9]
-            self.WhiteElo = data[10]
-            self.BlackElo = data[11]
-            self.WhiteRatingDiff = data[12]
-            self.BlackRatingDiff = data[13]
-            self.Variant = data[14]
-            self.TimeControl = data[15]
-            self.ECO = data[16]
-            self.Termination = data[17]
-            self.Annotator = data[18]
+        game = Game()
 
-        elif searchByGameId != '':
-            # TODO: search game by GameId (provided by lichess)
-            print(self.cursor.execute(f"SELECT * FROM games WHERE gameId = {searchById} LIMIT 1"))
+        if id != 0:
+            cursor.execute(f"SELECT * FROM games WHERE id = {id} LIMIT 1")
+            data = cursor.fetchone()
+
+            game.id = data[0]
+            game.Event = data[1]
+            game.Site = data[2]
+            game.Date = data[3]
+            game.White = data[4]
+            game.Black = data[5]
+            game.Result = data[6]
+            game.GameId = data[7]
+            game.UTCDate = data[8]
+            game.UTCTime = data[9]
+            game.WhiteElo = data[10]
+            game.BlackElo = data[11]
+            game.WhiteRatingDiff = data[12]
+            game.BlackRatingDiff = data[13]
+            game.Variant = data[14]
+            game.TimeControl = data[15]
+            game.ECO = data[16]
+            game.Termination = data[17]
+            game.Annotator = data[18]
+
+        return game
         
 
     def loadFromHeaders(self, headers: chess.pgn.Headers):
@@ -233,7 +239,7 @@ class Game:
         
         if self.cursor.rowcount == 1:
             # New row was inserted
-            self.id = self.cursor.lastrowid
+            self.id = self.cursor.lastrowid # type: ignore
         else:
             # Row already exists, fetch the existing ID
             select_query = "SELECT id FROM games WHERE GameId = ?"
@@ -284,3 +290,29 @@ class Game:
         ''')
 
         connection.commit()
+
+
+    def __repr__(self):
+        return (
+            f"puzzles.Game("
+            f"id={self.id}, "
+            f"Event='{self.Event}', "
+            f"Site='{self.Site}', "
+            f"Date='{self.Date}', "
+            f"White='{self.White}', "
+            f"Black='{self.Black}', "
+            f"Result='{self.Result}', "
+            f"GameId='{self.GameId}', "
+            f"UTCDate='{self.UTCDate}', "
+            f"UTCTime='{self.UTCTime}', "
+            f"WhiteElo={self.WhiteElo}, "
+            f"BlackElo={self.BlackElo}, "
+            f"WhiteRatingDiff={self.WhiteRatingDiff}, "
+            f"BlackRatingDiff={self.BlackRatingDiff}, "
+            f"Variant='{self.Variant}', "
+            f"TimeControl='{self.TimeControl}', "
+            f"ECO='{self.ECO}', "
+            f"Termination='{self.Termination}', "
+            f"Annotator='{self.Annotator}'"
+            f")"
+        )

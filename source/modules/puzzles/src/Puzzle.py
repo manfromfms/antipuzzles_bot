@@ -1,70 +1,54 @@
 from __future__ import annotations
 
 from .Game import Game
-from .Opening import Opening
-from .database import get_connection
+from ...database import get_connection
 
 import chess
 import sqlite3
 
 class Puzzle:
-    def __init__(self, searchById=0, searchByGameId=''):
+    def __init__(self):
         self.connection = get_connection()
         self.cursor = self.connection.cursor()
 
         self.id = 0
-        self.gameId = 0
+        self.gameId: int = 0
         self.elo = 1000
         self.elodev = 350
         self.volatility = 0.06
         self.fen = ''
         self.openingId = 0
-        self.opening = Opening(searchById=self.openingId)
         self.isProcessed = False
         self.turn = True
         self.moveTime = 0
 
-        self.game = Game()
 
-        if searchByGameId != '':
-            self.cursor.execute('SELECT * FROM puzzles JOIN games ON puzzles.gameId = games.id WHERE games.GameId = ?', (searchByGameId,))
-            data = self.cursor.fetchone()
+    @staticmethod
+    def searchById(id: int) -> Puzzle:
+        connection = get_connection()
+        cursor = connection.cursor() # sqlite3.Cursor
 
-            if data is None:
-                return
-            
-            self.id = data[0]
-            self.gameId = data[1]
-            self.elo = data[2]
-            self.elodev = data[3]
-            self.volatility = data[4]
-            self.fen = data[5]
-            self.openingId = data[6]
-            self.isProcessed = data[7]
-            self.turn = data[8]
-            self.moveTime = data[9]
+        puzzle = Puzzle()
 
-            self.opening = Opening(searchById=self.openingId)
-
-        if searchById != 0:
-            self.cursor.execute('SELECT * FROM puzzles WHERE id = ? LIMIT 1', (searchById,))
-            data = self.cursor.fetchone()
+        if id != 0:
+            cursor.execute('SELECT * FROM puzzles WHERE id = ? LIMIT 1', (id,))
+            data = cursor.fetchone()
 
             if data is None:
-                return
+                return puzzle
             
-            self.id = data[0]
-            self.gameId = data[1]
-            self.elo = data[2]
-            self.elodev = data[3]
-            self.volatility = data[4]
-            self.fen = data[5]
-            self.openingId = data[6]
-            self.isProcessed = data[7]
-            self.turn = data[8]
-            self.moveTime = data[9]
+            puzzle.id = data[0]
+            puzzle.gameId = data[1]
+            puzzle.elo = data[2]
+            puzzle.elodev = data[3]
+            puzzle.volatility = data[4]
+            puzzle.fen = data[5]
+            puzzle.openingId = data[6]
+            puzzle.isProcessed = data[7]
+            puzzle.turn = data[8]
+            puzzle.moveTime = data[9]
 
-            self.opening = Opening(searchById=self.openingId)
+        return puzzle
 
 
     def loadFromBoard(self, board: chess.Board):
@@ -80,8 +64,9 @@ class Puzzle:
 
         self.update_database_entry()
 
+
     def load_game(self) -> Game:
-        self.game = self.ml.Game.Game(self.ml, self.connection, searchById=self.gameId) # type: ignore
+        self.game = Game.searchById(id=self.gameId)
 
         return self.game
 
@@ -274,6 +259,10 @@ class Puzzle:
         puzzles = []
 
         for p in l:
-            puzzles.append(Puzzle(searchById=p[0]))
+            puzzles.append(Puzzle.searchById(id=p[0]))
 
         return puzzles
+    
+
+    def __repr__(self):
+        return f"puzzles.Puzzle(id={self.id}, gameId={self.gameId}, elo={self.elo}, elodev={self.elodev}, volatility={self.volatility}, fen='{self.fen}', openingId={self.openingId}, isProcessed={self.isProcessed}, turn={self.turn}, moveTime={self.moveTime})"

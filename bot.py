@@ -1,5 +1,7 @@
-from source.modules.database import get_connection, init
+from source.modules.database import database_init
+from source.modules.puzzles import puzzles_init, Puzzle
 
-init('./puzzles.db')
+database_init('./puzzles.db')
+puzzles_init()
 
-print(type(get_connection()))
+print(Puzzle.searchById(id=3))

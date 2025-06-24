@@ -13,7 +13,7 @@ from .themes.theme_enpassant import generate_category as theme_enpassant
 
 from .Puzzle import Puzzle
 from .Solution import Solution
-from .database import get_connection
+from ...database import get_connection
 
 class Theme:
     def __init__(self, puzzle: Puzzle, solution: Solution, searchById=0, searchByPuzzleId=0):

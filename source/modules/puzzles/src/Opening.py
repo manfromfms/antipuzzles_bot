@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from .database import get_connection
+from ...database import get_connection
 from .openings_list import openings_list
 
 import chess.pgn
 
 class Opening:
-    def __init__(self, moves_str='', searchById=0):
-
+    def __init__(self, moves_str=''):
         self.connection = get_connection()
         self.cursor = self.connection.cursor()
 
@@ -16,30 +15,30 @@ class Opening:
         self.sequence = ''
         self.parentId = 0
 
-        if moves_str != '':
-            found_opening = self.search_opening_by_string(moves_str) 
-            #self = self.search_opening_by_string(moves_str) //it does not work
-            if found_opening.id != 0:
-                self.id = found_opening.id
-                self.name = found_opening.name
-                self.sequence = found_opening.sequence
-                self.parentId = found_opening.parentId
+    @staticmethod
+    def searchById(id: int) -> Opening:
+        connection = get_connection()
+        cursor = connection.cursor() # sqlite3.Cursor
 
-        if searchById != 0:
-            self.cursor.execute('SELECT * FROM openings WHERE id = ? LIMIT 1', (searchById,))
-            data = self.cursor.fetchone()
+        opening = Opening()
+
+        if id != 0:
+            cursor.execute('SELECT * FROM openings WHERE id = ? LIMIT 1', (id,))
+            data = cursor.fetchone()
 
             if data is None:
-                return
+                return Opening()
             
-            self.id = data[0]
-            self.name = data[1]
-            self.sequence = data[2]
-            self.parentId = data[3]
+            opening.id = data[0]
+            opening.name = data[1]
+            opening.sequence = data[2]
+            opening.parentId = data[3]
+
+        return opening
 
 
     def movesFromParent(self):
-        parent = Opening(searchById=self.parentId)
+        parent = Opening.searchById(id=self.parentId)
 
         s = self.sequence.replace(parent.sequence, '--').replace('-- ', '') if len(parent.sequence) > 0 else self.sequence
 
@@ -54,7 +53,7 @@ class Opening:
     def get_children_class(self):
         l = self.get_children_first()
 
-        return [Opening(searchById=id) for id in l]
+        return [Opening.searchById(id=id) for id in l]
     
 
     def count_puzzles(self):
@@ -114,7 +113,7 @@ class Opening:
 
 
     @staticmethod
-    def search_opening_by_string(moves_str: str):
+    def searchByMovesStr(moves_str: str):
         """Find opening based on PGN string of SAN moves.
 
         Args:
@@ -213,7 +212,7 @@ class Opening:
             moves = opening[1].split(' ')
             moves.pop()
 
-            result = Opening.search_opening_by_string(' '.join(moves))
+            result = Opening.searchByMovesStr(' '.join(moves))
             cursor.execute('UPDATE openings SET parentId = ? WHERE id = ?', (result.id, opening[0]))
 
 
@@ -245,3 +244,14 @@ class Opening:
         move_str = ' '.join(move_parts)
         
         return Opening(moves_str=move_str)
+    
+
+    def __repr__(self):
+        return (
+            f"puzzles.Opening("
+            f"id={self.id}, "
+            f"name='{self.name}', "
+            f"sequence='{self.sequence}', "
+            f"parentId={self.parentId}"
+            f")"
+        )
