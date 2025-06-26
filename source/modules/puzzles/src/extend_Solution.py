@@ -8,14 +8,14 @@ import chess.engine
 
 class Solution(Solution_lite):
     def generate(self):
-        if len(self.puzzle.fen) < 1:
+        if len(self.get_puzzle().fen) < 1:
             self.remove_puzzle()
             return
         
-        self.cursor.execute('INSERT INTO positions (fen) VALUES (?) ON CONFLICT DO NOTHING', (self.puzzle.fen,))
+        self.cursor.execute('INSERT INTO positions (fen) VALUES (?) ON CONFLICT DO NOTHING', (self.get_puzzle().fen,))
         self.connection.commit()
         
-        board = chess.variant.AntichessBoard(self.puzzle.fen)
+        board = chess.variant.AntichessBoard(self.get_puzzle().fen)
         engine = chess.engine.SimpleEngine.popen_uci(os.getenv('ffish_path')) # type: ignore
 
         print(board.fen())
@@ -37,10 +37,10 @@ class Solution(Solution_lite):
 
                 self.update_database_entry()
 
-                Theme(self.puzzle, self).generate()
+                Theme().generate(self.get_puzzle(), self)
 
-                self.puzzle.isProcessed = True
-                self.puzzle.update_database_entry()
+                self.get_puzzle().isProcessed = True
+                self.get_puzzle().update_database_entry()
             else:
                 self.remove_puzzle()
         else: 

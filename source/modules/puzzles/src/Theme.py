@@ -16,18 +16,15 @@ from .Solution import Solution
 from ...database import get_connection
 
 class Theme:
-    def __init__(self, puzzle: Puzzle, solution: Solution, searchById=0, searchByPuzzleId=0):
+    def __init__(self):
         
-        self.id = searchById
+        self.id = 0
 
         self.connection = get_connection()
         self.cursor = self.connection.cursor()
 
-        self.puzzle = puzzle
-        self.solution = solution
-
-        self.puzzleId = puzzle.id
-        self.solutionId = solution.id
+        self.puzzleId = 0
+        self.solutionId = 0
 
         self.isValid = 1
 
@@ -57,72 +54,136 @@ class Theme:
         self.enpassant_upvotes = 0
         self.enpassant_downvotes = 1
 
-        if searchById != 0 or searchByPuzzleId != 0:
+    @staticmethod
+    def searchById(id: int) -> Theme:
+        theme = Theme()
 
-            if searchById != 0:
-                self.cursor.execute('SELECT * FROM themes WHERE id = ?', (searchById,))
-            elif searchByPuzzleId != 0:
-                self.cursor.execute('SELECT * FROM themes WHERE puzzleId = ?', (searchByPuzzleId,))
+        if id != 0:
+            connection = get_connection()
+            cursor = connection.cursor() # sqlite3.Cursor
+            
+            cursor.execute('SELECT * FROM themes WHERE id = ?', (id,))
+            data = cursor.fetchone()
 
-            data = self.cursor.fetchone()
+            if data is None:
+                return theme
+
+            theme.id = data[0]
+
+            theme.puzzleId = data[1]
+            theme.solutionId = data[2]
+
+            theme.isValid = data[3]
+
+            # Categories list (default downvotes for category is 1 so that corresponding category is rated as -1)
+            # Before adding new category it has to be added to the db structure
+            theme.opening_upvotes = data[4]
+            theme.opening_downvotes = data[5]
+
+            theme.middlegame_upvotes = data[6]
+            theme.middlegame_downvotes = data[7]
+
+            theme.endgame_upvotes = data[8]
+            theme.endgame_downvotes = data[9]
+
+            theme.zugzwang_upvotes = data[10]
+            theme.zugzwang_downvotes = data[11]
+
+            theme.cleaning_upvotes = data[12]
+            theme.cleaning_downvotes = data[13]
+
+            theme.queenrace_upvotes = data[14]
+            theme.queenrace_downvotes = data[15]
+
+            theme.promotion_upvotes = data[16]
+            theme.promotion_downvotes = data[17]
+
+            theme.enpassant_upvotes = data[18]
+            theme.enpassant_downvotes = data[19]
+
+        return theme
+
+
+    @staticmethod
+    def searchByPuzzleId(id):
+        theme = Theme()
+
+        if id != 0:
+            connection = get_connection()
+            cursor = connection.cursor() # sqlite3.Cursor
+
+            cursor.execute('SELECT * FROM themes WHERE puzzleId = ?', (id,))
+
+            data = cursor.fetchone()
 
             if data is None:
                 return
 
-            self.id = data[0]
+            theme.id = data[0]
 
-            self.puzzleId = data[1]
-            self.solutionId = data[2]
+            theme.puzzleId = data[1]
+            theme.solutionId = data[2]
 
-            self.puzzle = Puzzle(searchById=self.puzzleId)
-            self.solution = Solution(self.puzzle, searchByPuzzleId=self.puzzleId)
-
-            self.isValid = data[3]
+            theme.isValid = data[3]
 
             # Categories list (default downvotes for category is 1 so that corresponding category is rated as -1)
             # Before adding new category it has to be added to the db structure
-            self.opening_upvotes = data[4]
-            self.opening_downvotes = data[5]
+            theme.opening_upvotes = data[4]
+            theme.opening_downvotes = data[5]
 
-            self.middlegame_upvotes = data[6]
-            self.middlegame_downvotes = data[7]
+            theme.middlegame_upvotes = data[6]
+            theme.middlegame_downvotes = data[7]
 
-            self.endgame_upvotes = data[8]
-            self.endgame_downvotes = data[9]
+            theme.endgame_upvotes = data[8]
+            theme.endgame_downvotes = data[9]
 
-            self.zugzwang_upvotes = data[10]
-            self.zugzwang_downvotes = data[11]
+            theme.zugzwang_upvotes = data[10]
+            theme.zugzwang_downvotes = data[11]
 
-            self.cleaning_upvotes = data[12]
-            self.cleaning_downvotes = data[13]
+            theme.cleaning_upvotes = data[12]
+            theme.cleaning_downvotes = data[13]
 
-            self.queenrace_upvotes = data[14]
-            self.queenrace_downvotes = data[15]
+            theme.queenrace_upvotes = data[14]
+            theme.queenrace_downvotes = data[15]
 
-            self.promotion_upvotes = data[16]
-            self.promotion_downvotes = data[17]
+            theme.promotion_upvotes = data[16]
+            theme.promotion_downvotes = data[17]
 
-            self.enpassant_upvotes = data[18]
-            self.enpassant_downvotes = data[19]
+            theme.enpassant_upvotes = data[18]
+            theme.enpassant_downvotes = data[19]
 
 
-    def generate(self):
-        if self.puzzle.fen == '':
-            print('Empty fen', self.puzzle.id)
+    def get_puzzle(self) -> Puzzle:
+        return Puzzle.searchById(self.puzzleId)
+
+
+    def get_solution(self) -> Solution:
+        return Solution.searchById(self.solutionId)
+
+
+    @staticmethod
+    def generate(puzzle: Puzzle, solution: Solution) -> None:
+        if puzzle.fen == '':
+            print('Empty fen', puzzle.id)
             return
+        
+        theme = Theme()
+
+        theme.puzzleId = puzzle.id
+        theme.solutionId = solution.id
 
         # Call all selected categories
-        self.opening_upvotes, self.opening_downvotes = theme_opening(self.puzzle, self.solution)
-        self.middlegame_upvotes, self.middlegame_downvotes = theme_middlegame(self.puzzle, self.solution)
-        self.endgame_upvotes, self.endgame_downvotes = theme_endgame(self.puzzle, self.solution)
-        self.zugzwang_upvotes, self.zugzwang_downvotes = theme_zugzwang(self.puzzle, self.solution)
-        self.cleaning_upvotes, self.cleaning_downvotes = theme_cleaning(self.puzzle, self.solution)
-        self.queenrace_upvotes, self.queenrace_downvotes = theme_queenrace(self.puzzle, self.solution)
-        self.promotion_upvotes, self.promotion_downvotes = theme_promotion(self.puzzle, self.solution)
-        self.enpassant_upvotes, self.enpassant_downvotes = theme_enpassant(self.puzzle, self.solution)
+        theme.opening_upvotes, theme.opening_downvotes = theme_opening(puzzle, solution)
+        theme.middlegame_upvotes, theme.middlegame_downvotes = theme_middlegame(puzzle, solution)
+        theme.endgame_upvotes, theme.endgame_downvotes = theme_endgame(puzzle, solution)
+        theme.zugzwang_upvotes, theme.zugzwang_downvotes = theme_zugzwang(puzzle, solution)
+        theme.cleaning_upvotes, theme.cleaning_downvotes = theme_cleaning(puzzle, solution)
+        theme.queenrace_upvotes, theme.queenrace_downvotes = theme_queenrace(puzzle, solution)
+        theme.promotion_upvotes, theme.promotion_downvotes = theme_promotion(puzzle, solution)
+        theme.enpassant_upvotes, theme.enpassant_downvotes = theme_enpassant(puzzle, solution)
 
         # Finish generation by updating the db entry
-        self.update_database_entry()
+        theme.update_database_entry()
 
 
     def update_database_entry(self):

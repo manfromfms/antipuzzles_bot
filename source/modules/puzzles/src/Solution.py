@@ -15,34 +15,66 @@ from .Puzzle import Puzzle
 from ...database import get_connection
 
 class Solution:
-    def __init__(self, puzzle: Puzzle, searchByPuzzleId=0):
+    def __init__(self):
             
         self.connection = get_connection()
         self.cursor = self.connection.cursor()
 
         self.id = 0
-        self.puzzleId = puzzle.id
+        self.puzzleId = 0
         self.moves = ''
         self.length = 0
         self.fish_solution = ''
 
-        # Some additional stuff
-        self.puzzle = puzzle
 
-        if searchByPuzzleId != 0:
-            self.cursor.execute('SELECT * FROM solutions WHERE puzzleId = ? LIMIT 1', (searchByPuzzleId,))
-            data = self.cursor.fetchone()
+    def get_puzzle(self) -> Puzzle:
+        return Puzzle.searchById(self.puzzleId)
+
+
+    @staticmethod
+    def searchById(id: int) -> Solution:
+        solution = Solution()
+
+        if id != 0:
+            connection = get_connection()
+            cursor = connection.cursor() # sqlite3.Cursor
+
+            cursor.execute('SELECT * FROM solutions WHERE id = ? LIMIT 1', (id,))
+            data = cursor.fetchone()
 
             if data is None:
-                return
+                return solution
             
-            self.id = data[0]
-            self.puzzleId = data[1]
-            self.moves = data[2]
-            self.length = data[3]
-            self.fish_solution = data[4]
+            solution.id = data[0]
+            solution.puzzleId = data[1]
+            solution.moves = data[2]
+            solution.length = data[3]
+            solution.fish_solution = data[4]
 
-            self.puzzle = Puzzle(searchById=self.puzzleId)
+        return solution
+    
+
+    @staticmethod
+    def searchByPuzzleId(puzzleId: int) -> Solution:
+        solution = Solution()
+
+        if puzzleId != 0:
+            connection = get_connection()
+            cursor = connection.cursor() # sqlite3.Cursor
+
+            cursor.execute('SELECT * FROM solutions WHERE puzzleId = ? LIMIT 1', (puzzleId,))
+            data = cursor.fetchone()
+
+            if data is None:
+                return solution
+            
+            solution.id = data[0]
+            solution.puzzleId = data[1]
+            solution.moves = data[2]
+            solution.length = data[3]
+            solution.fish_solution = data[4]
+
+        return solution
 
 
     def remove_puzzle(self):

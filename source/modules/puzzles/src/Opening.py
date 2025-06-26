@@ -15,6 +15,7 @@ class Opening:
         self.sequence = ''
         self.parentId = 0
 
+
     @staticmethod
     def searchById(id: int) -> Opening:
         connection = get_connection()
