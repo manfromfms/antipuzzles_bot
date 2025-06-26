@@ -6,7 +6,7 @@ from .openings_list import openings_list
 import chess.pgn
 
 class Opening:
-    def __init__(self, moves_str=''):
+    def __init__(self):
         self.connection = get_connection()
         self.cursor = self.connection.cursor()
 
@@ -242,9 +242,9 @@ class Opening:
                 move_parts.append(f"{move_number}. {white} {black}")
             else:
                 move_parts.append(f"{move_number}. {white}")
-        move_str = ' '.join(move_parts)
+        moves_str = ' '.join(move_parts)
         
-        return Opening(moves_str=move_str)
+        return Opening.searchByMovesStr(moves_str)
     
 
     def __repr__(self):
