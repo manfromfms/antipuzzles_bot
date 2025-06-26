@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sqlite3
 
 from ...database import get_connection
@@ -5,7 +7,7 @@ from ...database import get_connection
 class User:
     def __init__(self, id=0):
 
-        self.connection = get_connection
+        self.connection = get_connection()
         self.cursor = self.connection.cursor()
         
         self.id = id
@@ -14,7 +16,7 @@ class User:
 
 
     @staticmethod
-    def searchById(id):
+    def searchById(id: int) -> User:
         connection = get_connection()
         cursor = connection.cursor()
 
@@ -29,6 +31,8 @@ class User:
                 user.id = data[0]
                 user.nickname = data[1]
                 user.pgroup = data[2]
+
+        return user
 
 
     def update_database_entry(self):
@@ -109,4 +113,7 @@ class User:
             cursor.execute(index_stmt)
 
         connection.commit()
-        
+
+
+    def __repr__(self):
+        return f"users.User(id={self.id}, nickname=\"{self.nickname}\", pgroup={self.pgroup})"

@@ -8,5 +8,5 @@ Module requirements:
 
 from .src.User import User
 
-def puzzles_init():
+def users_init():
     User.setup_database_structure()
