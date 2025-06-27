@@ -1,5 +1,5 @@
 """
-This module contains puzzle classes:
+This module contains puzzle-related classes:
 - Game
 - Opening
 - Puzzle

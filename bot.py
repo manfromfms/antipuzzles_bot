@@ -1,6 +1,5 @@
-from source.modules.database import database_init
-from source.modules.users import users_init, User
+import source.modules.telegram as tg
+import source.modules.command_start
+import source.modules.command_help
 
-database_init('./puzzles.db')
-
-print(User().searchById(939993565))
+tg.run_polling()

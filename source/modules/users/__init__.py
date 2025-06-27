@@ -1,5 +1,5 @@
 """
-This module contains puzzle classes:
+This module contains user-related classes:
 - User
 
 Module requirements:
