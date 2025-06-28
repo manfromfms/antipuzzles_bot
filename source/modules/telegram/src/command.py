@@ -1,6 +1,10 @@
 from typing import Any
 from telegram import Update
 
+
+import logging
+
+
 class CommandDecorator:
     name = ''
     h = ''
@@ -95,6 +99,7 @@ def command(n, params_spec, h=''):
                 if errors:
                     raise ValueError("\n".join(errors))
                 
+                logging.info((update.message.from_user.id, update.message.chat_id, update.message.text, parsed_params))
                 return await func(message, parsed_params)
             
         cmd = Command()
