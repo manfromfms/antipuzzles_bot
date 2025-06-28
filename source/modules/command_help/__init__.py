@@ -25,12 +25,15 @@ async def help(message: Message, params):
     if not group.hasPermission(f'CommandInteraction:help'):
         return
 
-    if params['name'] is not None and group.hasPermission(f'CommandInteraction:{params['name']}') and group.hasPermission(f'CommandInteraction:help:Param:name'):
+    if params['name'] is not None and group.hasPermission(f'CommandInteraction:help:Param:name'):
         for handler in get_handlers()[0]:
             handler = handler.callback
             if handler.name == params['name']:
-                await message.chat.send_message(handler.help, parse_mode='markdown')
-                # TODO: check permissions for each parameter.
+                if group.hasPermission(f'CommandInteraction:{params['name']}'):
+                    return await message.chat.send_message(handler.help, parse_mode='markdown')
+                    # TODO: check permissions for each parameter.
+
+        return await message.chat.send_message('Command not found 🙌', parse_mode='markdown')
 
     else:
         text = ''
@@ -41,7 +44,10 @@ async def help(message: Message, params):
                 text += f'*/{handler.name}*: {handler.h}\n'
 
         if len(text) != 0:
-            await message.chat.send_message(text, parse_mode='markdown')
+            return await message.chat.send_message(text, parse_mode='markdown')
+        
+    await message.chat.send_message("Nothing to show here 🫥", parse_mode='markdown')
+
 
 add_handler(CommandHandler(['help'], help))
 
