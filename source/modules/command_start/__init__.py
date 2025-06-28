@@ -9,6 +9,7 @@ from telegram import Message
 from telegram.ext import CommandHandler
 
 from ..telegram import command, add_handler
+from ..permissions import *
 
 
 @command('start', [], h='Initial command.')
@@ -19,5 +20,8 @@ add_handler(CommandHandler(['start'], start))
 
 
 def command_start_init():
-    pass
-
+    SUPERADMIN.addRule('CommandInteraction:start', True)
+    ADMIN     .addRule('CommandInteraction:start', True)
+    DEFAULT   .addRule('CommandInteraction:start', True)
+    RESTRICTED.addRule('CommandInteraction:start', True)
+    BANNED    .addRule('CommandInteraction:start', True)
