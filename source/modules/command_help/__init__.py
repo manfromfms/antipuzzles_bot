@@ -8,9 +8,10 @@ Module requirements:
 from telegram import Message
 from telegram.ext import CommandHandler
 
-from ..telegram import command, add_handler, get_handlers
+from ..telegram import command, add_handler, get_handlers, CommandDecorator
 from ..users import User
 from ..permissions import *
+from ..translation import Translation
 
 @command(
     n='help', 
@@ -20,33 +21,34 @@ from ..permissions import *
     h='Display information about a command'
 )
 async def help(message: Message, params):
-    group = BasicGroup().get(User().searchById(message.from_user.id).pgroup)
+    user = User().searchById(message.from_user.id)
+    group = BasicGroup().get(user.pgroup)
 
     if not group.hasPermission(f'CommandInteraction:help'):
         return
 
     if params['name'] is not None and group.hasPermission(f'CommandInteraction:help:Param:name'):
-        for handler in get_handlers()[0]:
-            handler = handler.callback
+        for h in get_handlers()[0]:
+            handler: CommandDecorator = h.callback
             if handler.name == params['name']:
                 if group.hasPermission(f'CommandInteraction:{params['name']}'):
-                    return await message.chat.send_message(handler.help, parse_mode='markdown')
+                    return await message.chat.send_message(handler.help.translate(language=message.from_user.language_code), parse_mode='markdown')
                     # TODO: check permissions for each parameter.
 
-        return await message.chat.send_message('Command not found 🙌', parse_mode='markdown')
+        return await message.chat.send_message(Translation('Command not found 🙌').translate(language=message.from_user.language_code), parse_mode='markdown')
 
     else:
         text = ''
-        for handler in get_handlers()[0]:
-            handler = handler.callback
+        for h in get_handlers()[0]:
+            handler: CommandDecorator = h.callback
 
             if group.hasPermission(f'CommandInteraction:{handler.name}'):
-                text += f'*/{handler.name}*: {handler.h}\n'
+                text += f'*/{handler.name}*: {handler.h.translate(language=message.from_user.language_code)}\n'
 
         if len(text) != 0:
             return await message.chat.send_message(text, parse_mode='markdown')
         
-    await message.chat.send_message("Nothing to show here 🫥", parse_mode='markdown')
+    await message.chat.send_message(Translation("Nothing to show here 🫥").translate(language=message.from_user.language_code), parse_mode='markdown')
 
 
 add_handler(CommandHandler(['help'], help))

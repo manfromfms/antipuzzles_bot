@@ -1,14 +1,15 @@
 from typing import Any
 from telegram import Update
 
-
 import logging
+
+from ...translation import Translation
 
 
 class CommandDecorator:
     name = ''
-    h = ''
-    help = ''
+    h: Translation
+    help: Translation
 
     async def __call__(self):
         pass
@@ -105,8 +106,8 @@ def command(n, params_spec, h=''):
         cmd = Command()
 
         cmd.name = n
-        cmd.h = h
-        cmd.help = f'*/{n}*: {h}\n'
+        cmd.h = Translation(h)
+        cmd.help = f'*/{n}*: ' + Translation(h) + '\n'
 
         for spec in params_spec:
             name = spec['name']
@@ -114,7 +115,7 @@ def command(n, params_spec, h=''):
             required = spec['required']
             hh = spec['help']
 
-            cmd.help += f'    - *{name}* _({param_type}{', required' if required else ''})_{(': ' + hh) if hh is not None else ''}'
+            cmd.help += f'    - *{name}* _({param_type}' + (', ' + Translation('required') if required else '') + ')_' + ((': ' + Translation(hh)) if hh is not None else '')
 
         return cmd
     return decorator

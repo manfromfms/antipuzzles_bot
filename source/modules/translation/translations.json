@@ -1,0 +1,20 @@
+{
+    "en": {
+        "Select a command to view information about.": {
+            "en": "Select a command to view information about.",
+            "ru": "Выбор команды для отоборажения информации."
+        },
+        "Display information about a command": {
+            "en": "Display information about a command",
+            "ru": "\u0412\u044b\u0432\u043e\u0434\u0438\u0442 \u0438\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044e \u043e \u043a\u043e\u043c\u0430\u043d\u0434\u0435"
+        },
+        "Command not found \ud83d\ude4c": {
+            "en": "Command not found \ud83d\ude4c",
+            "ru": "\u041a\u043e\u043c\u0430\u043d\u0434\u0430 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430 \ud83d\ude4c"
+        },
+        "Initial command.": {
+            "en": "Initial command.",
+            "ru": "\u041d\u0430\u0447\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u043c\u0430\u043d\u0434\u0430."
+        }
+    }
+}
