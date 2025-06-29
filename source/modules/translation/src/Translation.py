@@ -66,17 +66,17 @@ class Translation:
         self.translations: dict | list = read_json_file(self.path)
 
         if self.original_language in self.translations:
-            if self.original_text in self.translations[self.original_language]:
-                if language in self.translations[self.original_language][self.original_text]:
-                    return self.translations[self.original_language][self.original_text][language]
+            if self.original_text in self.translations[self.original_language]: # type: ignore
+                if language in self.translations[self.original_language][self.original_text]: # type: ignore
+                    return self.translations[self.original_language][self.original_text][language] # type: ignore
                 else:
-                    self.translations[self.original_language][self.original_text][language] = self.original_text
+                    self.translations[self.original_language][self.original_text][language] = self.original_text # type: ignore
                     save_to_json_file(self.translations, file_path=self.path)
             else:
-                self.translations[self.original_language][self.original_text] = {}
+                self.translations[self.original_language][self.original_text] = {} # type: ignore
                 save_to_json_file(self.translations, file_path=self.path)
         else:
-            self.translations[self.original_language] = {}
+            self.translations[self.original_language] = {} # type: ignore
             save_to_json_file(self.translations, file_path=self.path)
 
         return self.original_text

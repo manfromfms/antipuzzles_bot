@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from .Game import Game
 from ...database import get_connection
+from .Opening import Opening
 
 import chess
 import sqlite3
@@ -266,3 +267,6 @@ class Puzzle:
 
     def __repr__(self):
         return f"puzzles.Puzzle(id={self.id}, gameId={self.gameId}, elo={self.elo}, elodev={self.elodev}, volatility={self.volatility}, fen='{self.fen}', openingId={self.openingId}, isProcessed={self.isProcessed}, turn={self.turn}, moveTime={self.moveTime})"
+    
+    def getOpening(self):
+        return Opening.searchById(self.openingId)

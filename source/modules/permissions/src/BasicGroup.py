@@ -22,7 +22,7 @@ class BasicGroup:
 
 
     def hasPermission(self, name: str):
-        if self.pgroup < 0:
+        if self.pgroup <= 0:
             # ROOT has all the rules without a need to check.
             return True
         
