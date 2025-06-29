@@ -23,6 +23,8 @@ class CommandDecorator:
 def command(n, params_spec, h=''):
     """
     Decorator for parsing command parameters from message.text.
+
+    (AI generated with some additions)
     
     Parses a command string in the format:
         `/command param1:value1 param2 param3:value3 ...`
