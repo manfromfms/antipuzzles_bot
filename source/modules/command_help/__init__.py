@@ -29,26 +29,26 @@ async def help(message: Message, params):
 
     if params['name'] is not None and group.hasPermission(f'CommandInteraction:help:Param:name'):
         for h in get_handlers()[0]:
-            handler: CommandDecorator = h.callback
+            handler: CommandDecorator = h.callback # type: ignore
             if handler.name == params['name']:
                 if group.hasPermission(f'CommandInteraction:{params['name']}'):
-                    return await message.chat.send_message(handler.help.translate(language=message.from_user.language_code), parse_mode='markdown')
+                    return await message.chat.send_message(handler.help.translate(language=message.from_user.language_code), parse_mode='markdown') # type: ignore
                     # TODO: check permissions for each parameter.
 
-        return await message.chat.send_message(Translation('Command not found 🙌').translate(language=message.from_user.language_code), parse_mode='markdown')
+        return await message.chat.send_message(Translation('Command not found 🙌').translate(language=message.from_user.language_code), parse_mode='markdown') # type: ignore
 
     else:
         text = ''
         for h in get_handlers()[0]:
-            handler: CommandDecorator = h.callback
+            handler: CommandDecorator = h.callback # type: ignore
 
             if group.hasPermission(f'CommandInteraction:{handler.name}'):
-                text += f'*/{handler.name}*: {handler.h.translate(language=message.from_user.language_code)}\n'
+                text += f'*/{handler.name}*: {handler.h.translate(language=message.from_user.language_code)}\n' # type: ignore
 
         if len(text) != 0:
             return await message.chat.send_message(text, parse_mode='markdown')
         
-    await message.chat.send_message(Translation("Nothing to show here 🫥").translate(language=message.from_user.language_code), parse_mode='markdown')
+    await message.chat.send_message(Translation("Nothing to show here 🫥").translate(language=message.from_user.language_code), parse_mode='markdown') # type: ignore
 
 
 add_handler(CommandHandler(['help'], help))
