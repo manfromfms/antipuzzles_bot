@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sqlite3
 
 from ...users import User
@@ -15,7 +17,7 @@ class User_expand(User):
         self.current_puzzle_move = 0
 
 
-    def inherit(self, user: User):
+    def inherit(self, user: User | User_expand):
         self.connection = user.connection
         self.cursor = user.cursor
 
@@ -25,7 +27,7 @@ class User_expand(User):
 
     
     @staticmethod
-    def searchById(id: int) -> User:
+    def searchById(id: int) -> User_expand:
         user = User_expand()
         user.inherit(User().searchById(id))
 
