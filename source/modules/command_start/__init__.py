@@ -3,6 +3,7 @@ This module handles "start" command for telegram bot.
 
 Module requirements:
 - telegram
+- permissions
 """
 
 from telegram import Message

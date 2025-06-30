@@ -3,6 +3,9 @@ This module handles "help" command for telegram bot. This function should be cal
 
 Module requirements:
 - telegram
+- users
+- permissions
+- translation
 """
 
 from telegram import Message

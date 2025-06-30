@@ -61,7 +61,7 @@ async def puzzle(message: Message, params):
         await message.chat.send_message('Вот ваша текущая задача')
 
         user = ml.User.User(ml, connection, searchById=message.from_user.id) # type: ignore
-        puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=user.current_puzzle)
+        puzzle = ml.Puzzle.Puzzle(ml, connection, searchById=usxer.current_puzzle)
 
         await message.chat.send_message(complile_puzzle_info(ml, connection, puzzle, lang=Language(message.from_user.language_code)), parse_mode=telegram.constants.ParseMode('Markdown'))
         await show_current_puzzle_state(ml, connection, message, user=user) # type: ignore'''
