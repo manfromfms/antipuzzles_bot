@@ -71,3 +71,5 @@ async def show_current_puzzle_state(message: telegram.Message, user: User):
 
     if file_id is None and len(msg.photo) > 0:
         add_file_id(connection, board.fen(), msg.photo[0].file_id)
+
+    return

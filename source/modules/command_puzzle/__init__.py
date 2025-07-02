@@ -1,3 +1,5 @@
+# TODO: Write docstring
+
 from typing import TYPE_CHECKING
 
 import sqlite3

@@ -58,5 +58,4 @@ async def inline_keyboard_handler(update: Update, context: ContextTypes.DEFAULT_
 
     for h in handlers:
         if h.string in query.data: # type: ignore
-            print(h.string, query.data, True)
             return await h(query.data, query) # type: ignore
