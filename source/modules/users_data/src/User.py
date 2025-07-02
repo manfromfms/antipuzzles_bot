@@ -1,20 +1,86 @@
 from __future__ import annotations
 
+import random
 import sqlite3
 
 from ...users import User
+from ...puzzles import Opening
 from ...database import get_connection
 
 class User_expand(User):
     def __init__(self, id=0):
         super().__init__(id)
 
-        self.elo = 1000
-        self.elodev = 350
+        self.elo = 1000.0
+        self.elodev = 350.0
         self.volatility = 0.06
 
         self.current_puzzle = 0
         self.current_puzzle_move = 0
+
+
+    def count_solved_puzzles(self):
+        self.cursor.execute('''
+            SELECT COUNT(*)
+            FROM played
+            WHERE userId = ?;
+        ''', (self.id,))
+
+        return self.cursor.fetchone()[0]
+
+
+    def select_another_puzzle(self, id):
+        self.current_puzzle = id
+        self.current_puzzle_move = 0
+
+        self.update_database_entry()
+
+
+    def puzzle_selection_policy(self):
+        # preferences = Preferences(self.ml, self.connection, searchByUserId=self.id)
+
+        opening_ids = []
+
+        # This weird if statements will be used with preferences
+        if 0 == 1 or 0 == 0:
+            opening_ids = [0]
+        else:
+            opening_ids = (Opening.searchById(id=0)).get_children()
+
+        if 0 == 0:
+            self.cursor.execute('''
+                SELECT *
+                FROM puzzles
+                LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ?
+                WHERE puzzles.isProcessed = 1
+                AND played.puzzleId IS NULL
+                ORDER BY MAX(ABS(puzzles.elo + puzzles.elodev/3 - ?), ABS(puzzles.elo - puzzles.elodev/3 - ?)) ASC
+            ''', (self.id, self.elo + 0, self.elo + 0))
+        else:
+            self.cursor.execute(f'''
+                SELECT *
+                FROM puzzles
+                LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ?
+                WHERE puzzles.isProcessed = 1 AND puzzles.openingId IN ({','.join('?' * len(opening_ids))})
+                AND played.puzzleId IS NULL
+                ORDER BY MAX(ABS(puzzles.elo + puzzles.elodev/3 - ?), ABS(puzzles.elo - puzzles.elodev/3 - ?)) ASC
+            ''', [self.id] + opening_ids + [self.elo + 0, self.elo + 0])
+        
+        p = self.cursor.fetchall()
+
+        if len(p) == 0:
+            self.select_another_puzzle(3)
+
+            return 1
+
+        elo = p[0][2]
+
+        p = [a for a in p if a[2] == elo]
+        
+        id = random.sample(p, 1)[0][0]
+        self.select_another_puzzle(id)
+
+        return 0
 
 
     def inherit(self, user: User | User_expand):
@@ -62,7 +128,7 @@ class User_expand(User):
                 UPDATE user_data
                 SET 
                     elo = ?,
-                    elodev = ?
+                    elodev = ?,
                     volatility = ?,
                     current_puzzle = ?,
                     current_puzzle_move = ?
@@ -131,9 +197,9 @@ class User_expand(User):
         CREATE TABLE IF NOT EXISTS user_data (
             id INTEGER PRIMARY KEY,
             userId INTEGER NOT NULL REFERENCES users(id),
-            elo INTEGER DEFAULT 1000,
-            elodev INTEGER DEFAULT 350,
-            volatility INTEGER DEFAULT 0.06,
+            elo REAL DEFAULT 1000,
+            elodev REAL DEFAULT 350,
+            volatility REAL DEFAULT 0.06,
             current_puzzle INTEGER DEFAULT 0,
             current_puzzle_move INTEGER DEFAULT 0
         );

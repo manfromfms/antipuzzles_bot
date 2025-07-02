@@ -1,17 +1,26 @@
 from __future__ import annotations
 from typing import List, Callable, Any
 
+import logging
+
 from telegram import Update, CallbackQuery
 from telegram.ext import ContextTypes
 
 handlers: List[InlineKeyboardHandler] = []
 
+
+async def simple_function(data: str, query: CallbackQuery):
+    return await query.answer()
+
+
 class InlineKeyboardHandler:
     def __init__(self):
         self.string = ''
+
+        self.call = simple_function
     
     async def __call__(self, data: str, query: CallbackQuery):
-        await query.answer()
+        return await self.call(data, query)
 
 def create_inline_keyboard_handler(string: str = '') -> Callable[..., InlineKeyboardHandler]:
     """
@@ -35,22 +44,19 @@ def create_inline_keyboard_handler(string: str = '') -> Callable[..., InlineKeyb
         async def wrapper(data: str, query: CallbackQuery):
             return await func(data, query)
         
-        handler.__call__ = wrapper
+        handler.call = wrapper
+        handlers.append(handler)
         return handler
     
     return decorator
 
 
-def inline_keyboard_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def inline_keyboard_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = update.callback_query
+
+    logging.info((query.from_user.id, query.message.chat.id, query.data))
 
     for h in handlers:
         if h.string in query.data: # type: ignore
-            return h(query.data, query) # type: ignore
-        
-
-
-
-def add_inline_keyboard_handler(h: InlineKeyboardHandler):
-    handlers.append(h)
-    
+            print(h.string, query.data, True)
+            return await h(query.data, query) # type: ignore

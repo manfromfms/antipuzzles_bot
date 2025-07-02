@@ -16,7 +16,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, Callb
 
 from .src.command import command, CommandDecorator
 
-from .src.InlineKeyboardHandler import create_inline_keyboard_handler, add_inline_keyboard_handler, inline_keyboard_handler
+from .src.InlineKeyboardHandler import create_inline_keyboard_handler, inline_keyboard_handler
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -33,7 +33,7 @@ app = ApplicationBuilder()\
     .build()
 
 
-app.add_handler(CallbackQueryHandler(create_inline_keyboard_handler))
+app.add_handler(CallbackQueryHandler(inline_keyboard_handler))
 
 
 def add_handler(handler):

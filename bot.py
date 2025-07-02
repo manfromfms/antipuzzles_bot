@@ -7,8 +7,6 @@ import source.modules.users_data
 
 source.modules.users_data.users_data_init()
 
-print(source.modules.users_data.User.searchById(939993565))
-
 import source.modules.command_start
 import source.modules.command_puzzle
 import source.modules.command_help

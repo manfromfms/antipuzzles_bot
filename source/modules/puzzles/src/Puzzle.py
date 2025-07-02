@@ -14,8 +14,8 @@ class Puzzle:
 
         self.id = 0
         self.gameId: int = 0
-        self.elo = 1000
-        self.elodev = 350
+        self.elo = 1000.0
+        self.elodev = 350.0
         self.volatility = 0.06
         self.fen = ''
         self.openingId = 0

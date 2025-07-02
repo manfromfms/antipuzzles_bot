@@ -1,6 +1,7 @@
 import telegram
 import chess.svg
 import chess.variant
+from io import BytesIO
 from wand.image import Image
 
 from ...users_data import User
@@ -12,6 +13,12 @@ from .get_file_id import get_file_id, add_file_id
 from .move_to_emoji import convert_move_to_emoji
 
 async def show_current_puzzle_state(message: telegram.Message, user: User):
+    """Generates and sends puzzle state to a user.
+
+    Args:
+        message (telegram.Message): Any message.
+        user (User): User class from module (not python-telegram-bot).
+    """
     connection = get_connection()
 
     if user.current_puzzle == 0 or user.current_puzzle is None:
@@ -51,7 +58,7 @@ async def show_current_puzzle_state(message: telegram.Message, user: User):
     rows = [[]]
     for move in board.legal_moves:
         emoji = convert_move_to_emoji(move, board)
-        button = telegram.InlineKeyboardButton(text=emoji + board.san(move), callback_data=f"Make move:{puzzle.id}:{user.current_puzzle_move}:{move.uci()}")
+        button = telegram.InlineKeyboardButton(text=emoji + board.san(move), callback_data=f"make_move:{puzzle.id}:{user.current_puzzle_move}:{move.uci()}")
         if len(rows[-1]) == (4 if board.legal_moves.count() <= 24 else 5):
             rows.append([])
 
