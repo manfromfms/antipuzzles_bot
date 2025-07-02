@@ -32,21 +32,27 @@ async def help(message: Message, params):
 
     if params['name'] is not None and group.hasPermission(f'CommandInteraction:help:Param:name'):
         for h in get_handlers()[0]:
-            handler: CommandDecorator = h.callback # type: ignore
-            if handler.name == params['name']:
-                if group.hasPermission(f'CommandInteraction:{params['name']}'):
-                    return await message.chat.send_message(handler.help.translate(language=message.from_user.language_code), parse_mode='markdown') # type: ignore
-                    # TODO: check permissions for each parameter.
+            try: # This code will fail if callback isn't a Command
+                handler: CommandDecorator = h.callback # type: ignore
+                if handler.name == params['name']:
+                    if group.hasPermission(f'CommandInteraction:{params['name']}'):
+                        return await message.chat.send_message(handler.help.translate(language=message.from_user.language_code), parse_mode='markdown') # type: ignore
+                        # TODO: check permissions for each parameter.
+            except:
+                pass
 
         return await message.chat.send_message(Translation('Command not found 🙌').translate(language=message.from_user.language_code), parse_mode='markdown') # type: ignore
 
     else:
         text = ''
         for h in get_handlers()[0]:
-            handler: CommandDecorator = h.callback # type: ignore
+            try: # This code will fail if callback isn't a Command
+                handler: CommandDecorator = h.callback # type: ignore
 
-            if group.hasPermission(f'CommandInteraction:{handler.name}'):
-                text += f'*/{handler.name}*: {handler.h.translate(language=message.from_user.language_code)}\n' # type: ignore
+                if group.hasPermission(f'CommandInteraction:{handler.name}'):
+                    text += f'*/{handler.name}*: {handler.h.translate(language=message.from_user.language_code)}\n' # type: ignore
+            except:
+                pass
 
         if len(text) != 0:
             return await message.chat.send_message(text, parse_mode='markdown')
