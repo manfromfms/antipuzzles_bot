@@ -29,7 +29,7 @@ def update_ratings(user: User, puzzle: Puzzle, userWon):
     cursor = connection.cursor()
 
     cursor.execute('''SELECT EXISTS(
-        SELECT 1 
+        SELECT 1 s
         FROM played 
         WHERE userId = ? AND puzzleId = ?
     );''', (user.id, puzzle.id))
@@ -109,9 +109,18 @@ async def puzzle(message: Message, params):
         await message.chat.send_message(Translation('Here is your current puzzle.').translate(message.from_user.language_code)) # type: ignore
 
         await message.chat.send_message(complile_puzzle_info(puzzle).translate(message.from_user.language_code), parse_mode=telegram.constants.ParseMode('Markdown')) # type: ignore
-        await show_current_puzzle_state(message, user=user) # type: ignore'''
+        await show_current_puzzle_state(message, user=user) # type: ignore
 
 add_handler(CommandHandler(['puzzle', 'p'], puzzle))
+
+
+@create_inline_keyboard_handler(string='switch_to_puzzle')
+async def select_puzzle_handler(data: str, query: CallbackQuery):
+    message = query.message # type: ignore
+    user = User.searchById(id=query.from_user.id) # type: ignore
+    user.select_another_puzzle(int(query.data.split(':')[1])) # type: ignore
+
+    await show_current_puzzle_state(message, user=user) # type: ignore
 
 
 @create_inline_keyboard_handler(string='make_move')
