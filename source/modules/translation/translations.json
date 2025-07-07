@@ -61,13 +61,13 @@
         "black": {
             "ru": "\u0447\u0435\u0440\u043d\u044b\u0445",
             "null": "black",
-            "en": "black",
-            "null": "black"
+            "en": "black"
         },
         "white": {
             "ru": "\u0431\u0435\u043b\u044b\u0445",
             "null": "white",
-            "en": "white"
+            "en": "white",
+            "null": "white"
         },
         "Nothing to show here \ud83e\udee5": {
             "ru": "\u0412\u044b\u0432\u043e\u0434 \u043f\u0443\u0441\u0442 \ud83e\udee5"
@@ -131,6 +131,15 @@
         },
         "id": {
             "ru": "id"
+        },
+        "Show hardest puzzles.": {
+            "ru": "\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u044c \u0441\u0430\u043c\u044b\u0435 \u0441\u043b\u043e\u0436\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u0447\u0438."
+        },
+        "Without this flag all attempted puzzles will be hidden.": {
+            "ru": "\u0411\u0435\u0437 \u044d\u0442\u043e\u0433\u043e \u0444\u043b\u0430\u0433\u0430 \u0440\u0435\u0448\u0435\u043d\u043d\u044b\u0435 \u0432\u0430\u043c\u0438 \u0437\u0430\u0434\u0430\u0447\u0438 \u0431\u0443\u0434\u0443\u0442 \u0441\u043a\u0440\u044b\u0442\u044b."
+        },
+        "Show top players and your neighbours.": {
+            "ru": "\u0412\u044b\u0432\u0435\u0441\u0442\u0438 \u0440\u0435\u0439\u0442\u0438\u043d\u0433 \u043b\u0443\u0447\u0448\u0438\u0445 \u0438\u0433\u0440\u043e\u043a\u043e\u0432 \u0438 \u0432\u0430\u0448\u0438\u0445 \u0441\u043e\u0441\u0435\u0434\u0435\u0439."
         }
     }
 }
