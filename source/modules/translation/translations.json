@@ -127,7 +127,8 @@
             "ru": "\u0411\u0435\u0437 \u0434\u0435\u0431\u044e\u0442\u0430"
         },
         "The *hardest* puzzles": {
-            "ru": "\u0421\u0430\u043c\u044b\u0435 *\u0441\u043b\u043e\u0436\u043d\u044b\u0435* \u0437\u0430\u0434\u0430\u0447\u0438"
+            "ru": "\u0421\u0430\u043c\u044b\u0435 *\u0441\u043b\u043e\u0436\u043d\u044b\u0435* \u0437\u0430\u0434\u0430\u0447\u0438",
+            "en": "The *hardest* puzzles"
         },
         "id": {
             "ru": "id"
@@ -140,6 +141,8 @@
         },
         "Show top players and your neighbours.": {
             "ru": "\u0412\u044b\u0432\u0435\u0441\u0442\u0438 \u0440\u0435\u0439\u0442\u0438\u043d\u0433 \u043b\u0443\u0447\u0448\u0438\u0445 \u0438\u0433\u0440\u043e\u043a\u043e\u0432 \u0438 \u0432\u0430\u0448\u0438\u0445 \u0441\u043e\u0441\u0435\u0434\u0435\u0439."
-        }
+        },
+        "No such puzzle": {},
+        "This is an old puzzle. Try executing /puzzle to get your current puzzle.": {}
     }
 }

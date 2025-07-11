@@ -9,6 +9,7 @@ Module requirements:
 from telegram import Message
 from telegram.ext import CommandHandler
 
+from ..users import User
 from ..telegram import command, add_handler
 from ..permissions import *
 
@@ -16,6 +17,13 @@ from ..permissions import *
 @command('start', [], h='Initial command.')
 async def start(message: Message, params: dict) -> None:
     await message.chat.send_message('/start')
+
+    user = User()
+    user.id = message.from_user.id
+    user.nickname = message.from_user.full_name
+    user.pgroup = 1000
+
+    user.update_database_entry()
 
 add_handler(CommandHandler(['start'], start))
 

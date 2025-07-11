@@ -75,8 +75,8 @@ async def top(message: Message, params):
         if u[4] < len(data):
             s += f'''
 {str(u[4]+1) + ') '}*{data[u[4]][1]}*
-    ''' + Translation('Raiting') + ''': `{int(data[u[4]][2])}±{int(data[u[4]][3])}`
-    ''' + Translation('Solved puzzles') + ''': `{(User.searchById(id=data[u[4]][0])).count_solved_puzzles()}`
+    ''' + Translation('Raiting') + f''': `{int(data[u[4]][2])}±{int(data[u[4]][3])}`
+    ''' + Translation('Solved puzzles') + f''': `{(User.searchById(id=data[u[4]][0])).count_solved_puzzles()}`
 '''
 
     elif u[4] > 6:
