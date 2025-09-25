@@ -1,23 +1,24 @@
 """
-This module handles "start" command for telegram bot.
+This module handles "/start" command for telegram bot.
 
 Module requirements:
 - telegram
 - permissions
 - user
+- translation
 """
 
 from telegram import Message
 from telegram.ext import CommandHandler
 
 from ..users import User
-from ..telegram import command, add_handler
 from ..permissions import *
-
+from ..translation import Translation
+from ..telegram import command, add_handler
 
 @command('start', [], h='Initial command.')
 async def start(message: Message, params: dict) -> None:
-    await message.chat.send_message('/start')
+    await message.chat.send_message(Translation("Welcome to our bot with antichess puzzles! To see all the available commands execute /help or jump right into solving puzzles using /puzzle (/p works as well)!").translate(message.from_user.language_code))
 
     user = User()
     user.id = message.from_user.id
