@@ -99,7 +99,7 @@ class Translation:
     
 
     def translate(self, language='') -> str:
-        if language == '':
+        if language == '' or str(language) == 'null':
             language = self.translate_to
 
         s = ''
