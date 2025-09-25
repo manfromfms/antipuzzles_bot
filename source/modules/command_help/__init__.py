@@ -11,10 +11,10 @@ Module requirements:
 from telegram import Message
 from telegram.ext import CommandHandler
 
-from ..telegram import command, add_handler, get_handlers, CommandDecorator
 from ..users import User
 from ..permissions import *
 from ..translation import Translation
+from ..telegram import command, add_handler, get_handlers, CommandDecorator
 
 @command(
     n='help', 

@@ -15,9 +15,9 @@ from telegram.ext import CommandHandler
 
 from ..permissions import *
 from ..users_data import User
-from ..telegram import command, add_handler
 from ..translation import Translation
 from ..database import get_connection
+from ..telegram import command, add_handler
 
 
 @command(

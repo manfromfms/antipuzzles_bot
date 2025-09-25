@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import io
 import time
 
-import numpy
 from scipy.optimize import curve_fit
 import numpy as np
 
