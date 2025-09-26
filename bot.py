@@ -9,6 +9,10 @@ db.database_init('./puzzles.db')
 import source.modules.users_data
 source.modules.users_data.users_data_init()
 
+# Init daily challenges package
+import source.modules.daily
+source.modules.daily.daily_init()
+
 # Import all commands
 import source.modules.command_me
 import source.modules.command_start

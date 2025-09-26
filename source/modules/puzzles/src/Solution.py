@@ -3,9 +3,8 @@ from __future__ import annotations
 import sqlite3
 
 import chess.engine
-from chess.engine import Mate, Cp
 import chess.variant
-import chess.engine
+from chess.engine import Mate, Cp
 
 import os
 from dotenv import load_dotenv, find_dotenv
