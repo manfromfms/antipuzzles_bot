@@ -21,7 +21,7 @@ from ..telegram import command, add_handler
 async def start(message: Message, params: dict) -> None:
     await message.chat.send_message(Translation("Welcome to our bot with antichess puzzles! To see all the available commands execute /help or jump right into solving puzzles using /puzzle (/p works as well)!").translate(message.from_user.language_code))
 
-    if User.searchById(message.from_user.id).id is not 0:
+    if User.searchById(message.from_user.id).id != 0:
         return
 
     user = User()

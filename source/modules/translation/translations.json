@@ -197,6 +197,24 @@
             "ru": "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u0432\u0430\u0448 \u043f\u0440\u043e\u0433\u0440\u0435\u0441\u0441."
         },
         "Show information about another user.": {},
-        "This is an old puzzle. Try executing /puzzle to get your current puzzle.": {}
+        "This is an old puzzle. Try executing /puzzle to get your current puzzle.": {},
+        "Show your daily challenges.": {
+            "ru": "Show your daily challenges."
+        },
+        "": {
+            "ru": ""
+        },
+        "Gain XP": {
+            "ru": "Gain XP"
+        },
+        "Progress": {
+            "ru": "Progress"
+        },
+        "Correctly solve puzzles": {
+            "ru": "Correctly solve puzzles"
+        },
+        "Solve puzzles in a row": {
+            "ru": "Solve puzzles in a row"
+        }
     }
 }

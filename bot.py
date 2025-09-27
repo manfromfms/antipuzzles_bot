@@ -14,6 +14,7 @@ import source.modules.daily
 source.modules.daily.daily_init()
 
 # Import all commands
+import source.modules.command_daily
 import source.modules.command_me
 import source.modules.command_start
 import source.modules.command_puzzle
@@ -22,6 +23,7 @@ import source.modules.command_hardest
 import source.modules.command_help
 
 # Init all commands
+source.modules.command_daily.command_daily_init()
 source.modules.command_me.command_me_init()
 source.modules.command_start.command_start_init()
 source.modules.command_puzzle.command_puzzle_init()

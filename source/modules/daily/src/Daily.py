@@ -13,6 +13,7 @@ class Daily:
         self.userId = 0
 
         self.streak = 0
+        self.xp = 0
         self.currentDayFinishTimestamp = 0
         
         self.firstTaskType = 0
@@ -27,6 +28,13 @@ class Daily:
         self.thirdTaskMax = 0
         self.thirdTaskProgress = 0
 
+        self.doneForToday = 0
+
+
+    def change_xp(self, amount):
+        self.xp += amount
+        self.update_database_entry()
+
 
     def update_database_entry(self):
         """
@@ -40,6 +48,7 @@ class Daily:
             SET
                 userId = ?,
                 streak = ?,
+                xp = ?,
                 currentDayFinishTimestamp = ?,
                 
                 -- Task 1 updates
@@ -55,13 +64,16 @@ class Daily:
                 -- Task 3 updates
                 thirdTaskType = ?,
                 thirdTaskMax = ?,
-                thirdTaskProgress = ?
+                thirdTaskProgress = ?,
+
+                doneForToday = ?
             WHERE (id = ?)
             """
             
             update_params = (
                 self.userId,
                 self.streak,
+                self.xp,
                 self.currentDayFinishTimestamp,
                 
                 # Task 1 params
@@ -78,6 +90,8 @@ class Daily:
                 self.thirdTaskType,
                 self.thirdTaskMax,
                 self.thirdTaskProgress,
+
+                self.doneForToday,
                 
                 self.id  # WHERE clause parameter
             )
@@ -103,6 +117,7 @@ class Daily:
         INSERT INTO daily (
             userId,
             streak,
+            xp,
             currentDayFinishTimestamp,
             
             -- Task 1 fields
@@ -118,17 +133,21 @@ class Daily:
             -- Task 3 fields
             thirdTaskType,
             thirdTaskMax,
-            thirdTaskProgress
-        ) VALUES (?, ?, ?,
+            thirdTaskProgress,
+
+            doneForToday
+        ) VALUES (?, ?, ?, ?,
                 ?, ?, ?,
                 ?, ?, ?,
-                ?, ?, ?
+                ?, ?, ?,
+                ?
         )
         """
         
         insert_params = (
             self.userId,
             self.streak,
+            self.xp,
             self.currentDayFinishTimestamp,
             
             # Task 1 params
@@ -144,7 +163,9 @@ class Daily:
             # Task 3 params
             self.thirdTaskType,
             self.thirdTaskMax,
-            self.thirdTaskProgress
+            self.thirdTaskProgress,
+
+            self.doneForToday,
         )
         
         self.cursor.execute(insert_query, insert_params)
@@ -165,21 +186,26 @@ class Daily:
             data = cursor.fetchone()
 
             if data is None:
+                daily.userId = userId
+                daily.insert_database_entry()
+
                 return daily
             
             daily.id = data[0]
             daily.userId = data[1]
             daily.streak = data[2]
-            daily.currentDayFinishTimestamp = data[3]
-            daily.firstTaskType = data[4]
-            daily.firstTaskMax = data[5]
-            daily.firstTaskProgress = data[6]
-            daily.secondTaskType = data[7]
-            daily.secondTaskMax = data[8]
-            daily.secondTaskProgress = data[9]
-            daily.thirdTaskType = data[10]
-            daily.thirdTaskMax = data[11]
-            daily.thirdTaskProgress = data[12]
+            daily.xp = data[3]
+            daily.currentDayFinishTimestamp = data[4]
+            daily.firstTaskType = data[5]
+            daily.firstTaskMax = data[6]
+            daily.firstTaskProgress = data[7]
+            daily.secondTaskType = data[8]
+            daily.secondTaskMax = data[9]
+            daily.secondTaskProgress = data[10]
+            daily.thirdTaskType = data[11]
+            daily.thirdTaskMax = data[12]
+            daily.thirdTaskProgress = data[13]
+            daily.doneForToday = data[14]
 
         return daily
 
@@ -195,6 +221,7 @@ class Daily:
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 userId INTEGER UNIQUE REFERENCES users(id),
                 streak INTEGER NOT NULL DEFAULT 0,
+                xp INTEGER NOT NULL DEFAULT 0,
                 currentDayFinishTimestamp INTEGER NOT NULL DEFAULT 0,
                 
                 -- Task 1 fields
@@ -210,7 +237,9 @@ class Daily:
                 -- Task 3 fields
                 thirdTaskType INTEGER NOT NULL DEFAULT 0,
                 thirdTaskMax INTEGER NOT NULL DEFAULT 0,
-                thirdTaskProgress INTEGER NOT NULL DEFAULT 0
+                thirdTaskProgress INTEGER NOT NULL DEFAULT 0,
+
+                doneForToday INTEGER NOT NULL DEFAULT 0
             );
         """
         cursor.execute(create_table_sql)

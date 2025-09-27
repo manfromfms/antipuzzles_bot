@@ -14,6 +14,7 @@ from telegram.ext import CommandHandler
 
 from ..permissions import *
 from ..users_data import User
+from ..daily_extension import Daily
 from ..database import get_connection
 from ..translation import Translation
 from ..puzzles import Puzzle, Solution
