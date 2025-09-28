@@ -106,13 +106,13 @@ class Daily(Daily_base):
 
     def generateGoal(self, t, X):
         if t == 0:
-            return int(math.floor(3*X))
+            return int(math.ceil(3*X))
         
         if t == 1:
-            return int(math.floor(X))
+            return int(math.ceil(X))
         
         if t == 2:
-            return int(math.floor(X/2))
+            return int(math.ceil(X/2))
         
         if t == 3:
             return int(self.rowLookup[int(X)])
@@ -235,6 +235,8 @@ class Daily(Daily_base):
             elif self.thirdTaskType == 3:
                 if self.thirdTaskProgress < self.thirdTaskMax:
                     self.thirdTaskProgress = 0
+
+            self.update_database_entry()
 
 
         self.firstTaskProgress = min(self.firstTaskMax, self.firstTaskProgress)
