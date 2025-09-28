@@ -80,6 +80,11 @@ class Translation:
             save_to_json_file(self.translations, file_path=self.path)
 
         return self.original_text
+    
+
+    def __iadd__(self, other) -> Translation:
+        self.after.append(other)
+        return self
 
 
     def __add__(self, other) -> Translation:

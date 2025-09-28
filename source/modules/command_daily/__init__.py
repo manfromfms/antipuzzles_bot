@@ -8,6 +8,7 @@ Module requirements:
 - translation
 """
 
+import time
 from telegram import Message
 from telegram.ext import CommandHandler
 
@@ -22,12 +23,13 @@ async def daily(message: Message, params: dict) -> None:
     user = User.searchById(message.from_user.id)
     daily = Daily.searchByUserId(user.id)
 
-    if daily.currentDayFinishTimestamp == 0:
+    if daily.currentDayFinishTimestamp == 0 or time.time() > daily.currentDayFinishTimestamp:
         daily.update_general()
+        daily.update_database_entry()
 
     await message.chat.send_message(daily.compile().translate(message.from_user.language_code))
 
-add_handler(CommandHandler(['daily'], daily))
+add_handler(CommandHandler(['daily', 'd'], daily))
 
 
 def command_daily_init():

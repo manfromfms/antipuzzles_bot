@@ -167,7 +167,10 @@ async def make_move_puzzle_handler(data: str, query: CallbackQuery):
             puzzle =Puzzle.searchById(id=user.current_puzzle)
 
             if group.hasPermission('ButtonInteraction:make_move:rated_puzzle_solving'):
-                dif = int(update_ratings(user, puzzle, True))
+                dif = int(update_ratings(user, puzzle, True))\
+                
+                # Update daily challenges
+                Daily.searchByUserId(user.id).update_state(dif)
             else:
                 dif = 0
             user.puzzle_selection_policy()

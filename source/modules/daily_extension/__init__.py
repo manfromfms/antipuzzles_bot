@@ -87,33 +87,35 @@ class Daily(Daily_base):
         daily.thirdTaskProgress = base.thirdTaskProgress
         daily.doneForToday = base.doneForToday
 
+        daily.update_database_entry()
+
         return daily
 
 
     def compile(self) -> Translation:
-        s = Translation()
+        s = Translation('Only') + f' {math.floor((self.currentDayFinishTimestamp - time.time()) / 60 / 60)} ' + Translation('hours left!') + '\n\n'
 
-        s += '🕯️ ' + self.types[self.firstTaskType] + f': {self.firstTaskMax}\n' + Translation('Progress') + f': {self.firstTaskProgress}/{self.firstTaskMax}{'✅' if self.firstTaskMax == self.firstTaskProgress else ''}\n\n'
+        s = s + '🕯️ ' + self.types[self.firstTaskType] + f': {self.firstTaskMax}\n' + Translation('Progress') + f': {self.firstTaskProgress}/{self.firstTaskMax}{'✅' if self.firstTaskMax == self.firstTaskProgress else ''}\n\n'
 
-        s += '🔦 ' + self.types[self.secondTaskType] + f': {self.secondTaskMax}\n' + Translation('Progress') + f': {self.secondTaskProgress}/{self.secondTaskMax}{'✅' if self.secondTaskMax == self.secondTaskProgress else ''}\n\n'
+        s = s + '🔦 ' + self.types[self.secondTaskType] + f': {self.secondTaskMax}\n' + Translation('Progress') + f': {self.secondTaskProgress}/{self.secondTaskMax}{'✅' if self.secondTaskMax == self.secondTaskProgress else ''}\n\n'
 
-        s += '🏮 ' + self.types[self.thirdTaskType] + f': {self.thirdTaskMax}\n' + Translation('Progress') + f': {self.thirdTaskProgress}/{self.thirdTaskMax}{'✅' if self.thirdTaskMax == self.thirdTaskProgress else ''}\n\n'
+        s = s + '🏮 ' + self.types[self.thirdTaskType] + f': {self.thirdTaskMax}\n' + Translation('Progress') + f': {self.thirdTaskProgress}/{self.thirdTaskMax}{'✅' if self.thirdTaskMax == self.thirdTaskProgress else ''}\n\n'
 
         return s
 
 
     def generateGoal(self, t, X):
         if t == 0:
-            return 3*X
+            return int(math.floor(3*X))
         
         if t == 1:
-            return X
+            return int(math.floor(X))
         
         if t == 2:
-            return X/2
+            return int(math.floor(X/2))
         
         if t == 3:
-            return self.rowLookup[int(X)]
+            return int(self.rowLookup[int(X)])
         
         return -1
 
@@ -122,11 +124,15 @@ class Daily(Daily_base):
         """This function checks if challenges have expired and by how much handling possibilities accordingly."""
 
         if time.time() > self.currentDayFinishTimestamp:
-            if time.time() - self.currentDayFinishTimestamp > 60*60*24:
+            if time.time() - self.currentDayFinishTimestamp > (60*60*24):
                 # A day was skipped
                 self.streak = 0
 
-            self.currentDayFinishTimestamp = math.ceil(time.time() / 60*60*24) * 60*60*24
+            if not self.doneForToday:
+                # No challenges were completed
+                self.streak = 0
+
+            self.currentDayFinishTimestamp = math.ceil(time.time() / (60*60*24)) * (60*60*24)
 
             X = math.floor(5. + math.log2(self.streak + 1))
 
@@ -135,12 +141,14 @@ class Daily(Daily_base):
             self.firstTaskProgress = 0
 
             self.secondTaskType = math.floor(random.random() * len(self.types))
-            self.secondTaskMax = self.generateGoal(self.secondTaskType, X*2)
+            self.secondTaskMax = self.generateGoal(self.secondTaskType, X*2.5)
             self.secondTaskProgress = 0
 
             self.thirdTaskType = math.floor(random.random() * len(self.types))
-            self.thirdTaskMax = self.generateGoal(self.thirdTaskType, X*4)
+            self.thirdTaskMax = self.generateGoal(self.thirdTaskType, X*6.25)
             self.thirdTaskProgress = 0
+
+            self.doneForToday = False
 
             self.update_database_entry()
 
@@ -226,19 +234,19 @@ class Daily(Daily_base):
                 self.thirdTaskProgress = 0
 
 
-        self.firstTaskProgress = math.min(self.firstTaskMax, self.firstTaskProgress)
+        self.firstTaskProgress = min(self.firstTaskMax, self.firstTaskProgress)
         if self.firstTaskProgress >= self.firstTaskMax and self.doneForToday == 0:
             self.streak += 1
             self.doneForToday = 1
 
 
-        self.secondTaskProgress = math.min(self.secondTaskMax, self.secondTaskProgress)
+        self.secondTaskProgress = min(self.secondTaskMax, self.secondTaskProgress)
         if self.secondTaskProgress >= self.secondTaskMax and self.doneForToday == 0:
             self.streak += 1
             self.doneForToday = 1
 
 
-        self.thirdTaskProgress = math.min(self.thirdTaskMax, self.thirdTaskProgress)
+        self.thirdTaskProgress = min(self.thirdTaskMax, self.thirdTaskProgress)
         if self.thirdTaskProgress >= self.thirdTaskMax and self.doneForToday == 0:
             self.streak += 1
             self.doneForToday = 1

@@ -62,12 +62,12 @@
         "black": {
             "ru": "\u0447\u0435\u0440\u043d\u044b\u0445",
             "null": "black",
-            "en": "black",
-            "null": "black"
+            "en": "black"
         },
         "white": {
             "ru": "\u0431\u0435\u043b\u044b\u0445",
             "en": "white",
+            "null": "white",
             "null": "white"
         },
         "Nothing to show here \ud83e\udee5": {
@@ -199,22 +199,32 @@
         "Show information about another user.": {},
         "This is an old puzzle. Try executing /puzzle to get your current puzzle.": {},
         "Show your daily challenges.": {
-            "ru": "Show your daily challenges."
+            "ru": "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u0435\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u0447\u0438."
         },
         "": {
             "ru": ""
         },
         "Gain XP": {
-            "ru": "Gain XP"
+            "ru": "\u041f\u043e\u043b\u0443\u0447\u0438\u0442\u044c XP"
         },
         "Progress": {
-            "ru": "Progress"
+            "ru": "\u041f\u0440\u043e\u0433\u0440\u0435\u0441\u0441"
         },
         "Correctly solve puzzles": {
-            "ru": "Correctly solve puzzles"
+            "ru": "\u041f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u043e \u0440\u0435\u0448\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u0447"
         },
         "Solve puzzles in a row": {
-            "ru": "Solve puzzles in a row"
-        }
+            "ru": "\u0420\u0435\u0448\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u0447 \u043f\u043e\u0434\u0440\u044f\u0434"
+        },
+        "Attempt puzzles": {
+            "ru": "\u041f\u043e\u043f\u0440\u043e\u0431\u043e\u0432\u0430\u0442\u044c \u0440\u0435\u0448\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u0447"
+        },
+        "Only": {
+            "ru": "\u041e\u0441\u0442\u0430\u043b\u043e\u0441\u044c \u0432\u0441\u0435\u0433\u043e"
+        },
+        "hours left!": {
+            "ru": "\u0447\u0430\u0441\u043e\u0432!"
+        },
+        "Unexpected error occured. Selecting another puzzle.": {}
     }
 }
