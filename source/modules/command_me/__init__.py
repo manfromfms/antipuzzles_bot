@@ -18,6 +18,7 @@ from telegram.ext import CommandHandler
 
 from ..permissions import *
 from ..users_data import User
+from ..daily_extension import Daily
 from ..translation import Translation
 from ..database import get_connection
 from ..telegram import command, add_handler, get_handlers, CommandDecorator
@@ -41,6 +42,8 @@ async def me(message: Message, params):
     targetUser = user
     if params['id'] is not None and group.hasPermission(f'CommandInteraction:me:Param:id'):
         targetUser = User().searchById(params['id'])
+
+    daily = Daily.searchByUserId(targetUser.id)
 
     # Start the timer
     start_time = time.time()
@@ -119,7 +122,7 @@ async def me(message: Message, params):
 
     await message.chat.send_photo(buf2)
 
-    await message.chat.send_photo(buf1, caption=(f'📊 *' + Translation('Raiting') + f'*: `{int(targetUser.elo)}±{int(targetUser.elodev)}`\n🧮 *' + Translation('Solved correctly') + f'*: `{countpositive}/{countall} ({int(countpositive/countall*100)}%)`\n'+ Translation('Elo change rate') + f': {int(10*(popt[1] + 2*popt[2]*x[-1]))/10} elo/' + Translation('Puzzle') + f'\n' + Translation('Plot built in') + f' {elapsed_ms}' + Translation('ms')).translate(message.from_user.language_code), parse_mode='markdown')
+    await message.chat.send_photo(buf1, caption=(f'❤️‍🔥 *' + Translation('Streak') + f'*: `{daily.streak}`\n🧠 *XP*: `{daily.xp}`\n' + f'📊 *' + Translation('Raiting') + f'*: `{int(targetUser.elo)}±{int(targetUser.elodev)}`\n🧮 *' + Translation('Solved correctly') + f'*: `{countpositive}/{countall} ({int(countpositive/countall*100)}%)`\n'+ Translation('Elo change rate') + f': {int(10*(popt[1] + 2*popt[2]*x[-1]))/10} elo/' + Translation('Puzzle') + f'\n' + Translation('Plot built in') + f' {elapsed_ms}' + Translation('ms')).translate(message.from_user.language_code), parse_mode='markdown')
 
     
 

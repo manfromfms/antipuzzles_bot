@@ -93,13 +93,13 @@ class Daily(Daily_base):
 
 
     def compile(self) -> Translation:
-        s = Translation('Only') + f' {math.floor((self.currentDayFinishTimestamp - time.time()) / 60 / 60)} ' + Translation('hours left!') + '\n\n'
+        s = Translation('Only') + f' {round((self.currentDayFinishTimestamp - time.time()) / 60 / 60 * 10)/10} ' + Translation('hours left!') + '\n\n'
 
-        s = s + '🕯️ ' + self.types[self.firstTaskType] + f': {self.firstTaskMax}\n' + Translation('Progress') + f': {self.firstTaskProgress}/{self.firstTaskMax}{'✅' if self.firstTaskMax == self.firstTaskProgress else ''}\n\n'
+        s = s + '🕯️ ' + self.types[self.firstTaskType] + f': {self.firstTaskMax}\n' + Translation('Progress') + f': {self.firstTaskProgress}/{self.firstTaskMax}{' ✅' if self.firstTaskMax == self.firstTaskProgress else ''}\n\n'
 
-        s = s + '🔦 ' + self.types[self.secondTaskType] + f': {self.secondTaskMax}\n' + Translation('Progress') + f': {self.secondTaskProgress}/{self.secondTaskMax}{'✅' if self.secondTaskMax == self.secondTaskProgress else ''}\n\n'
+        s = s + '🔦 ' + self.types[self.secondTaskType] + f': {self.secondTaskMax}\n' + Translation('Progress') + f': {self.secondTaskProgress}/{self.secondTaskMax}{' ✅' if self.secondTaskMax == self.secondTaskProgress else ''}\n\n'
 
-        s = s + '🏮 ' + self.types[self.thirdTaskType] + f': {self.thirdTaskMax}\n' + Translation('Progress') + f': {self.thirdTaskProgress}/{self.thirdTaskMax}{'✅' if self.thirdTaskMax == self.thirdTaskProgress else ''}\n\n'
+        s = s + '🏮 ' + self.types[self.thirdTaskType] + f': {self.thirdTaskMax}\n' + Translation('Progress') + f': {self.thirdTaskProgress}/{self.thirdTaskMax}{' ✅' if self.thirdTaskMax == self.thirdTaskProgress else ''}\n\n'
 
         return s
 
@@ -209,7 +209,8 @@ class Daily(Daily_base):
                 self.firstTaskProgress += 1
 
             elif self.firstTaskType == 3:
-                self.firstTaskProgress = 0
+                if self.firstTaskProgress < self.firstTaskMax:
+                    self.firstTaskProgress = 0
 
 
             # Second task
@@ -220,7 +221,8 @@ class Daily(Daily_base):
                 self.secondTaskProgress += 1
 
             elif self.secondTaskType == 3:
-                self.secondTaskProgress = 0
+                if self.secondTaskProgress < self.secondTaskMax:
+                    self.secondTaskProgress = 0
 
 
             # Third task
@@ -231,7 +233,8 @@ class Daily(Daily_base):
                 self.thirdTaskProgress += 1
 
             elif self.thirdTaskType == 3:
-                self.thirdTaskProgress = 0
+                if self.thirdTaskProgress < self.thirdTaskMax:
+                    self.thirdTaskProgress = 0
 
 
         self.firstTaskProgress = min(self.firstTaskMax, self.firstTaskProgress)
