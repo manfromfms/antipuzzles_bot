@@ -67,6 +67,7 @@
         "white": {
             "ru": "\u0431\u0435\u043b\u044b\u0445",
             "en": "white",
+            "null": "white",
             "null": "white"
         },
         "Nothing to show here \ud83e\udee5": {
@@ -231,7 +232,7 @@
         },
         "Unexpected error occured. Selecting another puzzle.": {},
         "Streak": {
-            "ru": "Streak"
+            "ru": "Страйк"
         }
     }
 }
