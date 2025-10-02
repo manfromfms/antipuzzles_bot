@@ -112,6 +112,11 @@ class User_expand(User):
                 user.current_puzzle = data[3]
                 user.current_puzzle_move = data[4]
 
+            else:
+                user.id = 0
+                user.nickname = ''
+                user.pgroup = 1000
+
         return user
     
 

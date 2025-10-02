@@ -43,7 +43,7 @@ def save_to_json_file(data: Any, file_path: str, indent: int = 4) -> None:
     """
     try:
         with open(file_path, 'w') as file:
-            json.dump(data, file, indent=indent)
+            json.dump(data, file, indent=indent, ensure_ascii=False)
     except TypeError as e:
         raise ValueError(f"Cannot serialize object to JSON: {str(e)}")
 

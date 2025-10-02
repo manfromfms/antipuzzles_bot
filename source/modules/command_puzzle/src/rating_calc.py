@@ -69,7 +69,7 @@ def calculate_rating_changes(r1, RD1, sigma1, r2, RD2, sigma2, s): # Here s is t
     phi1__ = 1/math.sqrt(1/phi1_**2+1/v1)
     phi2__ = 1/math.sqrt(1/phi2_**2+1/v2)
 
-    mu1__ = mu1 + phi1__**2*g(phi2)*(s - E(mu1, mu2, phi2)) * (0.1 if RD2 == 350 else 1) # Fix for new puzzles
+    mu1__ = mu1 + phi1__**2*g(phi2)*(s - E(mu1, mu2, phi2)) #* (0.3 if RD2 == 350 else 1) # Fix for new puzzles
     mu2__ = mu2 + phi2__**2*g(phi1)*((1-s) - E(mu2, mu1, phi1))
 
     return (

@@ -2,253 +2,255 @@
     "en": {
         "Select a command to view information about.": {
             "en": "Select a command to view information about.",
-            "ru": "\u0412\u044b\u0431\u043e\u0440 \u043a\u043e\u043c\u0430\u043d\u0434\u044b \u0434\u043b\u044f \u043e\u0442\u043e\u0431\u043e\u0440\u0430\u0436\u0435\u043d\u0438\u044f \u0438\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u0438."
+            "ru": "Выбор команды для отоборажения информации."
         },
         "Display information about a command": {
             "en": "Display information about a command",
-            "ru": "\u0412\u044b\u0432\u043e\u0434\u0438\u0442 \u0438\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044e \u043e \u043a\u043e\u043c\u0430\u043d\u0434\u0435"
+            "ru": "Выводит информацию о команде"
         },
-        "Command not found \ud83d\ude4c": {
-            "en": "Command not found \ud83d\ude4c",
-            "ru": "\u041a\u043e\u043c\u0430\u043d\u0434\u0430 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u0430 \ud83d\ude4c"
+        "Command not found 🙌": {
+            "en": "Command not found 🙌",
+            "ru": "Команда не найдена 🙌"
         },
         "Initial command.": {
             "en": "Initial command.",
-            "ru": "\u041d\u0430\u0447\u0430\u043b\u044c\u043d\u0430\u044f \u043a\u043e\u043c\u0430\u043d\u0434\u0430."
+            "ru": "Начальная команда."
         },
         "Show current position or information about a puzzle.": {
-            "ru": "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u0442\u0435\u043a\u0443\u0449\u0443\u044e \u043f\u043e\u0437\u0438\u0446\u0438\u044e \u0438\u043b\u0438 \u0438\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044e \u043e \u0437\u0430\u0434\u0430\u0447\u0435.",
+            "ru": "Показывает текущую позицию или информацию о задаче.",
             "en": "Show current position or information about a puzzle."
         },
         "required": {
-            "ru": "\u043e\u0431\u044f\u0437\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u0439"
+            "ru": "обязательный"
         },
         "Select a puzzle to show information about.": {
-            "ru": "\u0412\u044b\u0431\u043e\u0440 \u0437\u0430\u0434\u0430\u0447\u0438 \u043f\u043e ID."
+            "ru": "Выбор задачи по ID."
         },
         "Puzzle": {
-            "ru": "\u0417\u0430\u0434\u0430\u0447\u0430",
+            "ru": "Задача",
             "en": "Puzzle"
         },
         "Rating": {
-            "ru": "\u0420\u0435\u0439\u0442\u0438\u043d\u0433",
+            "ru": "Рейтинг",
             "en": "Rating"
         },
         "Solved": {
-            "ru": "\u0420\u0435\u0448\u0435\u043d\u0430",
+            "ru": "Решена",
             "en": "Solved"
         },
         "Game": {
-            "ru": "\u041f\u0430\u0440\u0442\u0438\u044f",
+            "ru": "Партия",
             "en": "Game"
         },
         "Opening": {
-            "ru": "\u0414\u0435\u0431\u044e\u0442",
+            "ru": "Дебют",
             "en": "Opening"
         },
         "Popularity": {
-            "ru": "\u041e\u0446\u0435\u043d\u043a\u0430",
+            "ru": "Оценка",
             "en": "Popularity"
         },
         "Challenge!": {
-            "ru": "\u0420\u0435\u0448\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u0447\u0443!",
+            "ru": "Решить задачу!",
             "en": "Challenge!"
         },
         "Find the best move for": {
-            "ru": "\u041d\u0430\u0439\u0434\u0438\u0442\u0435 \u043b\u0443\u0447\u0448\u0438\u0439 \u0445\u043e\u0434 \u0437\u0430",
+            "ru": "Найдите лучший ход за",
             "en": "Find the best move for",
             "null": "Find the best move for"
         },
         "black": {
-            "ru": "\u0447\u0435\u0440\u043d\u044b\u0445",
+            "ru": "черных",
             "null": "black",
-            "en": "black",
-            "null": "black"
+            "en": "black"
         },
         "white": {
-            "ru": "\u0431\u0435\u043b\u044b\u0445",
+            "ru": "белых",
             "en": "white",
+            "null": "white",
             "null": "white"
         },
-        "Nothing to show here \ud83e\udee5": {
-            "ru": "\u0412\u044b\u0432\u043e\u0434 \u043f\u0443\u0441\u0442 \ud83e\udee5"
+        "Nothing to show here 🫥": {
+            "ru": "Вывод пуст 🫥"
         },
         "Here is your current puzzle.": {
-            "ru": "\u0412\u0430\u0448\u0430 \u0442\u0435\u043a\u0443\u0449\u0430\u044f \u043f\u043e\u0437\u0438\u0446\u0438\u044f.",
+            "ru": "Ваша текущая позиция.",
             "en": "Here is your current puzzle."
         },
         "This is an old position. Try executing /puzzle to get your current position.": {
-            "ru": "\u042d\u0442\u0430 \u043f\u043e\u0437\u0438\u0446\u0438\u044f \u0443\u0441\u0442\u0430\u0440\u0435\u043b\u0430. \u0418\u0441\u043f\u043e\u043b\u044c\u0437\u0443\u0439\u0442\u0435 \u043a\u043e\u043c\u0430\u043d\u0434\u0443 /puzzle \u0447\u0442\u043e\u0431\u044b \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u043f\u043e\u0437\u0438\u0446\u0438\u044e \u0438\u0437 \u0442\u0435\u043a\u0443\u0449\u0435\u0439 \u0437\u0430\u0434\u0430\u0447\u0438."
+            "ru": "Эта позиция устарела. Используйте команду /puzzle чтобы получить позицию из текущей задачи."
         },
         "Correct!": {
-            "ru": "\u0412\u0435\u0440\u043d\u043e!",
+            "ru": "Верно!",
             "en": "Correct!"
         },
         "Elo change": {
-            "ru": "\u0418\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0435 \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u0430",
+            "ru": "Изменение рейтинга",
             "en": "Elo change"
         },
-        "\u041d\u043e\u0432\u044b\u0439 \u0440\u0435\u0439\u0442\u0438\u043d\u0433": {},
+        "Новый рейтинг": {},
         "Analysis": {
-            "ru": "\u0410\u043d\u0430\u043b\u0438\u0437",
+            "ru": "Анализ",
             "en": "Analysis"
         },
         "Did you like this puzzle?": {
-            "ru": "\u041f\u043e\u043d\u0440\u0430\u0432\u0438\u043b\u0430\u0441\u044c \u043b\u0438 \u0432\u0430\u043c \u044d\u0442\u0430 \u0437\u0430\u0434\u0430\u0447\u0430?",
+            "ru": "Понравилась ли вам эта задача?",
             "en": "Did you like this puzzle?"
         },
         "New raiting": {
-            "ru": "\u041d\u043e\u0432\u044b\u0439 \u0440\u0435\u0439\u0442\u0438\u043d\u0433",
+            "ru": "Новый рейтинг",
             "en": "New raiting"
         },
         "Wrong!": {
-            "ru": "\u041d\u0435\u0432\u0435\u0440\u043d\u043e!",
+            "ru": "Неверно!",
             "en": "Wrong!"
         },
         "Correct move": {
-            "ru": "\u041f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u044b\u0439 \u0445\u043e\u0434",
+            "ru": "Правильный ход",
             "en": "Correct move"
         },
         "Raiting": {
-            "ru": "\u0420\u0435\u0439\u0442\u0438\u043d\u0433",
+            "ru": "Рейтинг",
             "en": "Raiting"
         },
         "TOP": {
-            "ru": "\u0422\u041e\u041f",
+            "ru": "ТОП",
             "en": "TOP"
         },
         "YOUR Raiting": {
-            "ru": "\u0412\u0410\u0428 \u0440\u0435\u0439\u0442\u0438\u043d\u0433"
+            "ru": "ВАШ рейтинг"
         },
         "Solved puzzles": {
-            "ru": "\u0420\u0435\u0448\u0435\u043d\u043e \u0437\u0430\u0434\u0430\u0447",
+            "ru": "Решено задач",
             "en": "Solved puzzles"
         },
         "Not specified": {
-            "ru": "\u0411\u0435\u0437 \u0434\u0435\u0431\u044e\u0442\u0430"
+            "ru": "Без дебюта"
         },
         "The *hardest* puzzles": {
-            "ru": "\u0421\u0430\u043c\u044b\u0435 *\u0441\u043b\u043e\u0436\u043d\u044b\u0435* \u0437\u0430\u0434\u0430\u0447\u0438",
+            "ru": "Самые *сложные* задачи",
             "en": "The *hardest* puzzles"
         },
         "id": {
             "ru": "id"
         },
         "Show hardest puzzles.": {
-            "ru": "\u041f\u043e\u043a\u0430\u0437\u0430\u0442\u044c \u0441\u0430\u043c\u044b\u0435 \u0441\u043b\u043e\u0436\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u0447\u0438.",
+            "ru": "Показать самые сложные задачи.",
             "en": "Show hardest puzzles."
         },
         "Without this flag all attempted puzzles will be hidden.": {
-            "ru": "\u0411\u0435\u0437 \u044d\u0442\u043e\u0433\u043e \u0444\u043b\u0430\u0433\u0430 \u0440\u0435\u0448\u0435\u043d\u043d\u044b\u0435 \u0432\u0430\u043c\u0438 \u0437\u0430\u0434\u0430\u0447\u0438 \u0431\u0443\u0434\u0443\u0442 \u0441\u043a\u0440\u044b\u0442\u044b."
+            "ru": "Без этого флага решенные вами задачи будут скрыты."
         },
         "Show top players and your neighbours.": {
-            "ru": "\u0412\u044b\u0432\u0435\u0441\u0442\u0438 \u0440\u0435\u0439\u0442\u0438\u043d\u0433 \u043b\u0443\u0447\u0448\u0438\u0445 \u0438\u0433\u0440\u043e\u043a\u043e\u0432 \u0438 \u0432\u0430\u0448\u0438\u0445 \u0441\u043e\u0441\u0435\u0434\u0435\u0439.",
+            "ru": "Вывести рейтинг лучших игроков и ваших соседей.",
             "en": "Show top players and your neighbours."
         },
         "No such puzzle": {
             "ru": "No such puzzle"
         },
         "Welcome to our bot with antichess puzzles! To see all the available commands execute /help or jump right into solving puzzles using /puzzle (/p works as well)!": {
-            "ru": "\u0414\u043e\u0431\u0440\u043e \u043f\u043e\u0436\u0430\u043b\u043e\u0432\u0430\u0442\u044c \u043a \u0431\u043e\u0442\u0443 \u0441 \u0437\u0430\u0434\u0430\u0447\u0430\u043c\u0438 \u043f\u043e \u0448\u0430\u0445\u043c\u0430\u0442\u043d\u044b\u043c \u043f\u043e\u0434\u0434\u0430\u0432\u043a\u0430\u043c! \u041f\u043e\u0441\u043c\u043e\u0442\u0440\u0438\u0442\u0435 \u0441\u043f\u0438\u0441\u043e\u043a \u0434\u043e\u0441\u0442\u0443\u043f\u043d\u044b\u0445 \u043a\u043e\u043c\u0430\u043d\u0434 \u043f\u0440\u0438 \u043f\u043e\u043c\u043e\u0449\u0438 \u043a\u043e\u043c\u0430\u043d\u0434\u044b /help \u0438\u043b\u0438 \u0441\u0440\u0430\u0437\u0443 \u043d\u0430\u0447\u0438\u043d\u0430\u0439\u0442\u0435 \u0440\u0435\u0448\u0430\u0442\u044c \u0437\u0430\u0434\u0430\u0447\u0438 \u043f\u0440\u0438 \u043f\u043e\u043c\u043e\u0449\u0438 \u043a\u043e\u043c\u0430\u043d\u0434\u044b /puzzle (\u0442\u0430\u043a\u0436\u0435 \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u0438 /p)!"
+            "ru": "Добро пожаловать к боту с задачами по шахматным поддавкам! Посмотрите список доступных команд при помощи команды /help или сразу начинайте решать задачи при помощи команды /puzzle (также работает и /p)!"
         },
         "Puzzles solved (@antipuzzles_bot)": {
-            "ru": "\u0420\u0435\u0448\u0435\u043d\u043e \u0437\u0430\u0434\u0430\u0447 (@antipuzzles_bot)",
+            "ru": "Решено задач (@antipuzzles_bot)",
             "en": "Puzzles solved (@antipuzzles_bot)"
         },
         "Raiting graph for": {
-            "ru": "\u0413\u0440\u0430\u0444\u0438\u043a \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u0430 \u0438\u0433\u0440\u043e\u043a\u0430",
+            "ru": "График рейтинга игрока",
             "en": "Raiting graph for"
         },
         "Avg elo change for each theme (@antipuzzles_bot)": {
-            "ru": "\u0421\u0440\u0435\u0434\u043d\u0435\u0435 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0435 \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u0430 \u043f\u043e \u0442\u0435\u043c\u0430\u043c (@antipuzzles_bot)",
+            "ru": "Среднее изменение рейтинга по темам (@antipuzzles_bot)",
             "en": "Avg elo change for each theme (@antipuzzles_bot)"
         },
         "End game": {
-            "ru": "\u042d\u043d\u0434\u0448\u043f\u0438\u043b\u044c",
+            "ru": "Эндшпиль",
             "en": "End game"
         },
         "Cleaning": {
-            "ru": "\u0417\u0430\u0447\u0438\u0441\u0442\u043a\u0430",
+            "ru": "Зачистка",
             "en": "Cleaning"
         },
         "Pawn promotion": {
-            "ru": "\u041f\u0440\u0435\u0432\u0440\u0430\u0449\u0435\u043d\u0438\u0435 \u043f\u0435\u0448\u043a\u0438",
+            "ru": "Превращение пешки",
             "en": "Pawn promotion"
         },
         "Enpassant": {
-            "ru": "\u0412\u0437\u044f\u0442\u0438\u0435 \u043d\u0430 \u043f\u0440\u043e\u0445\u043e\u0434\u0435",
+            "ru": "Взятие на проходе",
             "en": "Enpassant"
         },
         "Zugzwang": {
-            "ru": "\u0426\u0443\u0433\u0446\u0432\u0430\u043d\u0433",
+            "ru": "Цугцванг",
             "en": "Zugzwang"
         },
         "Queen Race": {
-            "ru": "\u0424\u0435\u0440\u0437\u0435\u0432\u0430\u044f \u0433\u043e\u043d\u043a\u0430",
+            "ru": "Ферзевая гонка",
             "en": "Queen Race"
         },
         "Middle game": {
-            "ru": "\u041c\u0438\u0442\u0442\u043b\u044c\u0448\u043f\u0438\u043b\u044c",
+            "ru": "Миттльшпиль",
             "en": "Middle game"
         },
         "Solved correctly": {
-            "ru": "\u0420\u0435\u0448\u0435\u043d\u043e \u0432\u0435\u0440\u043d\u043e",
+            "ru": "Решено верно",
             "en": "Solved correctly"
         },
         "Elo change rate": {
-            "ru": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0440\u0435\u0439\u0442\u0438\u043d\u0433\u0430",
+            "ru": "Динамика рейтинга",
             "en": "Elo change rate"
         },
         "Plot built in": {
-            "ru": "\u0413\u0440\u0430\u0444\u0438\u043a \u043f\u043e\u0441\u0442\u0440\u043e\u0435\u043d \u0437\u0430",
+            "ru": "График построен за",
             "en": "Plot built in"
         },
         "ms": {
-            "ru": "\u043c\u0441",
+            "ru": "мс",
             "en": "ms"
         },
         "Displays your progress.": {
-            "ru": "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u0432\u0430\u0448 \u043f\u0440\u043e\u0433\u0440\u0435\u0441\u0441."
+            "ru": "Показывает ваш прогресс."
         },
         "Show information about another user.": {},
-        "This is an old puzzle. Try executing /puzzle to get your current puzzle.": {},
+        "This is an old puzzle. Try executing /puzzle to get your current puzzle.": {
+            "ru": "This is an old puzzle. Try executing /puzzle to get your current puzzle."
+        },
         "Show your daily challenges.": {
-            "ru": "\u041f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u0435\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u044b\u0435 \u0437\u0430\u0434\u0430\u0447\u0438."
+            "ru": "Показывает ежедневные задачи."
         },
         "": {
             "ru": ""
         },
         "Gain XP": {
-            "ru": "\u041f\u043e\u043b\u0443\u0447\u0438\u0442\u044c XP",
+            "ru": "Получить XP",
             "en": "Gain XP"
         },
         "Progress": {
-            "ru": "\u041f\u0440\u043e\u0433\u0440\u0435\u0441\u0441",
+            "ru": "Прогресс",
             "en": "Progress"
         },
         "Correctly solve puzzles": {
-            "ru": "\u041f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u043e \u0440\u0435\u0448\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u0447",
+            "ru": "Правильно решить задач",
             "en": "Correctly solve puzzles"
         },
         "Solve puzzles in a row": {
-            "ru": "\u0420\u0435\u0448\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u0447 \u043f\u043e\u0434\u0440\u044f\u0434",
+            "ru": "Решить задач подряд",
             "en": "Solve puzzles in a row"
         },
         "Attempt puzzles": {
-            "ru": "\u041f\u043e\u043f\u0440\u043e\u0431\u043e\u0432\u0430\u0442\u044c \u0440\u0435\u0448\u0438\u0442\u044c \u0437\u0430\u0434\u0430\u0447",
+            "ru": "Попробовать решить задач",
             "en": "Attempt puzzles"
         },
         "Only": {
-            "ru": "\u041e\u0441\u0442\u0430\u043b\u043e\u0441\u044c \u0432\u0441\u0435\u0433\u043e",
+            "ru": "Осталось всего",
             "en": "Only"
         },
         "hours left!": {
-            "ru": "\u0447\u0430\u0441\u043e\u0432!",
+            "ru": "часов!",
             "en": "hours left!"
         },
         "Unexpected error occured. Selecting another puzzle.": {},
         "Streak": {
-            "ru": "\u0421\u0442\u0440\u0430\u0439\u043a",
+            "ru": "Страйк",
             "en": "Streak"
         }
     }

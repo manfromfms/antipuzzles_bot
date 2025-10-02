@@ -72,7 +72,7 @@ class User:
 
     def insert_database_entry(self):
         insert_query = """
-            INSERT INTO users (
+            INSERT OR IGNORE INTO users (
                 id,
                 nickname,
                 pgroup

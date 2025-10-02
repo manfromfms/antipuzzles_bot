@@ -134,18 +134,18 @@ class Daily(Daily_base):
 
             self.currentDayFinishTimestamp = math.ceil(time.time() / (60*60*24)) * (60*60*24)
 
-            X = math.floor(5. + math.log2(self.streak + 1))
+            X = math.floor(5. + math.log2(self.streak + 1)*.75)
 
             self.firstTaskType = math.floor(random.random() * len(self.types))
             self.firstTaskMax = self.generateGoal(self.firstTaskType, X)
             self.firstTaskProgress = 0
 
             self.secondTaskType = math.floor(random.random() * len(self.types))
-            self.secondTaskMax = self.generateGoal(self.secondTaskType, X*2.5)
+            self.secondTaskMax = self.generateGoal(self.secondTaskType, X*2.2)
             self.secondTaskProgress = 0
 
             self.thirdTaskType = math.floor(random.random() * len(self.types))
-            self.thirdTaskMax = self.generateGoal(self.thirdTaskType, X*6.25)
+            self.thirdTaskMax = self.generateGoal(self.thirdTaskType, X*4.84)
             self.thirdTaskProgress = 0
 
             self.doneForToday = False
