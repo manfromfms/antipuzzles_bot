@@ -153,7 +153,7 @@ class Daily(Daily_base):
             self.update_database_entry()
 
     
-    def update_state(self, elochange: float):
+    def update_state(self, elochange: float) -> int:
         if elochange > 0:
             self.xp += int(elochange) // 2
 
@@ -238,11 +238,14 @@ class Daily(Daily_base):
 
             self.update_database_entry()
 
+        return_value = 0
 
         self.firstTaskProgress = min(self.firstTaskMax, self.firstTaskProgress)
         if self.firstTaskProgress >= self.firstTaskMax and self.doneForToday == 0:
             self.streak += 1
             self.doneForToday = 1
+
+            return_value = 1
 
 
         self.secondTaskProgress = min(self.secondTaskMax, self.secondTaskProgress)
@@ -250,10 +253,16 @@ class Daily(Daily_base):
             self.streak += 1
             self.doneForToday = 1
 
+            return_value = 1
+
 
         self.thirdTaskProgress = min(self.thirdTaskMax, self.thirdTaskProgress)
         if self.thirdTaskProgress >= self.thirdTaskMax and self.doneForToday == 0:
             self.streak += 1
             self.doneForToday = 1
 
+            return_value = 1
+
         self.update_database_entry()
+
+        return return_value

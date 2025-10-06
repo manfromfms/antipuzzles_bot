@@ -171,7 +171,10 @@ async def make_move_puzzle_handler(data: str, query: CallbackQuery):
                 
                 # Update daily challenges
                 Daily.searchByUserId(user.id).update_general()
-                Daily.searchByUserId(user.id).update_state(dif)
+                state = Daily.searchByUserId(user.id).update_state(dif)
+
+                if state > 0:
+                    await message.chat.send_message(('🏁 *' + Translation('DAILY CHALLENGE IS COMPLETED') + '* 🏁\n_' + Translation('Don\'t forget to come back tomorrow!') + '_').translate(query.from_user.language_code))
             else:
                 dif = 0
             user.puzzle_selection_policy()
@@ -199,7 +202,10 @@ async def make_move_puzzle_handler(data: str, query: CallbackQuery):
                 
             # Update daily challenges
             Daily.searchByUserId(user.id).update_general()
-            Daily.searchByUserId(user.id).update_state(dif)
+            state = Daily.searchByUserId(user.id).update_state(dif)
+
+            if state > 0:
+                await message.chat.send_message(('🏁 *' + Translation('DAILY CHALLENGE IS COMPLETED') + '* 🏁\n_' + Translation('Don\'t forget to come back tomorrow!') + '_').translate(query.from_user.language_code))
         else:
             dif = 0
         user.puzzle_selection_policy()

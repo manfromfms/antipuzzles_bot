@@ -62,12 +62,12 @@
         "black": {
             "ru": "черных",
             "null": "black",
-            "en": "black"
+            "en": "black",
+            "null": "black"
         },
         "white": {
             "ru": "белых",
             "en": "white",
-            "null": "white",
             "null": "white"
         },
         "Nothing to show here 🫥": {
@@ -149,7 +149,8 @@
             "ru": "No such puzzle"
         },
         "Welcome to our bot with antichess puzzles! To see all the available commands execute /help or jump right into solving puzzles using /puzzle (/p works as well)!": {
-            "ru": "Добро пожаловать к боту с задачами по шахматным поддавкам! Посмотрите список доступных команд при помощи команды /help или сразу начинайте решать задачи при помощи команды /puzzle (также работает и /p)!"
+            "ru": "Добро пожаловать к боту с задачами по шахматным поддавкам! Посмотрите список доступных команд при помощи команды /help или сразу начинайте решать задачи при помощи команды /puzzle (также работает и /p)!",
+            "en": "Welcome to our bot with antichess puzzles! To see all the available commands execute /help or jump right into solving puzzles using /puzzle (/p works as well)!"
         },
         "Puzzles solved (@antipuzzles_bot)": {
             "ru": "Решено задач (@antipuzzles_bot)",
@@ -208,14 +209,16 @@
             "en": "ms"
         },
         "Displays your progress.": {
-            "ru": "Показывает ваш прогресс."
+            "ru": "Показывает ваш прогресс.",
+            "en": "Displays your progress."
         },
         "Show information about another user.": {},
         "This is an old puzzle. Try executing /puzzle to get your current puzzle.": {
             "ru": "This is an old puzzle. Try executing /puzzle to get your current puzzle."
         },
         "Show your daily challenges.": {
-            "ru": "Показывает ежедневные задачи."
+            "ru": "Показывает ежедневные задачи.",
+            "en": "Show your daily challenges."
         },
         "": {
             "ru": ""
