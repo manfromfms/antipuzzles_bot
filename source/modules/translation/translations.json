@@ -62,12 +62,12 @@
         "black": {
             "ru": "черных",
             "null": "black",
-            "en": "black",
-            "null": "black"
+            "en": "black"
         },
         "white": {
             "ru": "белых",
             "en": "white",
+            "null": "white",
             "null": "white"
         },
         "Nothing to show here 🫥": {
@@ -251,10 +251,41 @@
             "ru": "часов!",
             "en": "hours left!"
         },
-        "Unexpected error occured. Selecting another puzzle.": {},
+        "Unexpected error occured. Selecting another puzzle.": {
+            "ru": "Unexpected error occured. Selecting another puzzle."
+        },
         "Streak": {
             "ru": "Страйк",
             "en": "Streak"
+        },
+        "DAILY CHALLENGE IS COMPLETED": {
+            "ru": "ЕЖЕДНЕВНАЯ ЗАДАЧА РЕШЕНА",
+            "en": "DAILY CHALLENGE IS COMPLETED"
+        },
+        "Don't forget to come back tomorrow!": {
+            "ru": "Не забудьте вернуться завтра!",
+            "en": "Don't forget to come back tomorrow!"
+        },
+        "Middlegame": {
+            "ru": "Миттельшпиль"
+        },
+        "Select the theme you would like to explore!": {
+            "ru": "Выберете тему задач!"
+        },
+        "Endgame": {
+            "ru": "Эндшпиль"
+        },
+        "Promotion": {
+            "ru": "Превращение пешки"
+        },
+        "En Passant": {
+            "ru": "Взятие на проходе"
+        },
+        "Deselect": {
+            "ru": "ОТМЕНИТЬ"
+        },
+        "The theme was successfuly switched! This changes will effect after the current puzzle is attempted.": {
+            "null": "The theme was successfuly switched! This changes will effect after the current puzzle is attempted."
         }
     }
 }

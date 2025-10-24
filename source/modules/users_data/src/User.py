@@ -5,6 +5,7 @@ import sqlite3
 
 from ...users import User
 from ...puzzles import Opening
+from ...preferences import Preferences
 from ...database import get_connection
 
 class User_expand(User):
@@ -37,9 +38,23 @@ class User_expand(User):
 
 
     def puzzle_selection_policy(self):
-        # preferences = Preferences(self.ml, self.connection, searchByUserId=self.id)
+        preferences = Preferences.selectByUserId(self.id)
 
         opening_ids = []
+
+        themes = [
+            '',
+            'opening',
+            'middlegame',
+            'endgame',
+            'zugzwang',
+            'cleaning',
+            'queenrace',
+            'promotion',
+            'enpassant',
+        ]
+
+        theme = themes[int(preferences.get_preferences()[0]) if preferences.get_preferences()[0] != '' else 0]
 
         # This weird if statements will be used with preferences
         if 0 == 1 or 0 == 0:
@@ -47,7 +62,7 @@ class User_expand(User):
         else:
             opening_ids = (Opening.searchById(id=0)).get_children()
 
-        if 0 == 0:
+        if theme == '':
             self.cursor.execute('''
                 SELECT *
                 FROM puzzles
@@ -61,11 +76,15 @@ class User_expand(User):
                 SELECT *
                 FROM puzzles
                 LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ?
-                WHERE puzzles.isProcessed = 1 AND puzzles.openingId IN ({','.join('?' * len(opening_ids))})
+                LEFT JOIN themes ON puzzles.id = themes.puzzleId
+                WHERE puzzles.isProcessed = 1 
                 AND played.puzzleId IS NULL
-                ORDER BY MAX(ABS(puzzles.elo + puzzles.elodev/3 - ?), ABS(puzzles.elo - puzzles.elodev/3 - ?)) ASC
-            ''', [self.id] + opening_ids + [self.elo + 0, self.elo + 0])
+                ORDER BY MAX(ABS(puzzles.elo + puzzles.elodev/3 - ?), ABS(puzzles.elo - puzzles.elodev/3 - ?)) * (1.5 - (themes.{theme}_upvotes - themes.{theme}_downvotes) / (themes.{theme}_upvotes + themes.{theme}_downvotes)) / 3 ASC
+            ''', [self.id, self.elo, self.elo])
         
+        
+        # self.cursor.execute(f' SELECT * FROM puzzles LEFT JOIN played ON puzzles.id = played.puzzleId AND played.userId = ? WHERE puzzles.isProcessed = 1 AND puzzles.openingId IN ({','.join('?' * len(opening_ids))}) AND played.puzzleId IS NULL ORDER BY MAX(ABS(puzzles.elo + puzzles.elodev/3 - ?), ABS(puzzles.elo - puzzles.elodev/3 - ?)) ASC ', [self.id] + opening_ids + [self.elo + 0, self.elo + 0])
+
         p = self.cursor.fetchall()
 
         if len(p) == 0:

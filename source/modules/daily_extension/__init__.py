@@ -52,6 +52,13 @@ class Daily(Daily_base):
             Translation('Solve puzzles in a row'),
         ]
 
+        self.help_with_commads = [
+            '/puzzle',
+            '/puzzle',
+            '/puzzle',
+            '/puzzle',
+        ]
+
         self.rowLookup = [0, # 0 puzzles
             0, 1, 1, 1, 2, 2, 2, 2, 2, 2, #  1-10 puzzles
             2, 2, 3, 3, 3, 3, 3, 3, 3, 3, # 11-20 puzzles
@@ -95,11 +102,11 @@ class Daily(Daily_base):
     def compile(self) -> Translation:
         s = Translation('Only') + f' {round((self.currentDayFinishTimestamp - time.time()) / 60 / 60 * 10)/10} ' + Translation('hours left!') + '\n\n'
 
-        s = s + '🕯️ ' + self.types[self.firstTaskType] + f': {self.firstTaskMax}\n' + Translation('Progress') + f': {self.firstTaskProgress}/{self.firstTaskMax}{' ✅' if self.firstTaskMax == self.firstTaskProgress else ''}\n\n'
+        s = s + '🕯️ ' + self.types[self.firstTaskType] + f': {self.firstTaskMax}\n' + Translation('Progress') + f': {self.firstTaskProgress}/{self.firstTaskMax}{' ✅' if self.firstTaskMax == self.firstTaskProgress else ''}\n`{self.help_with_commads[self.firstTaskType]}`\n\n'
 
-        s = s + '🔦 ' + self.types[self.secondTaskType] + f': {self.secondTaskMax}\n' + Translation('Progress') + f': {self.secondTaskProgress}/{self.secondTaskMax}{' ✅' if self.secondTaskMax == self.secondTaskProgress else ''}\n\n'
+        s = s + '🔦 ' + self.types[self.secondTaskType] + f': {self.secondTaskMax}\n' + Translation('Progress') + f': {self.secondTaskProgress}/{self.secondTaskMax}{' ✅' if self.secondTaskMax == self.secondTaskProgress else ''}\n`{self.help_with_commads[self.secondTaskType]}`\n\n'
 
-        s = s + '🏮 ' + self.types[self.thirdTaskType] + f': {self.thirdTaskMax}\n' + Translation('Progress') + f': {self.thirdTaskProgress}/{self.thirdTaskMax}{' ✅' if self.thirdTaskMax == self.thirdTaskProgress else ''}\n\n'
+        s = s + '🏮 ' + self.types[self.thirdTaskType] + f': {self.thirdTaskMax}\n' + Translation('Progress') + f': {self.thirdTaskProgress}/{self.thirdTaskMax}{' ✅' if self.thirdTaskMax == self.thirdTaskProgress else ''}\n`{self.help_with_commads[self.thirdTaskType]}`\n\n'
 
         return s
 

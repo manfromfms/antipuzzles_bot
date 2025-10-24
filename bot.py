@@ -13,7 +13,12 @@ source.modules.users_data.users_data_init()
 import source.modules.daily
 source.modules.daily.daily_init()
 
+# Init preferences package
+import source.modules.preferences
+source.modules.preferences.preferences_init()
+
 # Import all commands
+import source.modules.command_theme
 import source.modules.command_daily
 import source.modules.command_me
 import source.modules.command_start
@@ -23,6 +28,7 @@ import source.modules.command_hardest
 import source.modules.command_help
 
 # Init all commands
+source.modules.command_theme.command_theme_init()
 source.modules.command_daily.command_daily_init()
 source.modules.command_me.command_me_init()
 source.modules.command_start.command_start_init()

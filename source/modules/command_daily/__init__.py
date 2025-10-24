@@ -27,7 +27,7 @@ async def daily(message: Message, params: dict) -> None:
         daily.update_general()
         daily.update_database_entry()
 
-    await message.chat.send_message(daily.compile().translate(message.from_user.language_code))
+    await message.chat.send_message(daily.compile().translate(message.from_user.language_code), parse_mode='markdown')
 
 add_handler(CommandHandler(['daily', 'd'], daily))
 

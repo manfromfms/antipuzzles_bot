@@ -17,6 +17,7 @@ from ..users_data import User
 from ..daily_extension import Daily
 from ..database import get_connection
 from ..translation import Translation
+from ..preferences import Preferences
 from ..puzzles import Puzzle, Solution
 from ..telegram import command, add_handler, create_inline_keyboard_handler
 
@@ -37,6 +38,8 @@ def update_ratings(user: User, puzzle: Puzzle, userWon):
 
     if cursor.fetchone()[0] == 1:
         return 0
+    
+    preferences = Preferences.selectByUserId(user.id)
 
     results = calculate_rating_changes(
         user.elo,
@@ -47,7 +50,8 @@ def update_ratings(user: User, puzzle: Puzzle, userWon):
         puzzle.elodev,
         puzzle.volatility,
 
-        1 if userWon else 0
+        1 if userWon else 0,
+        1 if preferences.get_preferences()[0] == '0' or preferences.get_preferences()[0] == '' else 0.5
     )
 
     dif = results[0] - user.elo
@@ -174,7 +178,7 @@ async def make_move_puzzle_handler(data: str, query: CallbackQuery):
                 state = Daily.searchByUserId(user.id).update_state(dif)
 
                 if state > 0:
-                    await message.chat.send_message(('🏁 *' + Translation('DAILY CHALLENGE IS COMPLETED') + '* 🏁\n_' + Translation('Don\'t forget to come back tomorrow!') + '_').translate(query.from_user.language_code))
+                    await message.chat.send_message(('🏁 *' + Translation('DAILY CHALLENGE IS COMPLETED') + '* 🏁\n_' + Translation('Don\'t forget to come back tomorrow!') + '_').translate(query.from_user.language_code), parse_mode='markdown')
             else:
                 dif = 0
             user.puzzle_selection_policy()
@@ -205,7 +209,7 @@ async def make_move_puzzle_handler(data: str, query: CallbackQuery):
             state = Daily.searchByUserId(user.id).update_state(dif)
 
             if state > 0:
-                await message.chat.send_message(('🏁 *' + Translation('DAILY CHALLENGE IS COMPLETED') + '* 🏁\n_' + Translation('Don\'t forget to come back tomorrow!') + '_').translate(query.from_user.language_code))
+                await message.chat.send_message(('🏁 *' + Translation('DAILY CHALLENGE IS COMPLETED') + '* 🏁\n_' + Translation('Don\'t forget to come back tomorrow!') + '_').translate(query.from_user.language_code), parse_mode='markdown')
         else:
             dif = 0
         user.puzzle_selection_policy()
